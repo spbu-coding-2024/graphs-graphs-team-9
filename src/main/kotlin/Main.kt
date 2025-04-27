@@ -48,5 +48,9 @@ fun main() = application {
     graph.addEdge(1, 6, 5.0)
     graph.addEdge(1, 7, 6.0)
 
+//    graph.printG()
+
+    graph.deleteEdge(1, 2)
+
     graph.printG()
 }
