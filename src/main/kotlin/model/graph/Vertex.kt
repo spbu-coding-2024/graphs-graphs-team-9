@@ -1,6 +1,6 @@
 package model.graph;
 
-class Vertex (
+data class Vertex (
     var id: Int,
-    var name: String
+    var name: String? = null
 )
