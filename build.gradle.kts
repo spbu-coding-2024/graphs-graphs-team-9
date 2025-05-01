@@ -21,6 +21,14 @@ dependencies {
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 compose.desktop {
