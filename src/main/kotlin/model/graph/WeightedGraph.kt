@@ -66,4 +66,31 @@ class WeightedGraph(private val isDirected: Boolean) : WeightedGraphInterface {
     override fun isDirected(): Boolean {
         return isDirected
     }
+
+    inner class Iterate : Iterator<Pair<Vertex, MutableList<Pair<Vertex, Double>>?>> {
+        var array: ArrayDeque<Pair<Vertex, MutableList<Pair<Vertex, Double>>?>> = ArrayDeque()
+        var f: Boolean = true
+
+        override fun next(): Pair<Vertex, MutableList<Pair<Vertex, Double>>?> {
+            return array.removeFirst()
+        }
+
+        override fun hasNext(): Boolean {
+            if (f) {
+                getGraph()
+                f = false
+            }
+            return array.isNotEmpty()
+        }
+
+        fun getGraph() {
+            for (el in adjList) {
+                array.add(el.toPair())
+            }
+        }
+    }
+
+    operator fun iterator(): Iterate {
+        return this.Iterate()
+    }
 }
