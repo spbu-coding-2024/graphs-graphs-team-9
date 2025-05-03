@@ -1,0 +1,4 @@
+package viewModel
+
+class EdgeViewModel {
+}
