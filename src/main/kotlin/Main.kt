@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import model.graph.Edge
 import model.graph.WeightedGraph
 import model.graph.Vertex
 
@@ -27,7 +28,9 @@ fun App() {
 }
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
-        App()
-    }
+//    Window(onCloseRequest = ::exitApplication) {
+//        App()
+//    }
+    val e = Edge(2, 2.3, Pair(Vertex(1, "d"), Vertex(2, "4")))
+    println(e.num.toString() + " " + e.weight.toString() + " " + e.connect.toString())
 }
