@@ -1,7 +1,6 @@
 package model.graph
 
 import model.graph.Vertex // Make sure Vertex is accessible
-import model.graph.WeightedGraph // Make sure AdjListWeightedGraph is accessible
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -26,11 +25,11 @@ class AdjListWeightedGraphTest {
     @DisplayName("Тесты для Ориентированного Взвешенного Графа")
     inner class DirectedWeightedGraphTest {
 
-        private lateinit var graph: WeightedGraph
+        private lateinit var graph: Graph
 
         @BeforeEach
         fun setUp() {
-            graph = WeightedGraph(isDirected = true)
+            graph = GraphFactory.createDirectedWeightedGraph()
         }
 
         // Тесты на добавление вершин аналогичны невзвешенному
@@ -196,11 +195,11 @@ class AdjListWeightedGraphTest {
     @DisplayName("Тесты для Неориентированного Взвешенного Графа")
     inner class UndirectedWeightedGraphTest {
 
-        private lateinit var graph: WeightedGraph
+        private lateinit var graph: Graph
 
         @BeforeEach
         fun setUp() {
-            graph = WeightedGraph(isDirected = false)
+            graph = GraphFactory.createUndirectedWeightedGraph()
         }
 
         // Тесты на добавление вершин аналогичны

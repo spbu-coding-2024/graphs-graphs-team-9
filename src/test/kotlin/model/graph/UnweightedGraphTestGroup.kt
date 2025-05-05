@@ -1,7 +1,6 @@
 package model.graph
 
 import model.graph.Vertex // Make sure Vertex is accessible
-import model.graph.UnweightedGraph
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -21,11 +20,11 @@ class UnweightedGraphTest {
     @DisplayName("Тесты для Ориентированного Невзвешенного Графа")
     inner class DirectedUnweightedGraphTest {
 
-        private lateinit var graph: UnweightedGraph
+        private lateinit var graph: Graph
 
         @BeforeEach
         fun setUp() {
-            graph = UnweightedGraph(isDirected = true)
+            graph = GraphFactory.createDirectedUnweightedGraph()
         }
 
         @Test
@@ -64,14 +63,14 @@ class UnweightedGraphTest {
         }
 
         @Test
-        @DisplayName("Добавление ребра с несуществующими вершинами (должны добавиться)")
+        @DisplayName("Добавление ребра с несуществующими вершинами")
         fun addEdgeWithMissingVertices() {
-            graph.addEdge(vA, vB) // vA и vB еще не добавлены явно
-            assertTrue(graph.containsVertex(vA), "Вершина A должна быть добавлена неявно")
-            assertTrue(graph.containsVertex(vB), "Вершина B должна быть добавлена неявно")
-            assertTrue(graph.containsEdge(vA, vB), "Ребро A -> B должно существовать")
-            assertEquals(2, graph.getVertexCount())
-            assertEquals(1, graph.getEdgeCount())
+            graph.addEdge(vA, vB)
+            assertFalse(graph.containsVertex(vA), "Вершина A должна быть добавлена явно")
+            assertFalse(graph.containsVertex(vB), "Вершина B должна быть добавлена явно")
+            assertFalse(graph.containsEdge(vA, vB), "Ребро A -> B не может существовать")
+            assertEquals(0, graph.getVertexCount())
+            assertEquals(0, graph.getEdgeCount())
         }
 
         @Test
@@ -161,12 +160,12 @@ class UnweightedGraphTest {
     @DisplayName("Тесты для Неориентированного Невзвешенного Графа")
     inner class UndirectedUnweightedGraphTest {
 
-        private lateinit var graph: UnweightedGraph
+        private lateinit var graph: Graph
 
         @BeforeEach
         fun setUp() {
             // Создаем неориентированный невзвешенный граф перед каждым тестом
-            graph = UnweightedGraph(isDirected = false)
+            graph = GraphFactory.createUndirectedUnweightedGraph()
         }
 
         // Тесты на добавление/удаление вершин аналогичны ориентированному
@@ -196,15 +195,15 @@ class UnweightedGraphTest {
         }
 
         @Test
-        @DisplayName("Добавление ребра с несуществующими вершинами (должны добавиться)")
+        @DisplayName("Добавление ребра с несуществующими вершинами")
         fun addEdgeWithMissingVertices() {
             graph.addEdge(vA, vB)
-            assertTrue(graph.containsVertex(vA))
-            assertTrue(graph.containsVertex(vB))
-            assertTrue(graph.containsEdge(vA, vB))
-            assertTrue(graph.containsEdge(vB, vA))
-            assertEquals(2, graph.getVertexCount())
-            assertEquals(1, graph.getEdgeCount())
+            assertFalse(graph.containsVertex(vA))
+            assertFalse(graph.containsVertex(vB))
+            assertFalse(graph.containsEdge(vA, vB))
+            assertFalse(graph.containsEdge(vB, vA))
+            assertEquals(0, graph.getVertexCount())
+            assertEquals(0, graph.getEdgeCount())
         }
 
 
