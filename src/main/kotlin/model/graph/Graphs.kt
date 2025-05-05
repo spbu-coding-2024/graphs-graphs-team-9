@@ -10,6 +10,8 @@ interface Graph {
     fun getVertexCount(): Int
     fun getEdgeCount(): Int
     fun isDirected(): Boolean
+    fun getEdge(): List<Pair<Pair<Vertex, Vertex>, Double?>>
+    fun getVertex(): List<Vertex>
 }
 
 interface WeightedGraphInterface : Graph {

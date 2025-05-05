@@ -11,7 +11,7 @@ import model.graph.Vertex
 import kotlin.time.Duration.Companion.seconds
 
 class GraphViewModel(
-    private val graph: UnweightedGraph,
+    private val graph: Graph,
 //    private val placement: MutableMap<Vertex, Pair<Dp?, Dp?>?>,
     showVerticesLabels: State<Boolean>,
     showEdgesLabels: State<Boolean>,
