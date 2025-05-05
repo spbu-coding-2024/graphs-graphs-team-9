@@ -8,7 +8,7 @@ import view.MainScreen
 import viewModel.CircularPlacementStrategy
 import viewModel.MainScreenViewModel
 
-val sampleGraph: Graph = UnweightedGraph(false).apply {
+val sampleGraph: Graph = GraphFactory.createUndirectedUnweightedGraph().apply {
     addVertex(Vertex(1, "A"))
     addVertex(Vertex(2, "B"))
     addVertex(Vertex(3, "C"))

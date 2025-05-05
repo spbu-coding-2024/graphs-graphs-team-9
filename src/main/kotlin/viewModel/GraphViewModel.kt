@@ -6,7 +6,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import model.graph.Edge
 import model.graph.Graph
-import model.graph.UnweightedGraph
 import model.graph.Vertex
 import kotlin.time.Duration.Companion.seconds
 
@@ -16,16 +15,16 @@ class GraphViewModel(
     showVerticesLabels: State<Boolean>,
     showEdgesLabels: State<Boolean>,
 ){
-    private val _vertices = graph.getVertex().associateWith { v ->
+    private val _vertices = graph.getVertices().associateWith { v ->
         VertexViewModel(0.dp, 0.dp, Color.Gray, v, showVerticesLabels)
     }
 
-    private val _edges = graph.getEdge().associateWith { e ->
-        val fst = _vertices[e.first.first]
-            ?: throw IllegalStateException("VertexView for ${e.first.first} not found")
-        val snd = _vertices[e.first.second]
-            ?: throw IllegalStateException("VertexView for ${e.first.second} not found")
-        EdgeViewModel(fst, snd, Color.Gray, Edge(e.first, e.second), showVerticesLabels, showEdgesLabels, e.second)
+    private val _edges = graph.getEdges().associateWith { e ->
+        val fst = _vertices[e.source]
+            ?: throw IllegalStateException("VertexView for ${e.source} not found")
+        val snd = _vertices[e.destination]
+            ?: throw IllegalStateException("VertexView for ${e.destination} not found")
+        EdgeViewModel(fst, snd, Color.Gray, Edge(e.source, e.destination), showVerticesLabels, showEdgesLabels, e.weight)
     }
 
     val vertices: Collection<VertexViewModel>
