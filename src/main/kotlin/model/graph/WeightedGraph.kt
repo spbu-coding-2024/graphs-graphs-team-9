@@ -67,6 +67,25 @@ class WeightedGraph(private val isDirected: Boolean) : WeightedGraphInterface {
         return isDirected
     }
 
+    fun getEdge() : List<Pair<Pair<Vertex, Vertex>, Double?>> {
+        val mas: MutableList<Pair<Pair<Vertex, Vertex>, Double?>> = mutableListOf()
+        for (v_f in adjList){
+            for (v_s in v_f.value){
+                mas.add(Pair(Pair(v_f.key, v_s.first), v_s.second))
+            }
+        }
+        return mas.toSet().toList()
+    }
+
+    fun getVertex(): List<Vertex> {
+        val vertexes: MutableList<Vertex> = mutableListOf()
+        for (v in getEdge()){
+            vertexes.add(v.first.first)
+            vertexes.add(v.first.second)
+        }
+        return vertexes.toSet().toList()
+    }
+
     inner class Iterate : Iterator<Pair<Vertex, MutableList<Pair<Vertex, Double>>?>> {
         var array: ArrayDeque<Pair<Vertex, MutableList<Pair<Vertex, Double>>?>> = ArrayDeque()
         var f: Boolean = true

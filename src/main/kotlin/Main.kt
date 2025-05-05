@@ -28,9 +28,7 @@ fun App() {
 }
 
 fun main() = application {
-//    Window(onCloseRequest = ::exitApplication) {
-//        App()
-//    }
-    val e = Edge(2, 2.3, Pair(Vertex(1, "d"), Vertex(2, "4")))
-    println(e.num.toString() + " " + e.weight.toString() + " " + e.connect.toString())
+    Window(onCloseRequest = ::exitApplication) {
+        App()
+    }
 }

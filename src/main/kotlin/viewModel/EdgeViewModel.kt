@@ -14,14 +14,14 @@ class EdgeViewModel (
     private val _weightVisible: State<Boolean>,
     width: Double?,
 ) {
-    val label
-        get() = e.num.toString()
+//    val label
+//        get() = e.num.toString()
 
     val labelVisible
         get() = _labelVisible.value
 
-    val Id
-        get() = e.num
+//    val Id
+//        get() = e.num
 
     private var _color = mutableStateOf(color)
     var color: Color

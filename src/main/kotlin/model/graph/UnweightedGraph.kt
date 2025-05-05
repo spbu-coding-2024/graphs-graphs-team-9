@@ -57,6 +57,25 @@ class UnweightedGraph(private val isDirected: Boolean) : UnweightedGraphInterfac
         return isDirected
     }
 
+    fun getEdge() : List<Pair<Pair<Vertex, Vertex>, Double?>> {
+        val mas: MutableList<Pair<Pair<Vertex, Vertex>, Double?>> = mutableListOf()
+        for (v_f in adjList){
+            for (v_s in v_f.value){
+                mas.add(Pair(Pair(v_f.key, v_s), null))
+            }
+        }
+        return mas.toSet().toList()
+    }
+
+    fun getVertex(): List<Vertex> {
+        val vertexes: MutableList<Vertex> = mutableListOf()
+        for (v in getEdge()){
+            vertexes.add(v.first.first)
+            vertexes.add(v.first.second)
+        }
+        return vertexes.toSet().toList()
+    }
+
     inner class Iterate : Iterator<Pair<Vertex, MutableList<Vertex>>?> {
         var array: ArrayDeque<Pair<Vertex, MutableList<Vertex>>> = ArrayDeque()
         var f: Boolean = true
