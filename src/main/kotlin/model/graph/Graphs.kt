@@ -9,21 +9,13 @@ interface Graph {
     fun containsEdge(from: Vertex, to: Vertex): Boolean
     fun getVertexCount(): Int
     fun getEdgeCount(): Int
-    fun isDirected(): Boolean
-    fun getEdge(): List<Pair<Pair<Vertex, Vertex>, Double?>>
-    fun getVertex(): List<Vertex>
-}
+    fun getVertices(): List<Vertex>
+    fun getEdges(): List<Edge>
 
-interface WeightedGraphInterface : Graph {
-    fun addEdge(from: Vertex, to: Vertex, weight: Double)
+    fun isDirected(): Boolean
+    fun isWeighted(): Boolean
+
+    fun addEdge(from: Vertex, to: Vertex, weight: Double? = null)
 
     fun getEdgeWeight(from: Vertex, to: Vertex): Double?
-
-    fun isWeighted(): Boolean = true
-}
-
-interface UnweightedGraphInterface : Graph {
-    fun addEdge(from: Vertex, to: Vertex)
-
-    fun isWeighted(): Boolean = false
 }
