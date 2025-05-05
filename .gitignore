@@ -1,3 +1,5 @@
+.gitignore
+/src/main/kotlin/model/graph/main.kt
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
