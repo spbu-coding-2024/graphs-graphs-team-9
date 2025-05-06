@@ -5,11 +5,11 @@ class GraphImpl(
     private val isWeighted: Boolean = false
 ) : Graph {
 
-    private val adjList: MutableMap<Vertex, MutableList<Edge>> = mutableMapOf()
+    private val adjList: MutableMap<Vertex, MutableSet<Edge>> = mutableMapOf()
 
     override fun addVertex(vertex: Vertex) {
         if (!adjList.containsKey(vertex)) {
-            adjList[vertex] = mutableListOf()
+            adjList[vertex] = mutableSetOf()
         }
     }
 
@@ -28,11 +28,11 @@ class GraphImpl(
         val actualWeight = if (isWeighted) weight else null
 
         val edge = Edge(from, to, actualWeight)
-        adjList.getOrPut(from) { mutableListOf() }.add(edge)
+        adjList.getOrPut(from) { mutableSetOf() }.add(edge)
 
         if (!isDirected) {
             val reverseEdge = Edge(to, from, actualWeight)
-            adjList.getOrPut(to) { mutableListOf() }.add(reverseEdge)
+            adjList.getOrPut(to) { mutableSetOf() }.add(reverseEdge)
         }
     }
 
@@ -96,11 +96,11 @@ class GraphImpl(
         }
     }
 
-    inner class Iterate : Iterator<Pair<Vertex, MutableList<Edge>>?> {
-        private var deque: ArrayDeque<Pair<Vertex, MutableList<Edge>>> = ArrayDeque()
+    inner class Iterate : Iterator<Pair<Vertex, MutableSet<Edge>>> {
+        private var deque: ArrayDeque<Pair<Vertex, MutableSet<Edge>>> = ArrayDeque()
         private var firstInitDeqState: Boolean = false
 
-        override fun next(): Pair<Vertex, MutableList<Edge>> {
+        override fun next(): Pair<Vertex, MutableSet<Edge>> {
             return deque.removeFirst()
         }
 
@@ -127,7 +127,7 @@ class GraphImpl(
         }
     }
 
-    operator fun iterator(): Iterate {
+    override operator fun iterator(): Iterate {
         return this.Iterate()
     }
 }

@@ -16,4 +16,6 @@ interface Graph {
 
     fun isDirected(): Boolean
     fun isWeighted(): Boolean
+
+    operator fun iterator(): Iterator<Pair<Vertex, MutableSet<Edge>>>
 }
