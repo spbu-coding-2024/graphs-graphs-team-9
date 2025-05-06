@@ -6,6 +6,12 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
+import org.junit.jupiter.api.RepeatedTest
+import kotlin.random.Random
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+
 class GraphImplTestGroup {
 
     private val vA = Vertex(1, "A")
@@ -477,7 +483,7 @@ class GraphImplTestGroup {
         @Test
         @DisplayName("Итератор для графа")
         fun graphIterator() {
-            val graph = GraphImpl(isDirected = false, isWeighted = false)
+            val graph = GraphFactory.createUndirectedUnweightedGraph()
             graph.addVertex(vA)
             graph.addVertex(vB)
             graph.addVertex(vC)
@@ -495,22 +501,427 @@ class GraphImplTestGroup {
                 when (vertex) {
                     vA -> {
                         assertEquals(1, edges.size)
-                        assertEquals(vB, edges[0].destination)
+                        assertEquals(vB, edges.first().destination)
                     }
+
                     vB -> {
                         assertEquals(2, edges.size)
                         assertTrue(edges.any { it.destination == vA })
                         assertTrue(edges.any { it.destination == vC })
                     }
+
                     vC -> {
                         assertEquals(1, edges.size)
-                        assertEquals(vB, edges[0].destination)
+                        assertEquals(vB, edges.first().destination)
                     }
+
                     else -> fail("Неизвестная вершина: $vertex")
                 }
             }
 
             assertEquals(3, count, "Итератор должен пройти по 3 вершинам")
+        }
+    }
+
+    @Nested
+    inner class GraphPropertyBasedTestGroup {
+
+        // Генератор случайных вершин с уникальными идентификаторами
+        private fun generateRandomVertex(): Vertex {
+            val id = Random.nextInt(1, 1000)
+            val name = ('A'..'Z').random().toString()
+            return Vertex(id, name)
+        }
+
+        // Генератор случайного списка вершин
+        private fun generateRandomVertices(count: Int): List<Vertex> {
+            val vertices = mutableListOf<Vertex>()
+            repeat(count) {
+                vertices.add(generateRandomVertex())
+            }
+            return vertices
+        }
+
+        // Генератор случайного веса
+        private fun generateRandomWeight(): Double {
+            return Random.nextDouble(0.1, 100.0)
+        }
+
+        @Nested
+        @DisplayName("Property-Based тесты для Неориентированного Невзвешенного Графа")
+        inner class UndirectedUnweightedGraphPropertyTest {
+
+            @RepeatedTest(10)
+            @DisplayName("Добавление множества вершин не приводит к дубликатам")
+            fun addingMultipleVerticesDoesNotCreateDuplicates() {
+                val graph = GraphFactory.createUndirectedUnweightedGraph()
+                val vertices = generateRandomVertices(Random.nextInt(5, 20))
+
+                // Добавляем все вершины из списка
+                vertices.forEach { graph.addVertex(it) }
+
+                // Проверяем, что все вершины добавлены
+                vertices.forEach { assertTrue(graph.containsVertex(it)) }
+
+                // Проверяем, что количество вершин равно количеству уникальных вершин
+                assertEquals(vertices.distinct().size, graph.getVertexCount())
+            }
+
+            @RepeatedTest(10)
+            @DisplayName("Удаление вершины удаляет все связанные ребра")
+            fun removingVertexRemovesAllConnectedEdges() {
+                val graph = GraphFactory.createUndirectedUnweightedGraph()
+                val vertices = generateRandomVertices(Random.nextInt(3, 10))
+
+                // Добавляем все вершины
+                vertices.forEach { graph.addVertex(it) }
+
+                // Соединяем первую вершину со всеми остальными
+                val sourceVertex = vertices[0]
+                vertices.drop(1).forEach { graph.addEdge(sourceVertex, it) }
+
+                // Проверяем, что все ребра добавлены
+                assertEquals(vertices.size - 1, graph.getEdgeCount())
+
+                // Удаляем первую вершину
+                graph.removeVertex(sourceVertex)
+
+                // Проверяем, что все связанные ребра удалены
+                assertEquals(0, graph.getEdgeCount())
+
+                // Проверяем, что у остальных вершин нет соседей
+                vertices.drop(1).forEach {
+                    assertTrue(graph.getNeighbors(it).isEmpty())
+                }
+            }
+
+            @RepeatedTest(10)
+            @DisplayName("Ребра в неориентированном графе симметричны")
+            fun edgesInUndirectedGraphAreSymmetric() {
+                val graph = GraphFactory.createUndirectedUnweightedGraph()
+                val v1 = generateRandomVertex()
+                var v2 = generateRandomVertex()
+
+                // Убедимся, что вершины разные
+                while (v1.id == v2.id) {
+                    v2 = generateRandomVertex()
+                }
+
+                graph.addVertex(v1)
+                graph.addVertex(v2)
+                graph.addEdge(v1, v2)
+
+                // Проверяем, что ребро существует в обоих направлениях
+                assertTrue(graph.containsEdge(v1, v2))
+                assertTrue(graph.containsEdge(v2, v1))
+
+                // Проверяем, что у обеих вершин есть соответствующий сосед
+                assertTrue(graph.getNeighbors(v1).contains(v2))
+                assertTrue(graph.getNeighbors(v2).contains(v1))
+            }
+        }
+
+        @Nested
+        @DisplayName("Property-Based тесты для Ориентированного Невзвешенного Графа")
+        inner class DirectedUnweightedGraphPropertyTest {
+
+            @RepeatedTest(10)
+            @DisplayName("Ребра в ориентированном графе направленные")
+            fun edgesInDirectedGraphAreDirectional() {
+                val graph = GraphFactory.createDirectedUnweightedGraph()
+                val v1 = generateRandomVertex()
+                var v2 = generateRandomVertex()
+
+                // Убедимся, что вершины разные
+                while (v1.id == v2.id) {
+                    v2 = generateRandomVertex()
+                }
+
+                graph.addVertex(v1)
+                graph.addVertex(v2)
+                graph.addEdge(v1, v2)
+
+                // Проверяем, что ребро существует только в одном направлении
+                assertTrue(graph.containsEdge(v1, v2))
+                assertFalse(graph.containsEdge(v2, v1))
+
+                // Проверяем соседей
+                assertTrue(graph.getNeighbors(v1).contains(v2))
+                assertFalse(graph.getNeighbors(v2).contains(v1))
+            }
+
+            @RepeatedTest(5)
+            @DisplayName("Количество ребер соответствует количеству соседей")
+            fun edgeCountMatchesNeighborCount() {
+                val graph = GraphFactory.createDirectedUnweightedGraph()
+                val vertices = generateRandomVertices(Random.nextInt(3, 8))
+                vertices.forEach { graph.addVertex(it) }
+
+                // Создаем случайные ребра между вершинами
+                val edgePairs = mutableSetOf<Pair<Vertex, Vertex>>()
+                vertices.forEach { source ->
+                    vertices.filter { it != source }.forEach { dest ->
+                        if (Random.nextBoolean()) {
+                            graph.addEdge(source, dest)
+                            edgePairs.add(source to dest)
+                        }
+                    }
+                }
+
+                // Проверяем, что количество ребер равно количеству добавленных пар
+                assertEquals(edgePairs.size, graph.getEdgeCount())
+
+                // Проверяем, что количество соседей соответствует
+                vertices.forEach { source ->
+                    val expectedNeighbors = edgePairs.filter { it.first == source }.map { it.second }.toSet()
+                    assertEquals(expectedNeighbors, graph.getNeighbors(source).toSet())
+                }
+            }
+        }
+
+        @Nested
+        @DisplayName("Property-Based тесты для Взвешенных Графов")
+        inner class WeightedGraphPropertyTest {
+
+            @RepeatedTest(10)
+            @DisplayName("Веса ребер в неориентированном графе одинаковы в обоих направлениях")
+            fun edgeWeightsInUndirectedGraphAreSameInBothDirections() {
+                val graph = GraphFactory.createUndirectedWeightedGraph()
+                val v1 = generateRandomVertex()
+                var v2 = generateRandomVertex()
+
+                // Убедимся, что вершины разные
+                while (v1.id == v2.id) {
+                    v2 = generateRandomVertex()
+                }
+
+                val weight = generateRandomWeight()
+
+                graph.addVertex(v1)
+                graph.addVertex(v2)
+                graph.addEdge(v1, v2, weight)
+
+                // Проверяем, что вес ребра одинаков в обоих направлениях
+                assertEquals(weight, graph.getEdgeWeight(v1, v2))
+                assertEquals(weight, graph.getEdgeWeight(v2, v1))
+            }
+
+            @RepeatedTest(10)
+            @DisplayName("Веса ребер в ориентированном графе могут быть разными")
+            fun edgeWeightsInDirectedGraphCanBeDifferent() {
+                val graph = GraphFactory.createDirectedWeightedGraph()
+                val v1 = generateRandomVertex()
+                var v2 = generateRandomVertex()
+
+                // Убедимся, что вершины разные
+                while (v1.id == v2.id) {
+                    v2 = generateRandomVertex()
+                }
+
+                val weight1 = generateRandomWeight()
+                val weight2 = generateRandomWeight()
+
+                graph.addVertex(v1)
+                graph.addVertex(v2)
+                graph.addEdge(v1, v2, weight1)
+                graph.addEdge(v2, v1, weight2)
+
+                // Проверяем, что веса ребер сохранены правильно
+                assertEquals(weight1, graph.getEdgeWeight(v1, v2))
+                assertEquals(weight2, graph.getEdgeWeight(v2, v1))
+            }
+        }
+
+        @Nested
+        @DisplayName("Сложные свойства графов")
+        inner class ComplexGraphPropertiesTest {
+
+            @RepeatedTest(5)
+            @DisplayName("Количество ребер не превышает N*(N-1)/2 для неориентированного и N*(N-1) для ориентированного")
+            fun edgeCountDoesNotExceedMaximumPossible() {
+                val vertices = generateRandomVertices(Random.nextInt(5, 10))
+                val undirectedGraph = GraphFactory.createUndirectedUnweightedGraph()
+                val directedGraph = GraphFactory.createDirectedUnweightedGraph()
+
+                vertices.forEach {
+                    undirectedGraph.addVertex(it)
+                    directedGraph.addVertex(it)
+                }
+
+                // Добавляем случайные ребра между вершинами
+                vertices.forEach { source ->
+                    vertices.filter { it != source }.forEach { dest ->
+                        if (Random.nextBoolean()) {
+                            undirectedGraph.addEdge(source, dest)
+                            directedGraph.addEdge(source, dest)
+                        }
+                    }
+                }
+
+                val n = vertices.size
+                val maxUndirectedEdges = n * (n - 1) / 2
+                val maxDirectedEdges = n * (n - 1)
+
+                // Проверяем, что количество ребер не превышает максимально возможное
+                assertTrue(undirectedGraph.getEdgeCount() <= maxUndirectedEdges)
+                assertTrue(directedGraph.getEdgeCount() <= maxDirectedEdges)
+            }
+
+            @RepeatedTest(5)
+            @DisplayName("Удаление всех вершин приводит к пустому графу")
+            fun removingAllVerticesResultsInEmptyGraph() {
+                val vertices = generateRandomVertices(Random.nextInt(2, 8))
+                val graphs = listOf(
+                        GraphFactory.createUndirectedUnweightedGraph(),
+                        GraphFactory.createDirectedUnweightedGraph(),
+                        GraphFactory.createUndirectedWeightedGraph(),
+                        GraphFactory.createDirectedWeightedGraph()
+                )
+
+                graphs.forEach { graph ->
+                    // Добавляем вершины и ребра
+                    vertices.forEach { graph.addVertex(it) }
+
+                    for (i in vertices.indices) {
+                        for (j in i + 1 until vertices.size) {
+                            if (Random.nextBoolean()) {
+                                if (graph.isWeighted()) {
+                                    graph.addEdge(vertices[i], vertices[j], generateRandomWeight())
+                                } else {
+                                    graph.addEdge(vertices[i], vertices[j])
+                                }
+                            }
+                        }
+                    }
+
+                    // Удаляем все вершины
+                    vertices.forEach { graph.removeVertex(it) }
+
+                    // Проверяем, что граф пуст
+                    assertEquals(0, graph.getVertexCount())
+                    assertEquals(0, graph.getEdgeCount())
+                }
+            }
+
+            @RepeatedTest(5)
+            @DisplayName("Итератор обходит все вершины графа ровно один раз")
+            fun iteratorVisitsEachVertexExactlyOnce() {
+                val graph = GraphFactory.createUndirectedUnweightedGraph()
+                val vertices = generateRandomVertices(Random.nextInt(3, 8))
+
+                vertices.forEach { graph.addVertex(it) }
+
+                // Добавляем случайные ребра
+                for (i in vertices.indices) {
+                    for (j in i + 1 until vertices.size) {
+                        if (Random.nextBoolean()) {
+                            graph.addEdge(vertices[i], vertices[j])
+                        }
+                    }
+                }
+
+                // Используем итератор для обхода графа
+                val visitedVertices = mutableSetOf<Vertex>()
+                val iterator = graph.iterator()
+
+                while (iterator.hasNext()) {
+                    val (vertex, _) = iterator.next()
+                    visitedVertices.add(vertex)
+                }
+
+                // Проверяем, что все вершины были посещены ровно один раз
+                assertEquals(vertices.toSet(), visitedVertices)
+            }
+        }
+
+        @Nested
+        @DisplayName("Дополнительные свойства графов")
+        inner class AdditionalGraphPropertiesTest {
+
+            @RepeatedTest(5)
+            @DisplayName("В графе без циклов количество ребер не превышает N-1")
+            fun graphWithoutCyclesHasAtMostNMinusOneEdges() {
+                val vertices = generateRandomVertices(Random.nextInt(5, 10))
+                val n = vertices.size
+
+                val graph = GraphFactory.createUndirectedUnweightedGraph()
+                vertices.forEach { graph.addVertex(it) }
+
+                // Создаем дерево (граф без циклов)
+                // Соединяем каждую вершину с одной случайной предыдущей
+                for (i in 1 until n) {
+                    val randomPrevIndex = Random.nextInt(0, i)
+                    graph.addEdge(vertices[i], vertices[randomPrevIndex])
+                }
+
+                // Проверяем, что количество ребер равно N-1
+                assertEquals(n - 1, graph.getEdgeCount())
+            }
+
+            @RepeatedTest(10)
+            @DisplayName("Ребра с одинаковыми конечными вершинами считаются одним ребром")
+            fun duplicateEdgesAreCountedAsOne() {
+                val graph = GraphFactory.createUndirectedUnweightedGraph()
+                val v1 = generateRandomVertex()
+                val v2 = generateRandomVertex()
+
+                graph.addVertex(v1)
+                graph.addVertex(v2)
+
+                // Добавляем одно и то же ребро несколько раз
+                graph.addEdge(v1, v2)
+                assertEquals(1, graph.getEdgeCount())
+
+                graph.addEdge(v1, v2)
+                assertEquals(1, graph.getEdgeCount(), "Повторное добавление ребра не должно увеличивать счетчик")
+
+                graph.addEdge(v2, v1)
+                assertEquals(1, graph.getEdgeCount(), "Добавление ребра в обратном направлении не должно увеличивать счетчик в неориентированном графе")
+            }
+
+            @RepeatedTest(5)
+            @DisplayName("Операции с неинициализированным графом не вызывают ошибок")
+            fun operationsOnUninitializedGraphDoNotThrowErrors() {
+                val graph = GraphFactory.createUndirectedUnweightedGraph()
+                val v1 = generateRandomVertex()
+                val v2 = generateRandomVertex()
+
+                // Операции с пустым графом
+                assertFalse(graph.containsVertex(v1))
+                assertFalse(graph.containsEdge(v1, v2))
+                assertEquals(0, graph.getEdgeCount())
+                assertEquals(0, graph.getVertexCount())
+                assertTrue(graph.getVertices().isEmpty())
+                assertTrue(graph.getEdges().isEmpty())
+                assertTrue(graph.getNeighbors(v1).isEmpty())
+            }
+
+            @RepeatedTest(5)
+            @DisplayName("Свойство транзитивности для связности графа")
+            fun transitivityPropertyForConnectivity() {
+                val graph = GraphFactory.createUndirectedUnweightedGraph()
+                val v1 = generateRandomVertex()
+                val v2 = generateRandomVertex()
+                val v3 = generateRandomVertex()
+
+                graph.addVertex(v1)
+                graph.addVertex(v2)
+                graph.addVertex(v3)
+
+                // Создаем ребра v1 -- v2 и v2 -- v3
+                graph.addEdge(v1, v2)
+                graph.addEdge(v2, v3)
+
+                // Проверяем транзитивность через соседей
+                val neighborsOfV1 = graph.getNeighbors(v1)
+                val neighborsOfV2 = graph.getNeighbors(v2)
+
+                assertTrue(neighborsOfV1.contains(v2))
+                assertTrue(neighborsOfV2.contains(v3))
+
+                // v3 не должна быть прямым соседом v1
+                assertFalse(neighborsOfV1.contains(v3))
+            }
         }
     }
 }
