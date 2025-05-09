@@ -1,9 +1,8 @@
 package model.graph;
 
-import kotlin.Pair;
-
-class Edge(
-    var num: Int,
-    var weight: Double,
-    var connect: Pair<Vertex?, Vertex?>
+data class Edge(
+//    var num: Int,
+    val source: Vertex,
+    val destination: Vertex,
+    var weight: Double? = null
 )
