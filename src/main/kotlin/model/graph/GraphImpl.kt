@@ -56,7 +56,7 @@ class GraphImpl(
     }
 
     override fun getEdgeWeight(from: Vertex, to: Vertex): Double? {
-        if (!adjList.containsKey(from)) {
+        if (!containsEdge(from, to)) {
             return null
         }
 
