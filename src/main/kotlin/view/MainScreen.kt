@@ -1,13 +1,11 @@
 package view
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Checkbox
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.ui.unit.sp
 import view.graph.GraphView
 import viewModel.MainScreenViewModel
@@ -15,11 +13,21 @@ import viewModel.MainScreenViewModel
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
+//        horizontalArrangement = Arrangement.spacedBy(20.dp)
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(modifier = Modifier.width(370.dp)) {
+        Column(modifier = Modifier
+            .fillMaxHeight()
+            .weight(1f)
+            .padding(8.dp)) {
             Row {
-                Checkbox(checked = viewModel.showVerticesLabels, onCheckedChange = {
+                Checkbox(checked = viewModel.showVerticesLabels,
+//                    colors = CheckboxDefaults.colors(
+//                        checkedColor = MaterialTheme.colors.primary,
+//                        uncheckedColor = Color.Gray,
+//                        checkmarkColor = Color.Black
+//                    ),
+                    onCheckedChange = {
                     viewModel.showVerticesLabels = it
                 })
                 Text("Show vertices labels", fontSize = 28.sp, modifier = Modifier.padding(4.dp))
@@ -38,18 +46,17 @@ fun MainScreen(viewModel: MainScreenViewModel) {
                     text = "Reset default settings",
                 )
             }
-//            Button(
-//                onClick = viewModel::setVerticesColor,
-//                enabled = true,
-//            ) {
-//                Text(
-//                    text = "Set colors",
-//                )
-//            }
         }
 
-        Surface(
-            modifier = Modifier.weight(1f),
+        Divider(
+            color = Color.Black,
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(1.dp)
+        )
+
+        Column(
+            modifier = Modifier.weight(3f),
         ) {
             GraphView(viewModel.graphViewModel)
         }
