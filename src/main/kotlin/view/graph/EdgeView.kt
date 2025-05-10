@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import viewModel.EdgeViewModel
 
 @Composable
@@ -29,7 +28,7 @@ fun EdgeView(
             color = Color.Black
         )
     }
-    if (viewModel.labelVisible) {
+    if (viewModel.labelVisible && viewModel.width != null) {
         Text(
             modifier = Modifier
                 .offset(

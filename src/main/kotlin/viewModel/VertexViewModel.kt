@@ -32,14 +32,14 @@ class VertexViewModel (
             _y.value = value
         }
     private var _color = mutableStateOf(color)
-    var color: androidx.compose.ui.graphics.Color
+    var color: Color
         get() = _color.value
         set(value) {
             _color.value = value
         }
 
     val label
-        get() = v.toString()
+        get() = v
 
     val labelVisible
         get() = _labelVisible.value
