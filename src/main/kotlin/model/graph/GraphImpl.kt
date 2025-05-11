@@ -27,6 +27,8 @@ class GraphImpl(
 
         val actualWeight = if (isWeighted) weight else null
 
+        removeEdge(from, to)
+
         val edge = Edge(from, to, actualWeight)
         adjList.getOrPut(from) { mutableSetOf() }.add(edge)
 
