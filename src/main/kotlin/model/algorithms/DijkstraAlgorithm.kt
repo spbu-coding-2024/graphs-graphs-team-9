@@ -1,5 +1,7 @@
 package model.algorithms
 
+import androidx.compose.material.CursorDropdownMenu
+import androidx.compose.runtime.currentCompositionErrors
 import model.graph.Graph
 import model.graph.Vertex
 import java.util.PriorityQueue
@@ -7,8 +9,8 @@ import java.util.PriorityQueue
 class DijkstraAlgorithm {
 
     data class PathResult(
-        val path: List<Vertex>,
-        val distance: Double
+            val path: List<Vertex>,
+            val distance: Double
     )
 
     fun findShortestPath(graph: Graph, start: Vertex, end: Vertex): PathResult? {
@@ -18,11 +20,17 @@ class DijkstraAlgorithm {
 
         val distances = HashMap<Vertex, Double>()
         val predecessors = HashMap<Vertex, Vertex?>()
-
         val priorityQueue = PriorityQueue<Pair<Vertex, Double>>(compareBy { it.second })
 
         for (vertex in graph.getVertices()) {
-            distances[vertex] = if (vertex == start) 0.0 else Double.POSITIVE_INFINITY
+
+            if (vertex == start) {
+                distances[vertex] = 0.0
+
+            } else {
+                distances[vertex] = Double.POSITIVE_INFINITY
+            }
+
             predecessors[vertex] = null
         }
 
@@ -35,21 +43,20 @@ class DijkstraAlgorithm {
                 break
             }
 
-            if (currentDistance > distances[currentVertex]!!) {
+            // Пропускаем устаревшую запись из очереди, если расстояние уже обновлено на меньшее
+            if (currentDistance > distances.getValue(currentVertex)) {
                 continue
             }
 
             for (neighbor in graph.getNeighbors(currentVertex)) {
-                val edgeWeight = graph.getEdgeWeight(currentVertex, neighbor)
-                        ?: continue
+                val edgeWeight: Double = graph.getEdgeWeight(currentVertex, neighbor) ?: continue
 
-                if (edgeWeight < 0) {
+                if (edgeWeight < 0)
                     throw IllegalArgumentException("Dijkstra's algorithm does not support negative edge weights")
-                }
 
-                val distanceThroughCurrent = distances[currentVertex]!! + edgeWeight
+                val distanceThroughCurrent = distances.getValue(currentVertex) + edgeWeight
 
-                if (distanceThroughCurrent < distances[neighbor]!!) {
+                if (distanceThroughCurrent < distances.getValue(neighbor)) {
                     distances[neighbor] = distanceThroughCurrent
                     predecessors[neighbor] = currentVertex
 
@@ -63,8 +70,7 @@ class DijkstraAlgorithm {
         }
 
         val path = reconstructPath(start, end, predecessors)
-
-        return PathResult(path, distances[end]!!)
+        return PathResult(path, distances.getValue(end))
     }
 
     private fun reconstructPath(start: Vertex, end: Vertex, predecessors: Map<Vertex, Vertex?>): List<Vertex> {
