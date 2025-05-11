@@ -381,6 +381,21 @@ class GraphImplTestGroup {
         }
 
         @Test
+        @DisplayName("Перезапись веса ребра")
+        fun rewriteWeight() {
+            graph.addVertex(vA)
+            graph.addVertex(vB)
+
+            graph.addEdge(vA, vB, 10.0)
+            assertEquals(10.0, graph.getEdgeWeight(vA, vB))
+            assertEquals(10.0, graph.getEdgeWeight(vB, vA))
+
+            graph.addEdge(vA, vB, 11.0)
+            assertEquals(11.0, graph.getEdgeWeight(vA, vB))
+            assertEquals(11.0, graph.getEdgeWeight(vB, vA))
+        }
+
+        @Test
         @DisplayName("Удаление взвешенного ребра (неориентированный)")
         fun removeEdge() {
             graph.addVertex(vA)
@@ -437,6 +452,19 @@ class GraphImplTestGroup {
 
             assertEquals(7.5, graph.getEdgeWeight(vA, vB), "Вес ребра A -> B должен быть 7.5")
             assertNull(graph.getEdgeWeight(vB, vA), "Вес ребра B -> A должен быть null")
+        }
+
+        @Test
+        @DisplayName("Перезапись веса ребра")
+        fun rewriteWeight() {
+            graph.addVertex(vA)
+            graph.addVertex(vB)
+
+            graph.addEdge(vA, vB, 10.0)
+            assertEquals(10.0, graph.getEdgeWeight(vA, vB))
+
+            graph.addEdge(vA, vB, 11.0)
+            assertEquals(11.0, graph.getEdgeWeight(vA, vB))
         }
 
         @Test
