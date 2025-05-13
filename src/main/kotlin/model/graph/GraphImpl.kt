@@ -7,6 +7,11 @@ class GraphImpl(
 
     private val adjList: MutableMap<Vertex, MutableSet<Edge>> = mutableMapOf()
 
+    override fun getMap(): Map<Vertex, List<Edge>> {
+        val map = adjList.mapValues { it.value.toList() }
+        return map
+    }
+
     override fun addVertex(vertex: Vertex) {
         if (!adjList.containsKey(vertex)) {
             adjList[vertex] = mutableSetOf()
