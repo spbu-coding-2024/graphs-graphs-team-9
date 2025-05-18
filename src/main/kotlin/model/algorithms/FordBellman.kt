@@ -5,7 +5,7 @@ import model.graph.Vertex
 
 object FordBellman {
 
-    fun fordBellman(graph: Graph, startVertex: Vertex, endVertex: Vertex? = null): Pair<List<Vertex>, Double> {
+    fun fordBellman(graph: Graph, startVertex: Vertex, endVertex: Vertex? = null): Pair<List<Vertex>?, Double?> {
         val infinity = Double.POSITIVE_INFINITY
         val distance =
             graph.getVertices().associateWith { if (it == startVertex) 0.0 else infinity }.toMutableMap()
@@ -37,13 +37,20 @@ object FordBellman {
                 }
             }
         }
-        if (endVertex == null) return distance.keys.toList() to distance.values.sum()
+        if (endVertex == null) return distance.keys.toList() to null
+        if (distance[endVertex] == infinity) {
+            return null to infinity  // путь не существует
+        }
         val path: MutableList<Vertex> = mutableListOf()
         var cur: Vertex? = endVertex
-        while (cur != null) {
+        while (cur != null && cur != startVertex) {
             path.add(cur)
             cur = previousVertex[cur]
         }
+        if (cur != startVertex) {
+            return null to infinity  // путь не существует
+        }
+        path.add(startVertex)
         path.reverse()
 
         return path to (distance[endVertex] ?: infinity)
