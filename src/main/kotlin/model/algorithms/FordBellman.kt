@@ -5,7 +5,7 @@ import model.graph.Vertex
 
 object FordBellman {
 
-    fun fordBellman(graph: Graph, startVertex: Vertex, endVertex: Vertex? = null): Pair<List<Vertex>?, Double?> {
+    fun fordBellman(graph: Graph, startVertex: Vertex, endVertex: Vertex?): Pair<List<Vertex>?, Double?> {
         val infinity = Double.POSITIVE_INFINITY
         val distance =
             graph.getVertices().associateWith { if (it == startVertex) 0.0 else infinity }.toMutableMap()
@@ -54,6 +54,41 @@ object FordBellman {
         path.reverse()
 
         return path to (distance[endVertex] ?: infinity)
+    }
+
+    fun fordBellman(graph: Graph, startVertex: Vertex): Map<Vertex, Double?> {
+        val infinity = Double.POSITIVE_INFINITY
+        val distance =
+            graph.getVertices().associateWith { if (it == startVertex) 0.0 else infinity }.toMutableMap()
+        val previousVertex: MutableMap<Vertex, Vertex?> = mutableMapOf()
+
+        for (i in 1 until graph.getVertices().size) {
+            for (entry in graph) {
+
+                for (edge in entry.second) {
+                    val weight = edge.weight ?: 0.0
+
+                    if ((distance[entry.first] != null && distance[edge.destination] != null) &&
+                        (distance[entry.first] ?: 0.0) + weight < (distance[edge.destination] ?: 0.0)
+                    ) {
+                        distance[edge.destination] = (distance[entry.first] ?: 0.0) + weight
+                        previousVertex[edge.destination] = entry.first
+                    }
+                }
+            }
+        }
+
+        for (entry in graph) {
+            for (edge in entry.second) {
+                val weight = edge.weight ?: 0.0
+                if ((distance[entry.first] != null && distance[edge.destination] != null) &&
+                    (distance[entry.first] ?: 0.0) + weight < (distance[edge.destination] ?: 0.0)
+                ) {
+                    error("Граф содержит отрицательный цикл")
+                }
+            }
+        }
+        return distance
     }
 }
 //object FordBellman{
