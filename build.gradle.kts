@@ -21,6 +21,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    implementation("org.xerial:sqlite-jdbc:3.49.1.0")
 }
 
 kotlin {
