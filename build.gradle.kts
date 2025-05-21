@@ -21,6 +21,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    implementation ("org.neo4j.driver:neo4j-java-driver:5.14.0")
 }
 
 kotlin {
