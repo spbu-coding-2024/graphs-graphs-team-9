@@ -1,4 +1,4 @@
-package algo
+package model.algo
 
 import model.algorithms.HarmonicCentrality
 import model.graph.Graph
