@@ -13,6 +13,7 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven("https://raw.github.com/gephi/gephi/mvn-thirdparty-repo/")
     google()
 }
 
@@ -22,6 +23,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     implementation("org.xerial:sqlite-jdbc:3.49.1.0")
+    implementation("org.gephi:gephi-toolkit:0.10.1:all")
 }
 
 kotlin {
