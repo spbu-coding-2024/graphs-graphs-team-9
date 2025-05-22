@@ -7,6 +7,11 @@ class GraphImpl(
 
     private val adjList: MutableMap<Vertex, MutableSet<Edge>> = mutableMapOf()
 
+    override fun getMap(): Map<Vertex, List<Edge>> {
+        val map = adjList.mapValues { it.value.toList() }
+        return map
+    }
+
     override fun addVertex(vertex: Vertex) {
         if (!adjList.containsKey(vertex)) {
             adjList[vertex] = mutableSetOf()
@@ -16,7 +21,7 @@ class GraphImpl(
     override fun removeVertex(vertex: Vertex) {
         adjList.remove(vertex)
         adjList.values.forEach { edges ->
-            edges.removeAll { it.destination == vertex}
+            edges.removeAll { it.destination == vertex }
         }
     }
 
@@ -96,6 +101,15 @@ class GraphImpl(
         return if (isDirected) edges else edges.distinctBy {
             setOf(it.source.id, it.destination.id)
         }
+    }
+
+    override fun getVertexByKey(id: Int): Vertex? {
+        for (i in getVertices()) {
+            if (i.id == id) {
+                return i
+            }
+        }
+        return null
     }
 
     inner class Iterate : Iterator<Pair<Vertex, MutableSet<Edge>>> {

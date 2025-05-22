@@ -1,6 +1,7 @@
 package model.graph
 
 interface Graph {
+    fun getMap(): Map<Vertex, List<Edge>>
     fun addVertex(vertex: Vertex)
     fun removeVertex(vertex: Vertex)
     fun addEdge(from: Vertex, to: Vertex, weight: Double? = null)
@@ -17,5 +18,6 @@ interface Graph {
     fun isDirected(): Boolean
     fun isWeighted(): Boolean
 
+    fun getVertexByKey(id: Int): Vertex?
     operator fun iterator(): Iterator<Pair<Vertex, MutableSet<Edge>>>
 }
