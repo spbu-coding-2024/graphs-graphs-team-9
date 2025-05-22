@@ -5,8 +5,8 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import model.graph.*
 import view.MainScreen
-import viewModel.CircularPlacementStrategy
-import viewModel.MainScreenViewModel
+import viewModel.screen.CircularPlacementStrategy
+import viewModel.screen.MainScreenViewModel
 
 val sampleGraph: Graph = GraphFactory.createUndirectedUnweightedGraph().apply {
     addVertex(Vertex(1, "A"))

@@ -1,13 +1,10 @@
-package viewModel
+package viewModel.graph
 
 import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import model.graph.Edge
 import model.graph.Graph
-import model.graph.Vertex
-import kotlin.time.Duration.Companion.seconds
 
 class GraphViewModel(
     private val graph: Graph,

@@ -1,8 +1,6 @@
 package model.io.Neo4j
 
-import androidx.compose.animation.core.tween
 import model.graph.Graph
-import model.graph.GraphFactory
 import model.graph.GraphImpl
 import model.graph.Vertex
 import org.neo4j.driver.AuthTokens
@@ -10,7 +8,6 @@ import org.neo4j.driver.GraphDatabase
 import org.neo4j.driver.Values
 import org.neo4j.driver.Values.parameters
 import org.neo4j.driver.exceptions.ClientException
-import viewModel.GraphViewModel
 import javax.naming.AuthenticationException
 import javax.naming.ServiceUnavailableException
 

@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import viewModel.VertexViewModel
+import viewModel.graph.VertexViewModel
 
 @Composable
 fun VertexView(

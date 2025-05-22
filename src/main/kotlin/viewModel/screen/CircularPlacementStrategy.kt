@@ -1,7 +1,8 @@
-package viewModel
+package viewModel.screen
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import viewModel.graph.VertexViewModel
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin

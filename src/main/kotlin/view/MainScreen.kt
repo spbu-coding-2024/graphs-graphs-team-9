@@ -10,7 +10,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.ui.unit.sp
 import view.graph.GraphView
-import viewModel.MainScreenViewModel
+import viewModel.screen.MainScreenViewModel
 
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel) {

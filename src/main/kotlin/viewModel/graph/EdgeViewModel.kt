@@ -1,4 +1,4 @@
-package viewModel
+package viewModel.graph
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -14,14 +14,8 @@ class EdgeViewModel (
     private val _weightVisible: State<Boolean>,
     width: Double?,
 ) {
-//    val label
-//        get() = e.num.toString()
-
     val labelVisible
         get() = _labelVisible.value
-
-//    val Id
-//        get() = e.num
 
     private var _color = mutableStateOf(color)
     var color: Color

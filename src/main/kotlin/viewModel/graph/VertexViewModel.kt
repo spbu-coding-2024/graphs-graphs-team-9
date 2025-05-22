@@ -1,4 +1,4 @@
-package viewModel
+package viewModel.graph
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

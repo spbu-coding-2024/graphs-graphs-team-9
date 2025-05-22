@@ -1,8 +1,9 @@
-package viewModel
+package viewModel.screen
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import model.graph.Graph
+import viewModel.graph.GraphViewModel
 
 
 class MainScreenViewModel(graph: Graph, private val representationStrategy: RepresentationStrategy) {
