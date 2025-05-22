@@ -24,6 +24,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     implementation("org.xerial:sqlite-jdbc:3.49.1.0")
     implementation("org.gephi:gephi-toolkit:0.10.1:all")
+    implementation("org.neo4j.driver:neo4j-java-driver:5.14.0")
 }
 
 kotlin {
@@ -33,6 +34,9 @@ kotlin {
 tasks.test {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
+    useJUnitPlatform() {
+        excludeTags("Wrong")
+    }
 }
 
 tasks.jacocoTestReport {

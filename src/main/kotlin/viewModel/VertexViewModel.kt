@@ -39,7 +39,7 @@ class VertexViewModel (
         }
 
     val label
-        get() = v.toString()
+        get() = v
 
     val labelVisible
         get() = _labelVisible.value

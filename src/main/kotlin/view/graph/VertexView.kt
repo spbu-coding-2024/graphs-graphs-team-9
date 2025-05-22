@@ -38,7 +38,7 @@ fun VertexView(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .offset(0.dp, -viewModel.radius - 10.dp),
-                text = viewModel.label,
+                text = viewModel.label.name.toString(),
             )
         }
     }
