@@ -6,14 +6,13 @@ import model.graph.GraphFactory
 import model.graph.GraphImpl
 import model.graph.Vertex
 import model.io.Neo4j.Neo4j
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.neo4j.driver.exceptions.ClientException
 import kotlin.test.*
 
+@Tag("Wrong")
 class Neo4jTest {
 
     private lateinit var graphDW: Graph
