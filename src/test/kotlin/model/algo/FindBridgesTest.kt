@@ -32,13 +32,12 @@ class FindBridgesTest {
 
         findBridges = FindBridges(graphUU)
         findBridges.findBridges()
-        assertTrue(findBridges.bridges.isEmpty())
+        assertTrue(findBridges.findBridges().isEmpty())
     }
 
     @Test
     @DisplayName("Простой граф с одним мостом")
     fun simpleGraphWithOneBridge() {
-        val graphUU = GraphFactory.createUndirectedUnweightedGraph()
         val a = Vertex(1, "A")
         val b = Vertex(2, "B")
         val c = Vertex(3, "C")
@@ -51,17 +50,15 @@ class FindBridgesTest {
         graphUU.addEdge(b, c)
 
         findBridges = FindBridges(graphUU)
-        findBridges.findBridges()
 
-        assertEquals(2, findBridges.bridges.size)
-        assertTrue(findBridges.bridges.contains(a to b) || findBridges.bridges.contains(b to a))
-        assertTrue(findBridges.bridges.contains(b to c) || findBridges.bridges.contains(c to b))
+        assertEquals(2, findBridges.findBridges().size )
+        assertTrue(findBridges.findBridges().contains(a to b) || findBridges.findBridges().contains(b to a))
+        assertTrue(findBridges.findBridges().contains(b to c) || findBridges.findBridges().contains(c to b))
     }
 
     @Test
     @DisplayName("Граф без мостов (цикл)")
     fun graphUUWithNoBridgesCycle() {
-        val graphUU = GraphFactory.createUndirectedUnweightedGraph()
         val a = Vertex(1, "A")
         val b = Vertex(2, "B")
         val c = Vertex(3, "C")
@@ -77,13 +74,12 @@ class FindBridgesTest {
         findBridges = FindBridges(graphUU)
         findBridges.findBridges()
 
-        assertTrue(findBridges.bridges.isEmpty())
+        assertTrue(findBridges.findBridges().isEmpty())
     }
 
     @Test
     @DisplayName("Граф с несколькими компонентами связности")
     fun graphUUWithMultipleConnectedComponents() {
-        val graphUU = GraphFactory.createUndirectedUnweightedGraph()
         val a = Vertex(1, "A")
         val b = Vertex(2, "B")
         val c = Vertex(3, "C")
@@ -98,17 +94,15 @@ class FindBridgesTest {
         graphUU.addEdge(c, d)
 
         findBridges = FindBridges(graphUU)
-        findBridges.findBridges()
 
-        assertEquals(2, findBridges.bridges.size)
-        assertTrue(findBridges.bridges.contains(a to b) || findBridges.bridges.contains(b to a))
-        assertTrue(findBridges.bridges.contains(c to d) || findBridges.bridges.contains(d to c))
+        assertEquals(2, findBridges.findBridges().size)
+        assertTrue(findBridges.findBridges().contains(a to b) || findBridges.findBridges().contains(b to a))
+        assertTrue(findBridges.findBridges().contains(c to d) || findBridges.findBridges().contains(d to c))
     }
 
     @Test
     @DisplayName("Граф с несколькими мостами и компонентами связности")
     fun graphUUWithMultipleBridgesAndComponents() {
-        val graphUU = GraphFactory.createUndirectedUnweightedGraph()
         val a = Vertex(1, "A")
         val b = Vertex(2, "B")
         val c = Vertex(3, "C")
@@ -135,32 +129,29 @@ class FindBridgesTest {
         graphUU.addEdge(f, g) // мост F-G
 
         findBridges = FindBridges(graphUU)
-        findBridges.findBridges()
 
-        assertEquals(3, findBridges.bridges.size)
-        assertTrue(findBridges.bridges.any { it == (c to d) || it == (d to c) })
-        assertTrue(findBridges.bridges.any { it == (e to f) || it == (f to e) })
-        assertTrue(findBridges.bridges.any { it == (f to g) || it == (g to f) })
+        assertEquals(3, findBridges.findBridges().size)
+        assertTrue(findBridges.findBridges().any { it == (c to d) || it == (d to c) })
+        assertTrue(findBridges.findBridges().any { it == (e to f) || it == (f to e) })
+        assertTrue(findBridges.findBridges().any { it == (f to g) || it == (g to f) })
 
         val cycleEdges = listOf(a to b, b to c, c to a)
         for (edge in cycleEdges) {
-            assertTrue(!findBridges.bridges.any { it == edge || it == Pair(edge.second, edge.first) })
+            assertTrue(!findBridges.findBridges().any { it == edge || it == Pair(edge.second, edge.first) })
         }
     }
 
     @Test
     @DisplayName("Пустой граф")
     fun emptyGraphHandling() {
-        val graphUU = GraphFactory.createUndirectedUnweightedGraph()
         findBridges = FindBridges(graphUU)
         assertDoesNotThrow { findBridges.findBridges() }
-        assertTrue(findBridges.bridges.isEmpty())
+        assertTrue(findBridges.findBridges().isEmpty())
     }
 
     @Test
     @DisplayName("Граф с петлями")
     fun graphUUWithSelfLoops() {
-        val graphUU = GraphFactory.createUndirectedUnweightedGraph()
         val a = Vertex(1, "A")
         graphUU.addVertex(a)
         graphUU.addEdge(a, a)
@@ -168,13 +159,12 @@ class FindBridgesTest {
         findBridges = FindBridges(graphUU)
         findBridges.findBridges()
 
-        assertTrue(findBridges.bridges.isEmpty())
+        assertTrue(findBridges.findBridges().isEmpty())
     }
 
     @Test
     @DisplayName("Большой граф без мостов")
     fun largeGraphNoBridges() {
-        val graphUU = GraphFactory.createUndirectedUnweightedGraph()
         val vertices = (1..1000).map { Vertex(it, "V$it") }
         vertices.forEach { graphUU.addVertex(it) }
 
@@ -185,6 +175,6 @@ class FindBridgesTest {
 
         findBridges = FindBridges(graphUU)
         findBridges.findBridges()
-        assertTrue(findBridges.bridges.isEmpty())
+        assertTrue(findBridges.findBridges().isEmpty())
     }
 }

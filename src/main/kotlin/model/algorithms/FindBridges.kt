@@ -11,11 +11,11 @@ class FindBridges(graph: Graph) {
     private val fup = graph.getVertices().associateWith { 0 }.toMutableMap()
     private val used = graph.getVertices().associateWith { false }.toMutableMap()
     private val g = graph.getMap()
-    val bridges: MutableList<Pair<Vertex, Vertex>> = mutableListOf()
+    private val bridges: MutableList<Pair<Vertex, Vertex>> = mutableListOf()
 
 
 
-    fun dsp(v: Vertex, p: Vertex = Vertex(-1, "")){
+    private fun dsp(v: Vertex, p: Vertex = Vertex(-1, "")){
         used[v] = true
         tin[v] = timer
         fup[v] = timer
@@ -36,7 +36,7 @@ class FindBridges(graph: Graph) {
         }
     }
 
-    fun findBridges(){
+    fun findBridges(): MutableList<Pair<Vertex, Vertex>>{
         timer = 0
         used.forEach { (key, _ ) -> used[key] = false }
         for (el in g){
@@ -44,5 +44,6 @@ class FindBridges(graph: Graph) {
                 dsp(el.key)
             }
         }
+        return bridges
     }
 }
