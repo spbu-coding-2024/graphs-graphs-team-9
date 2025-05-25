@@ -3,6 +3,8 @@ package viewModel.graph
 import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import model.algorithms.FindBridges
+import model.algorithms.FordBellman
 import model.graph.Edge
 import model.graph.Graph
 
@@ -11,7 +13,7 @@ class GraphViewModel(
 //    private val placement: MutableMap<Vertex, Pair<Dp?, Dp?>?>,
     showVerticesLabels: State<Boolean>,
     showEdgesLabels: State<Boolean>,
-){
+) {
     private val _vertices = graph.getVertices().associateWith { v ->
         VertexViewModel(0.dp, 0.dp, Color.Gray, v, showVerticesLabels)
     }
@@ -29,4 +31,26 @@ class GraphViewModel(
 
     val edges: Collection<EdgeViewModel>
         get() = _edges.values
+
+    fun startFordBellman(idStart: Int, idEnd: Int): Boolean {
+        val vertexStart = graph.getVertexByKey(idStart) ?: return false
+        val vertexEnd = graph.getVertexByKey(idEnd) ?: return false
+        val bellman = FordBellman.fordBellman(graph, vertexStart, vertexEnd)
+        val path = bellman.first ?: return false
+
+        for (i in 0..path.size - 1) {
+            _vertices[path[i]]?.color = Color.Red
+            if (i + 1 != path.size) {
+                _edges[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Yellow
+            }
+        }
+
+        return true
+    }
+    fun startFindBridges(){
+        val bridges = FindBridges(graph).findBridges()
+        for (ed in bridges){
+            _edges[graph.getEdgeByVertex(ed.first, ed.second)]?.color = Color.LightGray
+        }
+    }
 }
