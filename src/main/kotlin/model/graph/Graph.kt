@@ -19,5 +19,6 @@ interface Graph {
     fun isWeighted(): Boolean
 
     fun getVertexByKey(id: Int): Vertex?
+    fun getEdgeByVertex(firstV: Vertex, secondV: Vertex): Edge?
     operator fun iterator(): Iterator<Pair<Vertex, MutableSet<Edge>>>
 }

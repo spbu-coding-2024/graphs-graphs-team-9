@@ -112,6 +112,17 @@ class GraphImpl(
         return null
     }
 
+    override fun getEdgeByVertex(firstV: Vertex, secondV: Vertex): Edge? {
+        val edges = adjList[getVertexByKey(firstV.id)] ?: emptySet()
+        val secondVertex = getVertexByKey(secondV.id)
+        for (el in edges) {
+            if (el.destination == secondVertex){
+                return el
+            }
+        }
+        return null
+    }
+
     inner class Iterate : Iterator<Pair<Vertex, MutableSet<Edge>>> {
         private var deque: ArrayDeque<Pair<Vertex, MutableSet<Edge>>> = ArrayDeque()
         private var firstInitDeqState: Boolean = false
