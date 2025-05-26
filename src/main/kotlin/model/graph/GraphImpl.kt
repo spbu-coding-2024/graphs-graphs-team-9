@@ -122,6 +122,11 @@ class GraphImpl(
         }
         return null
     }
+    // Пофиксить
+    override fun getVertexByName(name: String): Vertex {
+        getVertices().forEach { i -> if (i.name == name) return i }
+        return Vertex(-1)
+    }
 
     inner class Iterate : Iterator<Pair<Vertex, MutableSet<Edge>>> {
         private var deque: ArrayDeque<Pair<Vertex, MutableSet<Edge>>> = ArrayDeque()
