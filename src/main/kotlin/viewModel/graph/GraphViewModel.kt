@@ -7,9 +7,12 @@ import model.algorithms.FindBridges
 import model.algorithms.FordBellman
 import model.graph.Edge
 import model.graph.Graph
+import model.graph.GraphImpl
+import model.graph.Vertex
+import model.io.Neo4j.Neo4j
 
 class GraphViewModel(
-    private val graph: Graph,
+    private var graph: Graph,
 //    private val placement: MutableMap<Vertex, Pair<Dp?, Dp?>?>,
     showVerticesLabels: State<Boolean>,
     showEdgesLabels: State<Boolean>,
@@ -32,10 +35,10 @@ class GraphViewModel(
     val edges: Collection<EdgeViewModel>
         get() = _edges.values
 
-    fun startFordBellman(idStart: Int, idEnd: Int): Boolean {
-        val vertexStart = graph.getVertexByKey(idStart) ?: return false
-        val vertexEnd = graph.getVertexByKey(idEnd) ?: return false
-        val bellman = FordBellman.fordBellman(graph, vertexStart, vertexEnd)
+    fun startFordBellman(startName: String?, endName: String?): Boolean {
+//        val vertexStart = start ?: return false
+//        val vertexEnd = graph.getVertexByKey(idEnd) ?: return false
+        val bellman = FordBellman.fordBellman(graph, graph.getVertexByName(startName ?: ""), graph.getVertexByName(endName ?: ""))
         val path = bellman.first ?: return false
 
         for (i in 0..path.size - 1) {
@@ -52,5 +55,12 @@ class GraphViewModel(
         for (ed in bridges){
             _edges[graph.getEdgeByVertex(ed.first, ed.second)]?.color = Color.LightGray
         }
+    }
+    fun startNeo4j(uri: String, username: String, password: String){
+        graph = Neo4j(uri, username, password).readFromDB(graph.isDirected(), graph.isWeighted())
+    }
+
+    fun clearGraph(){
+        graph = GraphImpl(isWeighted =  graph.isWeighted(), isDirected = graph.isDirected())
     }
 }
