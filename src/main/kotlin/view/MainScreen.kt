@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import view.additionalButtons.DBButtons
+import view.additionalButtons.VertexSizeSlider
 import view.additionalButtons.algoButton
 import view.additionalButtons.barButton
 import view.additionalButtons.switch
@@ -91,6 +92,13 @@ fun MainScreen(viewModel: MainScreenViewModel) {
 
                     DividerG()
 //            Spacer(modifier = Modifier.height(8.dp))
+
+                    VertexSizeSlider(
+                            viewModel = viewModel,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                    )
+
+                    DividerG()
 
                     Button(
                         onClick = viewModel::resetGraphView,

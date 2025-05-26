@@ -1,6 +1,7 @@
 package viewModel.graph
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import model.algorithms.FindBridges
@@ -8,8 +9,9 @@ import model.algorithms.FordBellman
 import model.graph.Edge
 import model.graph.Graph
 import model.graph.GraphImpl
-import model.graph.Vertex
 import model.io.Neo4j.Neo4j
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.unit.dp
 
 class GraphViewModel(
     private var graph: Graph,
@@ -62,5 +64,17 @@ class GraphViewModel(
 
     fun clearGraph(){
         graph = GraphImpl(isWeighted =  graph.isWeighted(), isDirected = graph.isDirected())
+    }
+
+    private val _vertexSize = mutableStateOf(25f)
+    val vertexSize: State<Float>
+        get() = _vertexSize
+
+    // Функция для изменения размера всех вершин
+    fun updateVertexSize(newSize: Float) {
+        _vertexSize.value = newSize
+        _vertices.values.forEach { vertex ->
+            vertex.radius = newSize.dp
+        }
     }
 }

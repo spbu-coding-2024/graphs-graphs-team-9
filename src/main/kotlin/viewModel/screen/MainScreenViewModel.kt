@@ -89,4 +89,9 @@ class MainScreenViewModel(graph: Graph, private val representationStrategy: Repr
     fun clearGraph(){
         graphViewModel.clearGraph()
     }
+
+    val vertexSize: State<Float>
+        get() = graphViewModel.vertexSize
+
+    fun updateVertexSize(newSize: Float) = graphViewModel.updateVertexSize(newSize)
 }
