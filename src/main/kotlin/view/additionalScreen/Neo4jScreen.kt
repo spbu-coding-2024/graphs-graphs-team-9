@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun diologistNeo4j(
     showNeo4j: MutableState<Boolean>,
+    showSaveClearButton: MutableState<Boolean>,
 ) {
     AnimatedVisibility(
         visible = showNeo4j.value,
@@ -54,6 +55,7 @@ fun diologistNeo4j(
             confirmButton = {
                 Button(
                     onClick = {
+                        showSaveClearButton.value = !showSaveClearButton.value
                         showNeo4j.value = false
                     }
                 ) {
@@ -63,6 +65,7 @@ fun diologistNeo4j(
             dismissButton = {
                 Button(
                     onClick = {
+                        showSaveClearButton.value = false
                         showNeo4j.value = false
                     }
                 ) {

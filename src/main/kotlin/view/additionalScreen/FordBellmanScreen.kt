@@ -51,6 +51,7 @@ fun diologistFordBellman(
                 Button(
                     onClick = {
 //                        viewModel::runFordBellman
+
                         showFordBellman.value = false
                     }
                 ) {

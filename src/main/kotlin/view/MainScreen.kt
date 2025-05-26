@@ -15,7 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import view.additionalButtons.DBButtons
+import view.additionalButtons.algoButton
+import view.additionalButtons.barButton
+import view.additionalButtons.switch
+import view.additionalScreen.diologistAddVertexScreen
 import view.graph.GraphView
+import viewModel.additionalScreen.diologistDijkstraScreen
 import viewModel.additionalScreen.diologistFordBellman
 import viewModel.additionalScreen.diologistNeo4j
 import viewModel.screen.MainScreenViewModel
@@ -23,12 +29,18 @@ import viewModel.screen.MainScreenViewModel
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel) {
     val showGraph = remember { mutableStateOf(false) }
-    val expandedSettingsMenu = remember { mutableStateOf(false) }
+    val showAddMenu = remember { mutableStateOf(false) }
+    val showSettingsMenu = remember { mutableStateOf(false) }
+    val showAddVertex = remember { mutableStateOf(false) }
     val showUploadSaveButtons = remember { mutableStateOf(false) }
     val showAlgoButtons = remember { mutableStateOf(false) }
     val scale = remember { mutableStateOf(1f) }
-    val showNeo4j = remember { mutableStateOf(false) }
+    val showNeo4jScreen = remember { mutableStateOf(false) }
+    val showDijkstraScreen = remember { mutableStateOf(false) }
+    val showNeo4jSaveClearButton = remember { mutableStateOf(false) }
+    val showSQLiteSaveClearButton = remember { mutableStateOf(false) }
     val showFordBellman = remember { mutableStateOf(false) }
+    val showLabels = remember { mutableStateOf(false) }
     var uri = remember { viewModel.uri }
     var username = remember { viewModel.username }
     var password = remember { viewModel.password }
@@ -37,62 +49,8 @@ fun MainScreen(viewModel: MainScreenViewModel) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Box(modifier = Modifier.fillMaxWidth().background(Color.DarkGray).fillMaxHeight(0.04f)) {
-            Row(
-                modifier = Modifier.padding(vertical = 2.dp).background(Color.DarkGray),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(IntrinsicSize.Min)
-                ) {
-                    DropdownMenuItem(
-                        modifier = Modifier.fillMaxSize(),
-                        onClick = { showGraph.value = !showGraph.value }
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .background(Color.Transparent),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("Graph", color = Color.White)
-                        }
-                    }
-                }
-                Divider(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(1.dp),
-                    color = Color.Gray
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(IntrinsicSize.Min)
-                ) {
-                    DropdownMenuItem(
-                        modifier = Modifier.fillMaxSize(),
-                        onClick = { expandedSettingsMenu.value = true }
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("Settings", color = Color.White)
-                        }
-                    }
-                    DropdownMenu(
-                        expanded = expandedSettingsMenu.value,
-                        onDismissRequest = { expandedSettingsMenu.value = false }
-                    ) {
-                        DropdownMenuItem(onClick = {}) {}
-                    }
-                }
-            }
-        }
+        barButton(showGraph, showAddMenu, showSettingsMenu, showAddVertex)
+
         Divider(
             color = Color.Black,
             modifier = Modifier
@@ -110,145 +68,54 @@ fun MainScreen(viewModel: MainScreenViewModel) {
                         .width(232.dp)
                         .padding(horizontal = 8.dp)
                 ) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    DividerG()
 
                     Button(
-                        onClick = { showUploadSaveButtons.value = !showUploadSaveButtons.value },
+                        onClick = {
+                            showUploadSaveButtons.value = !showUploadSaveButtons.value
+                            showSQLiteSaveClearButton.value = false
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Upload/save")
                     }
-                    AnimatedVisibility(
-                        visible = showUploadSaveButtons.value,
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .absolutePadding(left = 8.dp, right = 8.dp)
-                        ) {
 
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("SQLite")
-                            }
-                            Button(
-                                onClick = { showNeo4j.value = true },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("Neo4j")
-                            }
-                            Button(
-                                onClick = {viewModel::clearGraph},
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("Clear Graph")
-                            }
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("Save Graph")
-                            }
-                        }
-                    }
-                    Divider(
-                        color = Color.Black,
-                        modifier = Modifier
-                            .fillMaxWidth(230f)
-                            .width(1.dp)
-                    )
+                    DBButtons(viewModel, showNeo4jSaveClearButton, showSQLiteSaveClearButton, showUploadSaveButtons, showNeo4jScreen)
 
-                    Row {
-                        Switch(
-                            checked = viewModel.showVerticesLabels,
-                            onCheckedChange = { viewModel.showVerticesLabels = it }
-                        )
-                        Text(
-                            text = "Show vertices labels",
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
-                    Row {
-                        Switch(
-                            checked = viewModel.showEdgesLabels,
-                            onCheckedChange = { viewModel.showEdgesLabels = it }
-                        )
-                        Text(
-                            text = "Show edges labels",
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                    }
+                    DividerG()
+
+                    switch(viewModel, showLabels)
+
                     Spacer(modifier = Modifier.height(8.dp))
-                    Divider(
-                        color = Color.Black,
-                        modifier = Modifier
-                            .fillMaxWidth(230f)
-                            .width(1.dp)
-                    )
+
+                    DividerG()
 //            Spacer(modifier = Modifier.height(8.dp))
+
                     Button(
                         onClick = viewModel::resetGraphView,
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(text = "Reset default settings")
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Divider(
-                        color = Color.Black,
-                        modifier = Modifier
-                            .fillMaxWidth(230f)
-                            .width(1.dp)
-                    )
+//                    Spacer(modifier = Modifier.height(8.dp))
+
+                    DividerG()
+
                     Button(
                         onClick = { showAlgoButtons.value = !showAlgoButtons.value },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("Algorithms")
                     }
-                    AnimatedVisibility(
-                        visible = showAlgoButtons.value,
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .absolutePadding(left = 8.dp, right = 8.dp)
-                        ) {
 
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("Dijkstra")
-                            }
-                            Button(
-                                onClick = viewModel::runFindBridge,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("Find Bridges")
-                            }
-                            Button(
-                                onClick = {showFordBellman.value = !showFordBellman.value},
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("Ford Bellman")
-                            }
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("Tarjan")
-                            }
-                        }
-                    }
-                    Divider(
-                        color = Color.Black,
-                        modifier = Modifier
-                            .fillMaxWidth(230f)
-                            .width(1.dp)
-                    )
+                    algoButton(viewModel, showAlgoButtons, showFordBellman, showDijkstraScreen)
 
-                    diologistNeo4j(showNeo4j)
+                    DividerG()
+
+                    diologistAddVertexScreen(showAddVertex, viewModel)
+                    diologistDijkstraScreen(showDijkstraScreen, viewModel)
+                    diologistNeo4j(showNeo4jScreen,  showNeo4jSaveClearButton)
                     diologistFordBellman(showFordBellman, viewModel)
                 }
             }
@@ -273,6 +140,16 @@ fun MainScreen(viewModel: MainScreenViewModel) {
             }
         }
     }
+}
+
+@Composable
+fun DividerG(){
+    Divider(
+        color = Color.Black,
+        modifier = Modifier
+            .fillMaxWidth(230f)
+            .width(1.dp)
+    )
 }
 
 //                Box {
