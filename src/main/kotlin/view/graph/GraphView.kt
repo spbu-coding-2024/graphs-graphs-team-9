@@ -44,11 +44,12 @@ fun GraphView(
                     translationY = offset.value.y
                 )
         ) {
-            viewModel.vertices.forEach { v ->
-                VertexView(v, Modifier)
-            }
             viewModel.edges.forEach { e ->
                 EdgeView(e, Modifier)
+
+            }
+            viewModel.vertices.forEach { v ->
+                VertexView(v, Modifier)
             }
         }
     }
