@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import model.graph.Graph
+import model.io.Neo4j.Neo4j
 import viewModel.graph.GraphViewModel
 
 
@@ -22,24 +23,36 @@ class MainScreenViewModel(graph: Graph, private val representationStrategy: Repr
             _showEdgesLabels.value = value
         }
 
-    val graphViewModel = GraphViewModel(graph, _showVerticesLabels, _showEdgesLabels)
+    var graphViewModel = GraphViewModel(graph, _showVerticesLabels, _showEdgesLabels)
 
     init {
         representationStrategy.place(800.0, 600.0, graphViewModel.vertices)
     }
 
-    private var _startId = mutableStateOf<String?>(null)
-    val startId: State<String?>
-        get() = _startId
+    private var _startName = mutableStateOf<String?>(null)
+    val startName: State<String?>
+        get() = _startName
 
-    private var _endId = mutableStateOf<String?>(null)
-    val endId: State<String?>
-        get() = _endId
+    private var _endName = mutableStateOf<String?>(null)
+    val endName: State<String?>
+        get() = _endName
 //        set(value) =
 
+    private var _uri = mutableStateOf<String?>("")
+    val uri: State<String?>
+        get() = _uri
+
+    private var _username = mutableStateOf<String?>("")
+    val username: State<String?>
+        get() = _username
+
+    private var _password = mutableStateOf<String?>("")
+    val password: State<String?>
+        get() = _password
+
     private fun clearId(){
-        _startId.value = null
-        _endId.value = null
+        _startName.value = null
+        _endName.value = null
     }
 
     fun resetGraphView() {
@@ -56,8 +69,8 @@ class MainScreenViewModel(graph: Graph, private val representationStrategy: Repr
         resetColor()
         try {
             graphViewModel.startFordBellman(
-                startId.value?.toInt() ?: throw Exception("Incorrect id"),
-                endId.value?.toInt() ?: throw Exception("Incorrect id")
+                startName.value ?: throw Exception("Incorrect id"),
+            endName.value ?: throw Exception("Incorrect id")
             )
         }catch (e: Exception){
 
@@ -67,5 +80,13 @@ class MainScreenViewModel(graph: Graph, private val representationStrategy: Repr
     fun runFindBridge() {
         resetColor()
         graphViewModel.startFindBridges()
+    }
+
+    fun runNeo4j(){
+        graphViewModel.startNeo4j(uri.value ?: "", username.value ?: "", password.value ?: "")
+    }
+
+    fun clearGraph(){
+        graphViewModel.clearGraph()
     }
 }
