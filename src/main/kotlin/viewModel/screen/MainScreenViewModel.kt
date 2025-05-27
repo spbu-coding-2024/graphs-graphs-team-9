@@ -133,8 +133,7 @@ class MainScreenViewModel(
     private fun applyLayout(canvasW: Dp, canvasH: Dp) {
         rawVertexPositions = if (graphViewModel.graph.getVertices().isEmpty()) emptyMap()
         else representationStrategy.layout(
-                graphViewModel.graph,
-                canvasW.value.toDouble(), canvasH.value.toDouble()
+                graphViewModel.graph
         )
         layoutApplied = true
         lastGraphHash = graphViewModel.graph.hashCode()

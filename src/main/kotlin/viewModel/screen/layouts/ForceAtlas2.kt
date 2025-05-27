@@ -10,16 +10,6 @@ import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2 as GephiForceAtlas2
 class ForceAtlas2(private val graphModelForStrategy: Graph) : GephiAdapter(), RepresentationStrategy {
 
     override fun apply(graph: Graph): Map<Vertex, Pair<Float, Float>> {
-        return applyWithParams(graph, 100, true, 35.0, 1.5)
-    }
-
-    fun applyWithParams(
-            graph: Graph,
-            iterations: Int = 100,
-            barnesHutOptimize: Boolean = true,
-            scalingRatio: Double = 35.0,
-            gravity: Double = 1.5
-    ): Map<Vertex, Pair<Float, Float>> {
         val pc: ProjectController = Lookup.getDefault().lookup(ProjectController::class.java)
         pc.newProject()
 
@@ -32,13 +22,13 @@ class ForceAtlas2(private val graphModelForStrategy: Graph) : GephiAdapter(), Re
 
         algorithm.setGraphModel(this.graphModel)
         algorithm.resetPropertiesValues()
-        algorithm.isBarnesHutOptimize = barnesHutOptimize
-        algorithm.scalingRatio = scalingRatio
-        algorithm.gravity = gravity
+        algorithm.isBarnesHutOptimize = true
+        algorithm.scalingRatio = 35.0
+        algorithm.gravity = 1.5
         algorithm.isLinLogMode = true
 
         algorithm.initAlgo()
-        repeat(iterations) {
+        repeat(100) {
             if (algorithm.canAlgo()) {
                 algorithm.goAlgo()
             } else {
@@ -52,8 +42,6 @@ class ForceAtlas2(private val graphModelForStrategy: Graph) : GephiAdapter(), Re
 
     override fun layout(
             graph: Graph,
-            canvasWidthHint: Double,
-            canvasHeightHint: Double
     ): Map<Vertex, Pair<Float, Float>> {
         return apply(graph)
     }

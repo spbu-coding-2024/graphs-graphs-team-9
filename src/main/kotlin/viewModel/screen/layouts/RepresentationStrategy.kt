@@ -11,5 +11,5 @@ interface RepresentationStrategy {
      * @param canvasHeightHint Подсказка по высоте канвы (может использоваться алгоритмом).
      * @return Map, где ключ - это Vertex, а значение - Pair из X и Y Float координат.
      */
-    fun layout(graph: Graph, canvasWidthHint: Double, canvasHeightHint: Double): Map<Vertex, Pair<Float, Float>>
+    fun layout(graph: Graph): Map<Vertex, Pair<Float, Float>>
 }

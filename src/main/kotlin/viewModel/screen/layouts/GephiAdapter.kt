@@ -8,7 +8,6 @@ import kotlin.random.Random
 
 abstract class GephiAdapter {
 
-    // Поздняя инициализация
     lateinit var graphModel: GraphModel
     lateinit var gephiGraph: org.gephi.graph.api.Graph
 
@@ -17,7 +16,7 @@ abstract class GephiAdapter {
 
         for (vertex in graph.getVertices()) {
             val node = graphModel.factory().newNode()
-            node.setX(Random.nextFloat()) // Gephi layout starts with random positions
+            node.setX(Random.nextFloat())
             node.setY(Random.nextFloat())
             gephiGraph.addNode(node)
             array[vertex] = node
