@@ -8,17 +8,24 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import viewModel.additionalScreen.diologistDijkstraScreen
+import viewModel.additionalScreen.diologistFordBellman
 import viewModel.screen.MainScreenViewModel
 
 @Composable
 fun algoButton(
     viewModel: MainScreenViewModel,
     showAlgoButtons: MutableState<Boolean>,
-    showFordBellman: MutableState<Boolean>,
-    showDijkstraScreen: MutableState<Boolean>,
+//    showFordBellman: MutableState<Boolean>,
+//    showDijkstra: MutableState<Boolean>,
     ) {
+
+    val showDijkstra = remember { mutableStateOf(false) }
+    val showFordBellman = remember { mutableStateOf(false) }
     AnimatedVisibility(
         visible = showAlgoButtons.value,
     ) {
@@ -28,7 +35,7 @@ fun algoButton(
         ) {
 
             Button(
-                onClick = {showDijkstraScreen.value = !showDijkstraScreen.value},
+                onClick = {showDijkstra.value = !showDijkstra.value},
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Dijkstra")
@@ -53,4 +60,6 @@ fun algoButton(
             }
         }
     }
+    diologistDijkstraScreen(showDijkstra, viewModel)
+    diologistFordBellman(showFordBellman, viewModel)
 }

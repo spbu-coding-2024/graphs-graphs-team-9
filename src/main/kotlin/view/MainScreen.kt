@@ -33,29 +33,19 @@ import viewModel.toosl.CoolColors
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel) {
     val showGraphPanel = remember { mutableStateOf(false) }
-    val showAddMenu = remember { mutableStateOf(false) }
-    val showSettingsMenu = remember { mutableStateOf(false) }
-    val showAddVertexDialog = remember { mutableStateOf(false) }
-    val showDeleteVertexDialog = remember { mutableStateOf(false) }
-    val showAddEdgeDialog = remember { mutableStateOf(false) }
-    val showDeleteEdgeDialog = remember { mutableStateOf(false) }
-
     val showUploadSaveButtons = remember { mutableStateOf(false) }
     val showAlgoButtons = remember { mutableStateOf(false) }
     val scale = remember { mutableStateOf(1f) }
+
     val showNeo4jDialog = remember { mutableStateOf(false) }
-    val showDijkstraDialog = remember { mutableStateOf(false) }
     val showNeo4jSaveClearButtonsPanel = remember { mutableStateOf(false) }
     val showSQLiteSaveClearButtonsPanel = remember { mutableStateOf(false) }
-    val showFordBellmanDialog = remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        barButton(
-            showGraphPanel, showAddMenu,
-            showSettingsMenu, showAddVertexDialog,
-            showDeleteVertexDialog, showAddEdgeDialog, showDeleteEdgeDialog)
+        barButton(showGraphPanel, viewModel)
 
         Divider(
             color = Color.Black,
@@ -107,7 +97,7 @@ fun MainScreen(viewModel: MainScreenViewModel) {
                         onClick = { showAlgoButtons.value = !showAlgoButtons.value },
                         modifier = Modifier.fillMaxWidth(),
                     ) { Text("Algorithms") }
-                    algoButton(viewModel, showAlgoButtons, showFordBellmanDialog, showDijkstraDialog)
+                    algoButton(viewModel, showAlgoButtons)
                     DividerG()
 
 
@@ -149,13 +139,7 @@ fun MainScreen(viewModel: MainScreenViewModel) {
             }
         }
     }
-    diologistAddVertexScreen(showAddVertexDialog, viewModel)
-    diologistDeleteVertexScreen(showDeleteVertexDialog, viewModel)
-    diologistAddEdgeScreen(showAddEdgeDialog, viewModel)
-    diologistDeleteEdgeScreen(showDeleteEdgeDialog, viewModel)
-    diologistDijkstraScreen(showDijkstraDialog, viewModel)
     diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel)
-    diologistFordBellman(showFordBellmanDialog, viewModel)
 }
 
 @Composable

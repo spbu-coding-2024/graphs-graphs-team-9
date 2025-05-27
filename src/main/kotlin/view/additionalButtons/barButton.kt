@@ -8,21 +8,35 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import view.additionalScreen.diologistAddEdgeScreen
+import view.additionalScreen.diologistAddVertexScreen
+import view.additionalScreen.diologistDeleteEdgeScreen
+import view.additionalScreen.diologistDeleteVertexScreen
+import viewModel.screen.MainScreenViewModel
 
 @Composable
 fun barButton(
     showGraph: MutableState<Boolean>,
-    showSettingsMenu: MutableState<Boolean>,
-    showAddMenu: MutableState<Boolean>,
-    showAddVertex: MutableState<Boolean>,
-    showDeleteVertex: MutableState<Boolean>,
-    showAddEdgeDialog: MutableState<Boolean>,
-    showDeleteEdge: MutableState<Boolean>,
+    viewModel: MainScreenViewModel,
+//    showSettingsMenu: MutableState<Boolean>,
+//    showAddMenu: MutableState<Boolean>,
+//    showAddVertex: MutableState<Boolean>,
+//    showDeleteVertex: MutableState<Boolean>,
+//    showAddEdgeDialog: MutableState<Boolean>,
+//    showDeleteEdge: MutableState<Boolean>,
 ) {
+    val showAddMenu = remember { mutableStateOf(false) }
+    val showSettingsMenu = remember { mutableStateOf(false) }
+    val showAddVertex = remember { mutableStateOf(false) }
+    val showDeleteVertex = remember { mutableStateOf(false) }
+    val showAddEdgeDialog = remember { mutableStateOf(false) }
+    val showDeleteEdge = remember { mutableStateOf(false) }
     Box(
         modifier = Modifier.fillMaxWidth().background(Color.DarkGray).height(28.dp)
     ) {
@@ -144,6 +158,10 @@ fun barButton(
             }
         }
     }
+    diologistAddVertexScreen(showAddVertex, viewModel)
+    diologistDeleteVertexScreen(showDeleteVertex, viewModel)
+    diologistAddEdgeScreen(showAddEdgeDialog, viewModel)
+    diologistDeleteEdgeScreen(showDeleteEdge, viewModel)
 }
 
 //@Composable
