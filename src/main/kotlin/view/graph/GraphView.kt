@@ -45,7 +45,7 @@ fun GraphView(
                         )
         ) {
             viewModel.edges.forEach { e ->
-                EdgeView(e, Modifier)
+                EdgeView(e, Modifier, viewModel.isDirected(), viewModel.vertexSize.value)
 
             }
             viewModel.vertices.forEach { v ->

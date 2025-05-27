@@ -75,4 +75,7 @@ class GraphViewModel(
             vertex.radius = newSize.dp
         }
     }
+    fun isDirected(): Boolean{
+        return graph.isDirected()
+    }
 }
