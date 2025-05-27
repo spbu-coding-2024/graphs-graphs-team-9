@@ -4,12 +4,9 @@ import model.graph.Graph
 import model.graph.Vertex
 import org.gephi.graph.api.GraphModel
 import org.gephi.graph.api.Node
-import java.awt.Toolkit
 import kotlin.random.Random
 
 abstract class GephiAdapter {
-    val width = Toolkit.getDefaultToolkit().screenSize.width
-    val height = Toolkit.getDefaultToolkit().screenSize.height
 
     // Поздняя инициализация
     lateinit var graphModel: GraphModel
@@ -20,7 +17,7 @@ abstract class GephiAdapter {
 
         for (vertex in graph.getVertices()) {
             val node = graphModel.factory().newNode()
-            node.setX(Random.nextFloat())
+            node.setX(Random.nextFloat()) // Gephi layout starts with random positions
             node.setY(Random.nextFloat())
             gephiGraph.addNode(node)
             array[vertex] = node
@@ -30,7 +27,7 @@ abstract class GephiAdapter {
             val newEdge = graphModel.factory().newEdge(
                     array[edge.source],
                     array[edge.destination],
-                    graph.isDirected() // <-- ключевой момент
+                    graph.isDirected()
             )
             gephiGraph.addEdge(newEdge)
         }
@@ -43,7 +40,8 @@ abstract class GephiAdapter {
 
         for (node in gephiGraph.nodes) {
             val vertex = map.entries.first { it.value == node }.key
-            result[vertex] = Pair(node.x() * width, node.y() * height)
+            // Возвращаем "сырые" координаты X и Y из Gephi, без масштабирования
+            result[vertex] = Pair(node.x(), node.y())
         }
 
         return result
