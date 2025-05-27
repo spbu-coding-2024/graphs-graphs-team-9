@@ -19,7 +19,10 @@ import view.additionalButtons.VertexSizeSlider
 import view.additionalButtons.algoButton
 import view.additionalButtons.barButton
 import view.additionalButtons.switch
+import view.additionalScreen.diologistAddEdgeScreen
 import view.additionalScreen.diologistAddVertexScreen
+import view.additionalScreen.diologistDeleteEdgeScreen
+import view.additionalScreen.diologistDeleteVertexScreen
 import view.graph.GraphView
 import viewModel.additionalScreen.diologistDijkstraScreen
 import viewModel.additionalScreen.diologistFordBellman
@@ -33,6 +36,10 @@ fun MainScreen(viewModel: MainScreenViewModel) {
     val showAddMenu = remember { mutableStateOf(false) }
     val showSettingsMenu = remember { mutableStateOf(false) }
     val showAddVertexDialog = remember { mutableStateOf(false) }
+    val showDeleteVertexDialog = remember { mutableStateOf(false) }
+    val showAddEdgeDialog = remember { mutableStateOf(false) }
+    val showDeleteEdgeDialog = remember { mutableStateOf(false) }
+
     val showUploadSaveButtons = remember { mutableStateOf(false) }
     val showAlgoButtons = remember { mutableStateOf(false) }
     val scale = remember { mutableStateOf(1f) }
@@ -45,7 +52,10 @@ fun MainScreen(viewModel: MainScreenViewModel) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        barButton(showGraphPanel, showAddMenu, showSettingsMenu, showAddVertexDialog)
+        barButton(
+            showGraphPanel, showAddMenu,
+            showSettingsMenu, showAddVertexDialog,
+            showDeleteVertexDialog, showAddEdgeDialog, showDeleteEdgeDialog)
 
         Divider(
             color = Color.Black,
@@ -100,10 +110,7 @@ fun MainScreen(viewModel: MainScreenViewModel) {
                     algoButton(viewModel, showAlgoButtons, showFordBellmanDialog, showDijkstraDialog)
                     DividerG()
 
-                    diologistAddVertexScreen(showAddVertexDialog, viewModel)
-                    diologistDijkstraScreen(showDijkstraDialog, viewModel)
-                    diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel)
-                    diologistFordBellman(showFordBellmanDialog, viewModel)
+
                 }
             }
 
@@ -142,6 +149,13 @@ fun MainScreen(viewModel: MainScreenViewModel) {
             }
         }
     }
+    diologistAddVertexScreen(showAddVertexDialog, viewModel)
+    diologistDeleteVertexScreen(showDeleteVertexDialog, viewModel)
+    diologistAddEdgeScreen(showAddEdgeDialog, viewModel)
+    diologistDeleteEdgeScreen(showDeleteEdgeDialog, viewModel)
+    diologistDijkstraScreen(showDijkstraDialog, viewModel)
+    diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel)
+    diologistFordBellman(showFordBellmanDialog, viewModel)
 }
 
 @Composable
