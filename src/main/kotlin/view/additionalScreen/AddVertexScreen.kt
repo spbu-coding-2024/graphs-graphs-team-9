@@ -3,6 +3,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
@@ -25,23 +26,23 @@ fun diologistAddVertexScreen(
         visible = showAddVertex.value,
     ) {
         AlertDialog(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier.padding(5.dp).width(250.dp),
             onDismissRequest = { showAddVertex.value = false },
             title = { Text("Vertex") },
             text = {
-//                Column {
-//                    OutlinedTextField(
-//                        value = vertex.value ?: "",
-//                        onValueChange = { vertex.value = it },
-//                        label = { Text("Vertex") },
-//                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-//                    )
-//                }
+                Column {
+                    OutlinedTextField(
+                        value = vertex.value ?: "",
+                        onValueChange = { vertex.value = it },
+                        label = { Text("Vertex") },
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                }
             },
             confirmButton = {
                 Button(
                     onClick = {
-//                        viewModel::runFordBellman
+//                        viewModel::
                         showAddVertex.value = false
                     }
                 ) {
