@@ -19,6 +19,9 @@ fun barButton(
     showSettingsMenu: MutableState<Boolean>,
     showAddMenu: MutableState<Boolean>,
     showAddVertex: MutableState<Boolean>,
+    showDeleteVertex: MutableState<Boolean>,
+    showAddEdgeDialog: MutableState<Boolean>,
+    showDeleteEdge: MutableState<Boolean>,
 ) {
     Box(
         modifier = Modifier.fillMaxWidth().background(Color.DarkGray).height(28.dp)
@@ -120,16 +123,19 @@ fun barButton(
                         Text("Add Vertex")
                     }
                     DropdownMenuItem(onClick = {
+                        showAddEdgeDialog.value = true
                         showAddMenu.value = false
                     }) {
                         Text("Add Edge")
                     }
                     DropdownMenuItem(onClick = {
+                        showDeleteVertex.value =true
                         showAddMenu.value = false
                     }) {
                         Text("remove Vertex")
                     }
                     DropdownMenuItem(onClick = {
+                        showDeleteEdge.value = true
                         showAddMenu.value = false
                     }) {
                         Text("remove Edge")
