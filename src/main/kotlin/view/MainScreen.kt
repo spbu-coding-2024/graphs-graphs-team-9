@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,59 +43,59 @@ fun MainScreen(viewModel: MainScreenViewModel) {
     val showFordBellmanDialog = remember { mutableStateOf(false) }
 
     Column(
-            modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         barButton(showGraphPanel, showAddMenu, showSettingsMenu, showAddVertexDialog)
 
         Divider(
-                color = Color.Black,
-                modifier = Modifier.fillMaxWidth().height(1.dp)
+            color = Color.Black,
+            modifier = Modifier.fillMaxWidth().height(1.dp)
         )
         Row(
-                modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             AnimatedVisibility(
-                    visible = showGraphPanel.value,
+                visible = showGraphPanel.value,
             ) {
                 Column(
-                        modifier = Modifier
-                                .width(232.dp)
-                                .padding(horizontal = 8.dp)
-                                .scrollable(rememberScrollableState { 0f }, orientation = Orientation.Vertical)
+                    modifier = Modifier
+                        .width(232.dp)
+                        .padding(horizontal = 8.dp)
+                        .scrollable(rememberScrollableState { 0f }, orientation = Orientation.Vertical)
                 ) {
                     Spacer(modifier = Modifier.height(4.dp))
                     DividerG()
 
                     Button(
-                            onClick = {
-                                showUploadSaveButtons.value = !showUploadSaveButtons.value
-                                showSQLiteSaveClearButtonsPanel.value = false
-                                showNeo4jSaveClearButtonsPanel.value = false
-                            },
-                            modifier = Modifier.fillMaxWidth()
+                        onClick = {
+                            showUploadSaveButtons.value = !showUploadSaveButtons.value
+                            showSQLiteSaveClearButtonsPanel.value = false
+                            showNeo4jSaveClearButtonsPanel.value = false
+                        },
+                        modifier = Modifier.fillMaxWidth()
                     ) { Text("Upload/Save") }
 
                     DBButtons(
-                            viewModel,
-                            showNeo4jSaveClearButtonsPanel,
-                            showSQLiteSaveClearButtonsPanel,
-                            showUploadSaveButtons,
-                            showNeo4jDialog
+                        viewModel,
+                        showNeo4jSaveClearButtonsPanel,
+                        showSQLiteSaveClearButtonsPanel,
+                        showUploadSaveButtons,
+                        showNeo4jDialog
                     )
                     DividerG()
-                    view.additionalButtons.switch(viewModel, remember { mutableStateOf(viewModel.showVerticesLabels) })
+                    switch(viewModel, remember { mutableStateOf(viewModel.showVerticesLabels) })
                     Spacer(modifier = Modifier.height(8.dp))
                     DividerG()
                     VertexSizeSlider(viewModel = viewModel, modifier = Modifier.padding(vertical = 4.dp))
                     DividerG()
                     Button(
-                            onClick = { viewModel.resetGraphView() },
-                            modifier = Modifier.fillMaxWidth()
+                        onClick = { viewModel.resetGraphView() },
+                        modifier = Modifier.fillMaxWidth()
                     ) { Text(text = "Reset Graph Layout") }
                     DividerG()
                     Button(
-                            onClick = { showAlgoButtons.value = !showAlgoButtons.value },
-                            modifier = Modifier.fillMaxWidth(),
+                        onClick = { showAlgoButtons.value = !showAlgoButtons.value },
+                        modifier = Modifier.fillMaxWidth(),
                     ) { Text("Algorithms") }
                     algoButton(viewModel, showAlgoButtons, showFordBellmanDialog, showDijkstraDialog)
                     DividerG()
@@ -107,20 +108,22 @@ fun MainScreen(viewModel: MainScreenViewModel) {
             }
 
             Divider(
-                    color = Color.Black,
-                    modifier = Modifier.fillMaxHeight().width(1.dp)
+                color = Color.Black,
+                modifier = Modifier.fillMaxHeight().width(1.dp)
             )
 
             BoxWithConstraints(
-                    modifier = Modifier.weight(1f)
-                            .background(CoolColors.backgroundBasic)
-                            .scrollable(
-                                    orientation = Orientation.Vertical,
-                                    state = rememberScrollableState { delta ->
-                                        scale.value = (scale.value * (1f - delta / 500f)).coerceIn(0.1f, 5f)
-                                        delta
-                                    }
-                            )
+                modifier = Modifier
+                    .weight(1f)
+                    .background(CoolColors.backgroundBasic)
+                    .clipToBounds()
+                    .scrollable(
+                        orientation = Orientation.Vertical,
+                        state = rememberScrollableState { delta ->
+                            scale.value = (scale.value * (1f + delta / 500f)).coerceIn(0.1f, 5f)
+                            delta
+                        }
+                    )
             ) {
                 val canvasWidthDp = maxWidth
                 val canvasHeightDp = maxHeight
@@ -132,9 +135,9 @@ fun MainScreen(viewModel: MainScreenViewModel) {
                 }
 
                 GraphView(
-                        viewModel = viewModel.graphViewModel,
-                        scale = scale.value,
-                        onVertexDrag = viewModel::processVertexDrag
+                    viewModel = viewModel.graphViewModel,
+                    scale = scale.value,
+                    onVertexDrag = viewModel::processVertexDrag
                 )
             }
         }
@@ -144,7 +147,7 @@ fun MainScreen(viewModel: MainScreenViewModel) {
 @Composable
 fun DividerG() {
     Divider(
-            color = Color.Black,
-            modifier = Modifier.fillMaxWidth().height(1.dp)
+        color = Color.Black,
+        modifier = Modifier.fillMaxWidth().height(1.dp)
     )
 }
