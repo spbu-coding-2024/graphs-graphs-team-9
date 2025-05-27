@@ -7,7 +7,6 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import model.graph.*
 import view.MainScreen
-import viewModel.screen.CircularPlacementStrategy
 import viewModel.screen.MainScreenViewModel
 import java.awt.Dimension
 
@@ -33,7 +32,7 @@ val sampleGraph: Graph = GraphFactory.createUndirectedUnweightedGraph().apply {
 fun App() {
 
     MaterialTheme {
-        MainScreen(MainScreenViewModel(sampleGraph, CircularPlacementStrategy()))
+        MainScreen(MainScreenViewModel(sampleGraph))
     }
 //    var text by remember { mutableStateOf("Hello, World!") }
 //

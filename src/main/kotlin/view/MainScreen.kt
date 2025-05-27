@@ -7,9 +7,7 @@ import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,160 +24,126 @@ import viewModel.additionalScreen.diologistDijkstraScreen
 import viewModel.additionalScreen.diologistFordBellman
 import viewModel.additionalScreen.diologistNeo4j
 import viewModel.screen.MainScreenViewModel
+import viewModel.toosl.CoolColors // Убедитесь, что импорт правильный
 
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel) {
-    val showGraph = remember { mutableStateOf(false) }
+    val showGraphPanel = remember { mutableStateOf(false) }
     val showAddMenu = remember { mutableStateOf(false) }
     val showSettingsMenu = remember { mutableStateOf(false) }
-    val showAddVertex = remember { mutableStateOf(false) }
+    val showAddVertexDialog = remember { mutableStateOf(false) }
     val showUploadSaveButtons = remember { mutableStateOf(false) }
     val showAlgoButtons = remember { mutableStateOf(false) }
     val scale = remember { mutableStateOf(1f) }
-    val showNeo4jScreen = remember { mutableStateOf(false) }
-    val showDijkstraScreen = remember { mutableStateOf(false) }
-    val showNeo4jSaveClearButton = remember { mutableStateOf(false) }
-    val showSQLiteSaveClearButton = remember { mutableStateOf(false) }
-    val showFordBellman = remember { mutableStateOf(false) }
-    val showLabels = remember { mutableStateOf(false) }
-    var uri = remember { viewModel.uri }
-    var username = remember { viewModel.username }
-    var password = remember { viewModel.password }
-
+    val showNeo4jDialog = remember { mutableStateOf(false) }
+    val showDijkstraDialog = remember { mutableStateOf(false) }
+    val showNeo4jSaveClearButtonsPanel = remember { mutableStateOf(false) }
+    val showSQLiteSaveClearButtonsPanel = remember { mutableStateOf(false) }
+    val showFordBellmanDialog = remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize()
     ) {
-        barButton(showGraph, showAddMenu, showSettingsMenu, showAddVertex)
+        barButton(showGraphPanel, showAddMenu, showSettingsMenu, showAddVertexDialog)
 
         Divider(
-            color = Color.Black,
-            modifier = Modifier
-                .fillMaxWidth()
-                .width(1.dp)
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth().height(1.dp)
         )
         Row(
-            modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize()
         ) {
             AnimatedVisibility(
-                visible = showGraph.value,
+                    visible = showGraphPanel.value,
             ) {
                 Column(
-                    modifier = Modifier
-                        .width(232.dp)
-                        .padding(horizontal = 8.dp)
+                        modifier = Modifier
+                                .width(232.dp)
+                                .padding(horizontal = 8.dp)
+                                .scrollable(rememberScrollableState { 0f }, orientation = Orientation.Vertical)
                 ) {
                     Spacer(modifier = Modifier.height(4.dp))
                     DividerG()
 
                     Button(
-                        onClick = {
-                            showUploadSaveButtons.value = !showUploadSaveButtons.value
-                            showSQLiteSaveClearButton.value = false
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Upload/save")
-                    }
+                            onClick = {
+                                showUploadSaveButtons.value = !showUploadSaveButtons.value
+                                showSQLiteSaveClearButtonsPanel.value = false
+                                showNeo4jSaveClearButtonsPanel.value = false
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                    ) { Text("Upload/Save") }
 
-                    DBButtons(viewModel, showNeo4jSaveClearButton, showSQLiteSaveClearButton, showUploadSaveButtons, showNeo4jScreen)
-
-                    DividerG()
-
-                    switch(viewModel, showLabels)
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    DividerG()
-//            Spacer(modifier = Modifier.height(8.dp))
-
-                    VertexSizeSlider(
-                            viewModel = viewModel,
-                            modifier = Modifier.padding(vertical = 4.dp)
+                    DBButtons(
+                            viewModel,
+                            showNeo4jSaveClearButtonsPanel,
+                            showSQLiteSaveClearButtonsPanel,
+                            showUploadSaveButtons,
+                            showNeo4jDialog
                     )
-
                     DividerG()
-
+                    view.additionalButtons.switch(viewModel, remember { mutableStateOf(viewModel.showVerticesLabels) })
+                    Spacer(modifier = Modifier.height(8.dp))
+                    DividerG()
+                    VertexSizeSlider(viewModel = viewModel, modifier = Modifier.padding(vertical = 4.dp))
+                    DividerG()
                     Button(
-                        onClick = viewModel::resetGraphView,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = "Reset default settings")
-                    }
-//                    Spacer(modifier = Modifier.height(8.dp))
-
+                            onClick = { viewModel.resetGraphView() }, // Кнопка теперь вызывает resetGraphView
+                            modifier = Modifier.fillMaxWidth()
+                    ) { Text(text = "Reset Graph Layout") }
                     DividerG()
-
                     Button(
-                        onClick = { showAlgoButtons.value = !showAlgoButtons.value },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text("Algorithms")
-                    }
-
-                    algoButton(viewModel, showAlgoButtons, showFordBellman, showDijkstraScreen)
-
+                            onClick = { showAlgoButtons.value = !showAlgoButtons.value },
+                            modifier = Modifier.fillMaxWidth(),
+                    ) { Text("Algorithms") }
+                    algoButton(viewModel, showAlgoButtons, showFordBellmanDialog, showDijkstraDialog)
                     DividerG()
 
-                    diologistAddVertexScreen(showAddVertex, viewModel)
-                    diologistDijkstraScreen(showDijkstraScreen, viewModel)
-                    diologistNeo4j(showNeo4jScreen,  showNeo4jSaveClearButton)
-                    diologistFordBellman(showFordBellman, viewModel)
+                    diologistAddVertexScreen(showAddVertexDialog, viewModel)
+                    diologistDijkstraScreen(showDijkstraDialog, viewModel)
+                    diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel)
+                    diologistFordBellman(showFordBellmanDialog, viewModel)
                 }
             }
 
             Divider(
-                color = Color.Black,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(1.dp)
+                    color = Color.Black,
+                    modifier = Modifier.fillMaxHeight().width(1.dp)
             )
-            Surface(
-                modifier = Modifier.weight(1f).scrollable(
-                    orientation = Orientation.Vertical,
-                    state =
-                        rememberScrollableState { delta ->
-                            scale.value = (scale.value * (1f + delta / 500)).coerceIn(0.01f, 100f)
-                            delta
-                        },
-                )
+
+            BoxWithConstraints(
+                    modifier = Modifier.weight(1f)
+                            .background(CoolColors.backgroundBasic)
+                            .scrollable(
+                                    orientation = Orientation.Vertical,
+                                    state = rememberScrollableState { delta ->
+                                        scale.value = (scale.value * (1f - delta / 500f)).coerceIn(0.1f, 5f)
+                                        delta
+                                    }
+                            )
             ) {
-                GraphView(viewModel.graphViewModel, scale.value)
+                val canvasWidth = maxWidth.value.toFloat()
+                val canvasHeight = maxHeight.value.toFloat()
+
+                LaunchedEffect(canvasWidth, canvasHeight, viewModel.graphViewModel.graph) {
+                    if (canvasWidth > 0 && canvasHeight > 0) {
+                        viewModel.initializeOrUpdatePlacement(canvasWidth, canvasHeight)
+                    }
+                }
+
+                GraphView(
+                        viewModel = viewModel.graphViewModel,
+                        scale = scale.value
+                )
             }
         }
     }
 }
 
 @Composable
-fun DividerG(){
+fun DividerG() {
     Divider(
-        color = Color.Black,
-        modifier = Modifier
-            .fillMaxWidth(230f)
-            .width(1.dp)
+            color = Color.Black,
+            modifier = Modifier.fillMaxWidth().height(1.dp)
     )
 }
-
-//                Box {
-//                    TextButton(
-//                        onClick = { expandedFileMenu.value = true },
-//                        modifier = Modifier.padding(0.dp)
-//                    ) {
-//                        Text("File", color = Color.White)
-//                    }
-//                    DropdownMenu(
-//                        expanded = expandedFileMenu.value,
-//                        onDismissRequest = { expandedFileMenu.value = false }
-//                    ) {
-//                        DropdownMenuItem(onClick = { /* SQLite */ }) {
-//                            Text("SQLite")
-//                        }
-//                        DropdownMenuItem(onClick = { showNeo4j.value = true }) {
-//                            Text("Neo4j")
-//                        }
-//                        DropdownMenuItem(onClick = { /* Clear Graph */ }) {
-//                            Text("Clear Graph")
-//                        }
-//                    }
-//                }
-//            }

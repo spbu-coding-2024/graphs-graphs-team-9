@@ -14,7 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.dp
 
 class GraphViewModel(
-    private var graph: Graph,
+    var graph: Graph,
 //    private val placement: MutableMap<Vertex, Pair<Dp?, Dp?>?>,
     showVerticesLabels: State<Boolean>,
     showEdgesLabels: State<Boolean>,
