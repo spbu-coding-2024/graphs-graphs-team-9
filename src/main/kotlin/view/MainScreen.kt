@@ -24,7 +24,7 @@ import viewModel.additionalScreen.diologistDijkstraScreen
 import viewModel.additionalScreen.diologistFordBellman
 import viewModel.additionalScreen.diologistNeo4j
 import viewModel.screen.MainScreenViewModel
-import viewModel.toosl.CoolColors // Убедитесь, что импорт правильный
+import viewModel.toosl.CoolColors
 
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel) {
@@ -88,7 +88,7 @@ fun MainScreen(viewModel: MainScreenViewModel) {
                     VertexSizeSlider(viewModel = viewModel, modifier = Modifier.padding(vertical = 4.dp))
                     DividerG()
                     Button(
-                            onClick = { viewModel.resetGraphView() }, // Кнопка теперь вызывает resetGraphView
+                            onClick = { viewModel.resetGraphView() },
                             modifier = Modifier.fillMaxWidth()
                     ) { Text(text = "Reset Graph Layout") }
                     DividerG()
@@ -122,18 +122,19 @@ fun MainScreen(viewModel: MainScreenViewModel) {
                                     }
                             )
             ) {
-                val canvasWidth = maxWidth.value.toFloat()
-                val canvasHeight = maxHeight.value.toFloat()
+                val canvasWidthDp = maxWidth
+                val canvasHeightDp = maxHeight
 
-                LaunchedEffect(canvasWidth, canvasHeight, viewModel.graphViewModel.graph) {
-                    if (canvasWidth > 0 && canvasHeight > 0) {
-                        viewModel.initializeOrUpdatePlacement(canvasWidth, canvasHeight)
+                LaunchedEffect(canvasWidthDp, canvasHeightDp, viewModel.graphViewModel.graph) {
+                    if (canvasWidthDp > 0.dp && canvasHeightDp > 0.dp) {
+                        viewModel.initializeOrUpdatePlacement(canvasWidthDp, canvasHeightDp)
                     }
                 }
 
                 GraphView(
                         viewModel = viewModel.graphViewModel,
-                        scale = scale.value
+                        scale = scale.value,
+                        onVertexDrag = viewModel::processVertexDrag
                 )
             }
         }

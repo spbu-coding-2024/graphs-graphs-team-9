@@ -9,25 +9,27 @@ import model.algorithms.FordBellman
 import model.graph.Edge
 import model.graph.Graph
 import model.graph.GraphImpl
+import model.graph.Vertex
 import model.io.Neo4j.Neo4j
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.unit.dp
+
 
 class GraphViewModel(
-    var graph: Graph,
-//    private val placement: MutableMap<Vertex, Pair<Dp?, Dp?>?>,
-    showVerticesLabels: State<Boolean>,
-    showEdgesLabels: State<Boolean>,
+        var graph: Graph,
+        showVerticesLabels: State<Boolean>,
+        showEdgesLabels: State<Boolean>
 ) {
+
     private val _vertices = graph.getVertices().associateWith { v ->
-        VertexViewModel(0.dp, 0.dp, Color.Gray, v, showVerticesLabels)
+        VertexViewModel(
+                0.dp, 0.dp, Color.Gray, v, showVerticesLabels
+        )
     }
 
     private val _edges = graph.getEdges().associateWith { e ->
         val fst = _vertices[e.source]
-            ?: throw IllegalStateException("VertexView for ${e.source} not found")
+                ?: throw IllegalStateException("VertexView for ${e.source} not found")
         val snd = _vertices[e.destination]
-            ?: throw IllegalStateException("VertexView for ${e.destination} not found")
+                ?: throw IllegalStateException("VertexView for ${e.destination} not found")
         EdgeViewModel(fst, snd, Color.Gray, Edge(e.source, e.destination), showVerticesLabels, showEdgesLabels, e.weight)
     }
 
@@ -38,8 +40,6 @@ class GraphViewModel(
         get() = _edges.values
 
     fun startFordBellman(startName: String?, endName: String?): Boolean {
-//        val vertexStart = start ?: return false
-//        val vertexEnd = graph.getVertexByKey(idEnd) ?: return false
         val bellman = FordBellman.fordBellman(graph, graph.getVertexByName(startName ?: ""), graph.getVertexByName(endName ?: ""))
         val path = bellman.first ?: return false
 
@@ -49,7 +49,6 @@ class GraphViewModel(
                 _edges[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Yellow
             }
         }
-
         return true
     }
     fun startFindBridges(){
@@ -70,7 +69,6 @@ class GraphViewModel(
     val vertexSize: State<Float>
         get() = _vertexSize
 
-    // Функция для изменения размера всех вершин
     fun updateVertexSize(newSize: Float) {
         _vertexSize.value = newSize
         _vertices.values.forEach { vertex ->
