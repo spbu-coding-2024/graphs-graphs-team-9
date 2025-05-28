@@ -19,13 +19,12 @@ class GraphViewModel(
         showEdgesLabels: State<Boolean>
 ) {
 
-    private val _vertices = graph.getVertices().associateWith { v ->
+    private var _vertices = graph.getVertices().associateWith { v ->
         VertexViewModel(
                 0.dp, 0.dp, Color.Gray, v, showVerticesLabels
         )
     }
-
-    private val _edges = graph.getEdges().associateWith { e ->
+    private var _edges = graph.getEdges().associateWith { e ->
         val fst = _vertices[e.source]
                 ?: throw IllegalStateException("VertexView for ${e.source} not found")
         val snd = _vertices[e.destination]
@@ -77,5 +76,42 @@ class GraphViewModel(
     }
     fun isDirected(): Boolean{
         return graph.isDirected()
+    }
+
+    fun isWeighted(): Boolean{
+        return graph.isWeighted()
+    }
+
+    private fun updateVertices(showVerticesLabels: State<Boolean>): Map<Vertex, VertexViewModel> {
+        return graph.getVertices().associateWith { v ->
+            VertexViewModel(0.dp, 0.dp, Color.Gray, v, showVerticesLabels)
+        }
+    }
+
+    private fun updateEdges(
+        showVerticesLabels: State<Boolean>,
+        showEdgesLabels: State<Boolean>
+    ): Map<Edge, EdgeViewModel> {
+        return graph.getEdges().associateWith { e ->
+            val fst = _vertices[e.source]
+                ?: throw IllegalStateException("VertexView for ${e.source} not found")
+            val snd = _vertices[e.destination]
+                ?: throw IllegalStateException("VertexView for ${e.destination} not found")
+            EdgeViewModel(fst, snd, Color.Gray, Edge(e.source, e.destination),
+                showVerticesLabels, showEdgesLabels, e.weight)
+        }
+    }
+
+    val showVerticesLabels1 = showVerticesLabels
+    val showEdgesLabels1 = showEdgesLabels
+
+    fun updateGraph(newGraph: Graph) {
+        graph = newGraph
+        _vertices = newGraph.getVertices().associateWith { v ->
+            _vertices[v]?.let { existing ->
+                VertexViewModel(existing.x, existing.y, existing.color, v, showVerticesLabels1)
+            } ?: VertexViewModel(0.dp, 0.dp, Color.Gray, v, showVerticesLabels1)
+        }
+        _edges = updateEdges(showVerticesLabels1, showEdgesLabels1)
     }
 }
