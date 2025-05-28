@@ -30,19 +30,50 @@ import viewModel.additionalScreen.diologistNeo4j
 import viewModel.screen.MainScreenViewModel
 import viewModel.toosl.CoolColors
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.IntSize
+import model.graph.EmptyGraph
+import model.graph.Graph
+import model.graph.GraphFactory
+import model.graph.Vertex
 
+val sampleGraph: Graph = GraphFactory.createDirectedUnweightedGraph().apply {
+    addVertex(Vertex(1, "A"))
+    addVertex(Vertex(2, "B"))
+    addVertex(Vertex(3, "C"))
+    addVertex(Vertex(4, "D"))
+    addVertex(Vertex(5, "E"))
+    addVertex(Vertex(6, "F"))
+    addVertex(Vertex(7, "G"))
+
+    addEdge(Vertex(1, "A"), Vertex(2, "B"))
+    addEdge(Vertex(1, "A"), Vertex(3, "C"))
+    addEdge(Vertex(1, "A"), Vertex(4, "D"))
+    addEdge(Vertex(1, "A"), Vertex(5, "E"))
+    addEdge(Vertex(1, "A"), Vertex(6, "F"))
+    addEdge(Vertex(1, "A"), Vertex(7, "G"))
+}
 
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel) {
+fun MainScreen() {
+    val viewModel = remember { MainScreenViewModel(GraphFactory.createUndirectedUnweightedGraph()) }
+//    val viewModel = remember { MainScreenViewModel(sampleGraph) }
+
+    println(viewModel.getVertexs())
+
     val showGraphPanel = remember { mutableStateOf(false) }
     val showAlgoButtons = remember { mutableStateOf(false) }
     val scale = remember { mutableStateOf(1f) }
-    val offset = remember { mutableStateOf(Offset.Zero) }
+    var surfaceSize by remember { mutableStateOf(IntSize.Zero) }
 
     val showUploadSaveButtons = remember { mutableStateOf(false) }
     val showNeo4jDialog = remember { mutableStateOf(false) }
     val showNeo4jSaveClearButtonsPanel = remember { mutableStateOf(false) }
     val showSQLiteSaveClearButtonsPanel = remember { mutableStateOf(false) }
+
+    val uri = remember { viewModel.uri }
+    val username = remember { viewModel.username }
+    val password = remember { viewModel.password }
 
 //    DBButtons(
 //        showNeo4jSaveClearButtonsPanel,
@@ -123,6 +154,9 @@ fun MainScreen(viewModel: MainScreenViewModel) {
                     .weight(1f)
                     .background(CoolColors.backgroundBasic)
                     .clipToBounds()
+                    .onSizeChanged { newSize ->
+                        surfaceSize = newSize
+                    }
                     .scrollable(
                         orientation = Orientation.Vertical,
                         state = rememberScrollableState { delta ->
@@ -148,7 +182,7 @@ fun MainScreen(viewModel: MainScreenViewModel) {
             }
         }
     }
-    diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel)
+    diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel, viewModel, viewModel.uri, viewModel.username, viewModel.password)
 }
 
 @Composable
