@@ -100,18 +100,33 @@ fun barButton(
                 )
                 DropdownMenu(
                     expanded = showSettingsMenu.value,
-                    onDismissRequest = { showSettingsMenu.value = false }
+                    onDismissRequest = {
+                        showSettingsMenu.value = false
+                    }
                 ) {
-                    DropdownMenuItem(onClick = {showSettingsMenu.value = false}) {
+                    DropdownMenuItem(onClick = {
+                        viewModel.createGraph(true, true)
+                        showSettingsMenu.value = false
+                    }) {
                         Text("Directed weighted graph")
                     }
-                    DropdownMenuItem(onClick = {showSettingsMenu.value = false}) {
+                    DropdownMenuItem(onClick = {
+                        viewModel.createGraph(false, true)
+                        showSettingsMenu.value = false
+                    }) {
                         Text("Undirected weighted graph")
                     }
-                    DropdownMenuItem(onClick = {showSettingsMenu.value = false}) {
+                    DropdownMenuItem(onClick = {
+                        viewModel.createGraph(true, false)
+                        showSettingsMenu.value = false
+                    }) {
                         Text("Directed unweighted graph")
                     }
-                    DropdownMenuItem(onClick = {showSettingsMenu.value = false}) {
+                    DropdownMenuItem(onClick = {
+                        viewModel.createGraph(false, false)
+                        showSettingsMenu.value = false
+                    }
+                    ) {
                         Text("Undirected unweighted graph")
                     }
                 }
@@ -128,7 +143,7 @@ fun barButton(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("Add", color = Color.White)
+                            Text("Add/Delete", color = Color.White)
                         }
                     }
                 }
@@ -149,7 +164,7 @@ fun barButton(
                         Text("Add Edge")
                     }
                     DropdownMenuItem(onClick = {
-                        showDeleteVertex.value =true
+                        showDeleteVertex.value = true
                         showAddMenu.value = false
                     }) {
                         Text("remove Vertex")
@@ -169,105 +184,3 @@ fun barButton(
     diologistAddEdgeScreen(showAddEdgeDialog, viewModel)
     diologistDeleteEdgeScreen(showDeleteEdge, viewModel)
 }
-
-//@Composable
-//fun barButton(
-//    showGraph: MutableState<Boolean>,
-//    expandedSettingsMenu: MutableState<Boolean>,
-//) {
-//    Box(
-//        modifier = Modifier.fillMaxWidth().background(Color.DarkGray).height(28.dp)
-//    ) {
-//        Row(
-//            modifier = Modifier.padding(vertical = 2.dp).background(Color.DarkGray),
-//            horizontalArrangement = Arrangement.Start,
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            // Graph button
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .width(IntrinsicSize.Min)
-//            ) {
-//                DropdownMenuItem(
-//                    modifier = Modifier.fillMaxSize(),
-//                    onClick = { showGraph.value = !showGraph.value }
-//                ) {
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxHeight()
-//                            .background(Color.Transparent),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        Text("Graph", color = Color.White)
-//                    }
-//                }
-//            }
-//
-//            Divider(
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .width(1.dp),
-//                color = Color.Gray
-//            )
-//
-//            // Settings button
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .width(IntrinsicSize.Min)
-//            ) {
-//                DropdownMenuItem(
-//                    modifier = Modifier.fillMaxSize(),
-//                    onClick = { expandedSettingsMenu.value = true }
-//                ) {
-//                    Box(
-//                        modifier = Modifier.fillMaxSize(),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        Text("Settings", color = Color.White)
-//                    }
-//                }
-//            }
-//
-//            Divider(
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .width(1.dp),
-//                color = Color.Gray
-//            )
-//
-//            // Add button
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .width(IntrinsicSize.Min)
-//            ) {
-//                DropdownMenuItem(
-//                    modifier = Modifier.fillMaxSize(),
-//                    onClick = { expandedSettingsMenu.value = true }
-//                ) {
-//                    Box(
-//                        modifier = Modifier.fillMaxSize(),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        Text("Add", color = Color.White)
-//                    }
-//                }
-//            }
-//        }
-//
-//        // Dropdown menu (should be outside the Row)
-//        DropdownMenu(
-//            expanded = expandedSettingsMenu.value,
-//            onDismissRequest = { expandedSettingsMenu.value = false }
-//        ) {
-//            DropdownMenuItem(onClick = {}) {
-//                Text("Option 1")
-//            }
-//            DropdownMenuItem(onClick = {}) {
-//                Text("Option 2")
-//            }
-//        }
-//    }
-//}
