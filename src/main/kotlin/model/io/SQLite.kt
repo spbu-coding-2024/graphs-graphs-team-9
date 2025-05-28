@@ -1,10 +1,11 @@
-package model.repositories
+package model.io
 
 import model.graph.GraphImpl
 import model.graph.Vertex
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
+import java.sql.Types
 
 
 open class SQLGraph(private val dbPath: String) {
@@ -91,7 +92,7 @@ open class SQLGraph(private val dbPath: String) {
                             if (graph.isWeighted() && edge.weight != null) {
                                 pstmt.setDouble(3, edge.weight ?: throw IllegalArgumentException())
                             } else {
-                                pstmt.setNull(3, java.sql.Types.REAL)
+                                pstmt.setNull(3, Types.REAL)
                             }
                             pstmt.addBatch()
                         }

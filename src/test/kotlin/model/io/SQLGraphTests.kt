@@ -2,6 +2,7 @@ package model.repositories
 
 import model.graph.GraphImpl
 import model.graph.Vertex
+import model.io.SQLGraph
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
