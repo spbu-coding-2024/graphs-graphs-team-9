@@ -45,14 +45,20 @@ fun diologistDeleteEdgeScreen(
                 ) {
                     OutlinedTextField(
                         value = firstVertex.value ?: "",
-                        onValueChange = { firstVertex.value = it },
+                        onValueChange = {
+                            firstVertex.value = it
+                            viewModel.setStartVertex(it)
+                        },
                         label = { Text("First vertex") },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
                     Spacer(modifier = Modifier)
                     OutlinedTextField(
                         value = secondVertex.value ?: "",
-                        onValueChange = { secondVertex.value = it },
+                        onValueChange = {
+                            secondVertex.value = it
+                            viewModel.setEndVertex(it)
+                        },
                         label = { Text("Second vertex") },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
@@ -62,7 +68,7 @@ fun diologistDeleteEdgeScreen(
                 Row {
                     Button(
                         onClick = {
-//                        viewModel::
+                            viewModel.delEdge()
                             showDeleteEdge.value = false
                         },
                         modifier = Modifier.padding(horizontal = 10.dp)
