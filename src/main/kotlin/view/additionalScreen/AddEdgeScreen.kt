@@ -20,8 +20,11 @@ fun diologistAddEdgeScreen(
     showAddEdge: MutableState<Boolean>,
     viewModel: MainScreenViewModel,
 ) {
+    val errorMessage = remember { mutableStateOf<String?>(null) }
+
     val firstVertex = mutableStateOf<String?>(null)
     val secondVertex = mutableStateOf<String?>(null)
+    val weight = mutableStateOf<Double?>(null)
 
     AnimatedVisibility(
         visible = showAddEdge.value,
@@ -45,14 +48,20 @@ fun diologistAddEdgeScreen(
                 ) {
                     OutlinedTextField(
                         value = firstVertex.value ?: "",
-                        onValueChange = { firstVertex.value = it },
+                        onValueChange = {
+                            firstVertex.value = it
+                            viewModel.setStartVertex(it)
+                        },
                         label = { Text("First vertex") },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
                     Spacer(modifier = Modifier)
                     OutlinedTextField(
                         value = secondVertex.value ?: "",
-                        onValueChange = { secondVertex.value = it },
+                        onValueChange = {
+                            secondVertex.value = it
+                            viewModel.setEndVertex(it)
+                        },
                         label = { Text("Second vertex") },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
@@ -62,7 +71,7 @@ fun diologistAddEdgeScreen(
                 Row {
                     Button(
                         onClick = {
-//                        viewModel::
+                            viewModel.addEdge()
                             showAddEdge.value = false
                         },
                         modifier = Modifier.padding(horizontal = 10.dp)
