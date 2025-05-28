@@ -15,8 +15,8 @@ import viewModel.screen.MainScreenViewModel
 @Composable
 fun DBButtons(
     viewModel: MainScreenViewModel,
-    showNeo4jSaveClearButton: MutableState<Boolean>,
-    showSQLiteSaveClearButton: MutableState<Boolean>,
+    showNeo4jSaveUploadButton: MutableState<Boolean>,
+    showSQLiteSaveUploadButton: MutableState<Boolean>,
     showUploadSaveButtons: MutableState<Boolean>,
     showNeo4jScreen: MutableState<Boolean>,
 ) {
@@ -30,8 +30,8 @@ fun DBButtons(
 
             Button(
                 onClick = {
-                    showSQLiteSaveClearButton.value = !showSQLiteSaveClearButton.value
-                    showNeo4jSaveClearButton.value = false
+                    showSQLiteSaveUploadButton.value = !showSQLiteSaveUploadButton.value
+                    showNeo4jSaveUploadButton.value = false
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -41,24 +41,24 @@ fun DBButtons(
                 onClick = {
                     showNeo4jScreen.value = true
 //                    showNeo4jSaveClearButton.value = !showNeo4jSaveClearButton.value
-                    showSQLiteSaveClearButton.value = false
+                    showSQLiteSaveUploadButton.value = false
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Neo4j")
             }
             AnimatedVisibility(
-                visible = showSQLiteSaveClearButton.value,
+                visible = showSQLiteSaveUploadButton.value,
             ) {
                 Button(
-                    onClick = { viewModel::clearGraph },
+                    onClick = {  },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Clear Graph")
+                    Text("Upload Graph")
                 }
             }
             AnimatedVisibility(
-                visible = showSQLiteSaveClearButton.value,
+                visible = showSQLiteSaveUploadButton.value,
             ) {
                 Button(
                     onClick = {},
@@ -70,23 +70,33 @@ fun DBButtons(
 
 
             AnimatedVisibility(
-                visible = showNeo4jSaveClearButton.value,
+                visible = showNeo4jSaveUploadButton.value,
             ) {
                 Button(
                     onClick = { viewModel::clearGraph },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Clear Graph")
+                    Text("Upload Graph")
                 }
             }
             AnimatedVisibility(
-                visible = showNeo4jSaveClearButton.value,
+                visible = showNeo4jSaveUploadButton.value,
             ) {
                 Button(
                     onClick = {},
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Save Graph")
+                }
+            }
+            AnimatedVisibility(
+                visible = showSQLiteSaveUploadButton.value || showNeo4jSaveUploadButton.value,
+            ) {
+                Button(
+                    onClick = { viewModel::clearGraph },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Clear Graph")
                 }
             }
         }

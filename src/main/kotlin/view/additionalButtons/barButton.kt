@@ -83,7 +83,7 @@ fun barButton(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Settings", color = Color.White)
+                        Text("Create graph", color = Color.White)
                     }
                 }
             }
@@ -103,10 +103,16 @@ fun barButton(
                     onDismissRequest = { showSettingsMenu.value = false }
                 ) {
                     DropdownMenuItem(onClick = {showSettingsMenu.value = false}) {
-                        Text("light topic")
+                        Text("Directed weighted graph")
                     }
                     DropdownMenuItem(onClick = {showSettingsMenu.value = false}) {
-                        Text("light topic")
+                        Text("Undirected weighted graph")
+                    }
+                    DropdownMenuItem(onClick = {showSettingsMenu.value = false}) {
+                        Text("Directed unweighted graph")
+                    }
+                    DropdownMenuItem(onClick = {showSettingsMenu.value = false}) {
+                        Text("Undirected unweighted graph")
                     }
                 }
                 Box(

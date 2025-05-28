@@ -29,18 +29,27 @@ import viewModel.additionalScreen.diologistFordBellman
 import viewModel.additionalScreen.diologistNeo4j
 import viewModel.screen.MainScreenViewModel
 import viewModel.toosl.CoolColors
+import androidx.compose.ui.geometry.Offset
+
 
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel) {
     val showGraphPanel = remember { mutableStateOf(false) }
-    val showUploadSaveButtons = remember { mutableStateOf(false) }
     val showAlgoButtons = remember { mutableStateOf(false) }
     val scale = remember { mutableStateOf(1f) }
+    val offset = remember { mutableStateOf(Offset.Zero) }
 
+    val showUploadSaveButtons = remember { mutableStateOf(false) }
     val showNeo4jDialog = remember { mutableStateOf(false) }
     val showNeo4jSaveClearButtonsPanel = remember { mutableStateOf(false) }
     val showSQLiteSaveClearButtonsPanel = remember { mutableStateOf(false) }
 
+//    DBButtons(
+//        showNeo4jSaveClearButtonsPanel,
+//        showSQLiteSaveClearButtonsPanel,
+//        showUploadSaveButtons,
+//        showNeo4jDialog
+//    )
 
     Column(
         modifier = Modifier.fillMaxSize()
