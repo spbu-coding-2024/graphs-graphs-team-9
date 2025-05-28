@@ -21,7 +21,7 @@ fun diologistAddVertexScreen(
     showAddVertex: MutableState<Boolean>,
     viewModel: MainScreenViewModel,
 ) {
-    val vertex = mutableStateOf<String?>(null)
+    val vertex = mutableStateOf("")
     AnimatedVisibility(
         visible = showAddVertex.value,
     ) {
@@ -33,7 +33,9 @@ fun diologistAddVertexScreen(
                 Column {
                     OutlinedTextField(
                         value = vertex.value ?: "",
-                        onValueChange = { vertex.value = it },
+                        onValueChange = {
+                            vertex.value = it
+                            viewModel.setVertex(it) },
                         label = { Text("Vertex") },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
@@ -42,7 +44,7 @@ fun diologistAddVertexScreen(
             confirmButton = {
                 Button(
                     onClick = {
-//                        viewModel::
+                        viewModel.addVertex()
                         showAddVertex.value = false
                     }
                 ) {
