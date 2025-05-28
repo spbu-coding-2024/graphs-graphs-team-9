@@ -18,22 +18,24 @@ import viewModel.screen.MainScreenViewModel
 
 @Composable
 fun diologistDeleteVertexScreen(
-    showAddVertex: MutableState<Boolean>,
+    showDeleteVertex: MutableState<Boolean>,
     viewModel: MainScreenViewModel,
 ) {
-    val vertex = mutableStateOf<String?>(null)
+    val vertex = mutableStateOf("")
     AnimatedVisibility(
-        visible = showAddVertex.value,
+        visible = showDeleteVertex.value,
     ) {
         AlertDialog(
             modifier = Modifier.padding(5.dp).width(250.dp),
-            onDismissRequest = { showAddVertex.value = false },
+            onDismissRequest = { showDeleteVertex.value = false },
             title = { Text("Vertex") },
             text = {
                 Column {
                     OutlinedTextField(
                         value = vertex.value ?: "",
-                        onValueChange = { vertex.value = it },
+                        onValueChange = {
+                            vertex.value = it
+                            viewModel.setVertex(it) },
                         label = { Text("Vertex") },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
@@ -42,8 +44,8 @@ fun diologistDeleteVertexScreen(
             confirmButton = {
                 Button(
                     onClick = {
-//                        viewModel::
-                        showAddVertex.value = false
+                        viewModel.delVertex()
+                        showDeleteVertex.value = false
                     }
                 ) {
                     Text("Delete")
@@ -52,7 +54,7 @@ fun diologistDeleteVertexScreen(
             dismissButton = {
                 Button(
                     onClick = {
-                        showAddVertex.value = false
+                        showDeleteVertex.value = false
                     }
                 ) {
                     Text("Cancel")
