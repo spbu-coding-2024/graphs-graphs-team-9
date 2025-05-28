@@ -15,7 +15,6 @@ import viewModel.screen.MainScreenViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.runtime.Recomposer
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 
 @Composable
 fun diologistNeo4j(
@@ -36,37 +35,37 @@ fun diologistNeo4j(
             text = {
                 Spacer(modifier = Modifier.height(8.dp))
                 Column {
-                    try {
-                        OutlinedTextField(
-                            value = uri.value ?: "",
-                            onValueChange = {
-                                viewModel.setUri(it)
-                            },
-                            label = { Text("URI") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = username.value ?: "",
-                            onValueChange = {
-                                viewModel.setUsername(it)
-                            },
-                            label = { Text("Username") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = password.value ?: "",
-                            onValueChange = {
-                                viewModel.setPassword(it)
-                            },
-                            label = { Text("Password") },
-                            visualTransformation = PasswordVisualTransformation(),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    } catch (e: Exception) {
-                        throw Exception("Failed to write graph", e)
-                    }
+//                    try {
+//                        OutlinedTextField(
+//                            value = uri.value ?: "",
+//                            onValueChange = {
+//                                viewModel.setUri(it)
+//                            },
+//                            label = { Text("URI") },
+//                            modifier = Modifier.fillMaxWidth()
+//                        )
+//                        Spacer(modifier = Modifier.height(8.dp))
+//                        OutlinedTextField(
+//                            value = username.value ?: "",
+//                            onValueChange = {
+//                                viewModel.setUsername(it)
+//                            },
+//                            label = { Text("Username") },
+//                            modifier = Modifier.fillMaxWidth()
+//                        )
+//                        Spacer(modifier = Modifier.height(8.dp))
+//                        OutlinedTextField(
+//                            value = password.value ?: "",
+//                            onValueChange = {
+//                                viewModel.setPassword(it)
+//                            },
+//                            label = { Text("Password") },
+////                                    visualTransformation = PasswordVisualTransformation(),
+//                            modifier = Modifier.fillMaxWidth()
+//                        )
+//                    } catch (e: Exception) {
+//                        throw Exception("Failed to write graph", e)
+//                    }
                 }
             },
             confirmButton = {
