@@ -68,7 +68,7 @@ class Neo4j(private val uri: String, private val user: String, private val passw
             val session = driver.session()
             session.executeRead { tx ->
                 tx.run("MATCH (v:Vertex) RETURN v.id AS id, v.name AS name").list { record ->
-                    graph.addVertex(Vertex(record["id"].asInt(), record["name"].asString()))
+                    graph.addVertex(record["name"].asString())
                 }
             }
 
@@ -84,7 +84,7 @@ class Neo4j(private val uri: String, private val user: String, private val passw
                     val v1 = graph.getVertexByKey(sourceId)!!
                     val v2 = graph.getVertexByKey(targetId)!!
 
-                    graph.addEdge(v1, v2, weight)
+                    graph.addEdge(v1.name, v2.name, weight)
                 }
             }
             session.close()
