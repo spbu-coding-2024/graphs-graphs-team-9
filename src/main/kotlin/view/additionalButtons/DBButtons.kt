@@ -19,6 +19,7 @@ fun DBButtons(
     showSQLiteSaveUploadButton: MutableState<Boolean>,
     showUploadSaveButtons: MutableState<Boolean>,
     showNeo4jScreen: MutableState<Boolean>,
+    showSQLiteScreen: MutableState<Boolean>,
 ) {
     AnimatedVisibility(
         visible = showUploadSaveButtons.value,
@@ -30,7 +31,7 @@ fun DBButtons(
 
             Button(
                 onClick = {
-                    showSQLiteSaveUploadButton.value = !showSQLiteSaveUploadButton.value
+                    showSQLiteScreen.value = true
                     showNeo4jSaveUploadButton.value = false
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -51,8 +52,8 @@ fun DBButtons(
                 visible = showSQLiteSaveUploadButton.value,
             ) {
                 Button(
-                    onClick = {  },
-                    modifier = Modifier.fillMaxWidth()
+                        onClick = { viewModel.uploadFromSQLite() }, // Вызываем функцию загрузки
+                        modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Upload Graph")
                 }
@@ -61,8 +62,8 @@ fun DBButtons(
                 visible = showSQLiteSaveUploadButton.value,
             ) {
                 Button(
-                    onClick = {},
-                    modifier = Modifier.fillMaxWidth()
+                        onClick = { viewModel.saveToSQLite() },
+                        modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Save Graph")
                 }
@@ -91,8 +92,14 @@ fun DBButtons(
                 visible = showSQLiteSaveUploadButton.value || showNeo4jSaveUploadButton.value,
             ) {
                 Button(
-                    onClick = { viewModel.clearNeo4jDatabase() },
-                    modifier = Modifier.fillMaxWidth()
+                        onClick = {
+                            if (showSQLiteSaveUploadButton.value) {
+                                viewModel.clearGraph()
+                            } else {
+                                viewModel.clearNeo4jDatabase()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Clear Graph")
                 }

@@ -134,8 +134,8 @@ open class SQLGraph(private val dbPath: String) {
                 while (rsVertices.next()) {
                     val id = rsVertices.getInt("id")
                     val name = rsVertices.getString("name")
-//                    val vertex = Vertex(id, name)
-//                    vertices[id] = vertex
+                    val vertex = Vertex(id, name)
+                    vertices[id] = vertex
                     graph.addVertex(name)
                 }
             }

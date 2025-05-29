@@ -1,5 +1,6 @@
 package view
 
+import viewModel.additionalScreen.diologistSQLite
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -84,6 +85,7 @@ fun MainScreen() {
     val showNeo4jDialog = remember { mutableStateOf(false) }
     val showNeo4jSaveClearButtonsPanel = remember { mutableStateOf(false) }
     val showSQLiteSaveClearButtonsPanel = remember { mutableStateOf(false) }
+    val showSQLiteDialog = remember { mutableStateOf(false) }
 
 //    DBButtons(
 //        showNeo4jSaveClearButtonsPanel,
@@ -126,11 +128,12 @@ fun MainScreen() {
                     ) { Text("Upload/Save") }
 
                     DBButtons(
-                        viewModel,
-                        showNeo4jSaveClearButtonsPanel,
-                        showSQLiteSaveClearButtonsPanel,
-                        showUploadSaveButtons,
-                        showNeo4jDialog
+                            viewModel,
+                            showNeo4jSaveClearButtonsPanel,
+                            showSQLiteSaveClearButtonsPanel,
+                            showUploadSaveButtons,
+                            showNeo4jDialog,
+                            showSQLiteDialog // Добавить этот параметр
                     )
                     DividerG()
                     switch(viewModel, remember { mutableStateOf(viewModel.showVerticesLabels) })
@@ -184,6 +187,7 @@ fun MainScreen() {
         }
     }
     diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel, viewModel)
+    diologistSQLite(showSQLiteDialog, showSQLiteSaveClearButtonsPanel, viewModel)
     ErrorDialog(viewModel.showErrorDialog.value, viewModel.errorMessage.value, { viewModel.clearError() })
 }
 

@@ -15,6 +15,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import model.io.SQLGraph
 
 class MainScreenViewModel(
     private val graph: Graph,
@@ -126,6 +127,7 @@ class MainScreenViewModel(
     fun createGraph(isDirected: Boolean, isWeighted: Boolean) {
         graphViewModel.graph = GraphImpl(isDirected, isWeighted)
         graphViewModel.refreshGraph()
+        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 
     fun clearGraph() {
@@ -280,8 +282,67 @@ class MainScreenViewModel(
         }
     }
 
+    private var _dbPath = mutableStateOf<String?>(null)
+    val dbPath: State<String?> = _dbPath
+
+    private fun withSQLiteDB(action: SQLGraph.() -> Unit) {
+        val path = _dbPath.value
+        if (path.isNullOrBlank()) {
+            println("SQLite: missing database path")
+            return
+        }
+        try {
+            SQLGraph(path).action()
+        } catch (e: Exception) {
+            println("SQLite error: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
+    fun initializeSQLiteDB() {
+        withSQLiteDB {
+            initializeDatabase()
+            println("SQLite: database initialized successfully")
+        }
+    }
+
+    fun saveToSQLite() {
+        withSQLiteDB {
+            val graph = graphViewModel.graph
+            if (graph.getVertices().isEmpty()) {
+                println("SQLite Save: graph empty")
+                return@withSQLiteDB
+            }
+
+            // Проверяем, что graph это GraphImpl
+            if (graph is GraphImpl) {
+                saveGraph(graph)
+                println("SQLite: graph saved successfully")
+            } else {
+                println("SQLite Save: graph must be GraphImpl instance")
+            }
+        }
+    }
+
+    fun uploadFromSQLite() {
+        withSQLiteDB {
+            val loadedGraph = loadGraph()
+            if (loadedGraph != null) {
+                setNewGraph(loadedGraph)
+                println("SQLite: graph loaded successfully")
+            } else {
+                println("SQLite: no graph found or database not initialized")
+            }
+        }
+    }
+
+    fun setDbPath(path: String) {
+        _dbPath.value = path
+    }
+
     private fun setNewGraph(g: Graph) {
         graphViewModel = GraphViewModel(g, _showVerticesLabels, _showEdgesLabels)
+        graphViewModel.refreshGraph()
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 }
