@@ -21,10 +21,15 @@ fun diologistNeo4j(
     showNeo4j: MutableState<Boolean>,
     showSaveClearButton: MutableState<Boolean>,
     viewModel: MainScreenViewModel,
-    uri: State<String?>,
-    username: State<String?>,
-    password: State<String?>,
+//    uri: State<String?>,
+//    username: State<String?>,
+//    password: State<String?>,
 ) {
+
+    val uri = remember { mutableStateOf("") }
+    val username = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
+
     AnimatedVisibility(
         visible = showNeo4j.value,
     ) {
@@ -36,33 +41,36 @@ fun diologistNeo4j(
                 Spacer(modifier = Modifier.height(8.dp))
                 Column {
 //                    try {
-//                        OutlinedTextField(
-//                            value = uri.value ?: "",
-//                            onValueChange = {
-//                                viewModel.setUri(it)
-//                            },
-//                            label = { Text("URI") },
-//                            modifier = Modifier.fillMaxWidth()
-//                        )
-//                        Spacer(modifier = Modifier.height(8.dp))
-//                        OutlinedTextField(
-//                            value = username.value ?: "",
-//                            onValueChange = {
-//                                viewModel.setUsername(it)
-//                            },
-//                            label = { Text("Username") },
-//                            modifier = Modifier.fillMaxWidth()
-//                        )
-//                        Spacer(modifier = Modifier.height(8.dp))
-//                        OutlinedTextField(
-//                            value = password.value ?: "",
-//                            onValueChange = {
-//                                viewModel.setPassword(it)
-//                            },
-//                            label = { Text("Password") },
-////                                    visualTransformation = PasswordVisualTransformation(),
-//                            modifier = Modifier.fillMaxWidth()
-//                        )
+                        OutlinedTextField(
+                            value = uri.value ?: "",
+                            onValueChange = {
+                                uri.value = it
+                                viewModel.setUri(it)
+                            },
+                            label = { Text("URI") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = username.value ?: "",
+                            onValueChange = {
+                                username.value = it
+                                viewModel.setUsername(it)
+                            },
+                            label = { Text("Username") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = password.value ?: "",
+                            onValueChange = {
+                                password.value = it
+                                viewModel.setPassword(it)
+                            },
+                            label = { Text("Password") },
+//                                    visualTransformation = PasswordVisualTransformation(),
+                            modifier = Modifier.fillMaxWidth()
+                        )
 //                    } catch (e: Exception) {
 //                        throw Exception("Failed to write graph", e)
 //                    }
@@ -71,7 +79,8 @@ fun diologistNeo4j(
             confirmButton = {
                 Button(
                     onClick = {
-                        showSaveClearButton.value = !showSaveClearButton.value
+                        viewModel.runNeo4j()
+                        showSaveClearButton.value = true
                         showNeo4j.value = false
                     }
                 ) {
@@ -81,6 +90,7 @@ fun diologistNeo4j(
             dismissButton = {
                 Button(
                     onClick = {
+                        viewModel.createGraph(true, false)
                         showSaveClearButton.value = false
                         showNeo4j.value = false
                     }
