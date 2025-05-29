@@ -49,18 +49,18 @@ class MainScreenViewModel(
         currentCanvasHeight = height
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
-    
+
 
     private var _vertex = mutableStateOf<String?>(null)
     val vertex: State<String?> = _vertex
 
-    fun setVertex(name: String){
+    fun setVertex(name: String) {
         _vertex.value = name
     }
 
     var i = 0
     val map: MutableMap<String?, Int> = mutableMapOf()
-    fun addVertex(){
+    fun addVertex() {
         map[vertex.value] = i
         graphViewModel.graph.addVertex(Vertex(i++, vertex.value))
         graphViewModel.updateGraph(graphViewModel.graph)
@@ -68,7 +68,7 @@ class MainScreenViewModel(
 
     }
 
-    fun delVertex(){
+    fun delVertex() {
         graphViewModel.graph.removeVertex(graphViewModel.graph.getVertexByName(vertex.value ?: ""))
         graphViewModel.updateGraph(graphViewModel.graph)
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
@@ -83,15 +83,15 @@ class MainScreenViewModel(
     private var _width = mutableStateOf<Double?>(null)
     val width: State<Double?> = _width
 
-    fun setStartVertex(startV: String){
+    fun setStartVertex(startV: String) {
         _startVertex.value = startV
     }
 
-    fun setEndVertex(endV: String){
+    fun setEndVertex(endV: String) {
         _endVertex.value = endV
     }
 
-    fun setWidthVertex(width: Double?){
+    fun setWidthVertex(width: Double?) {
         _width.value = width
     }
 
@@ -107,7 +107,7 @@ class MainScreenViewModel(
         return true
     }
 
-    fun delEdge(): Boolean{
+    fun delEdge(): Boolean {
         val g = graphViewModel.graph
         val start = g.getVertexByName(startVertex.value ?: return false)
         val end = g.getVertexByName(endVertex.value ?: return false)
@@ -118,28 +118,14 @@ class MainScreenViewModel(
         return true
     }
 
-    fun getVertexs(): Map<Vertex, List<Edge>>{
+    fun getVertexes(): Map<Vertex, List<Edge>> {
         return graphViewModel.graph.getMap()
     }
 
-    fun createGraph(isDirected: Boolean, isWeighted: Boolean){
+    fun createGraph(isDirected: Boolean, isWeighted: Boolean) {
         graphViewModel.graph = GraphImpl(isDirected, isWeighted)
         graphViewModel.updateGraph(graphViewModel.graph)
     }
-
-    fun runNeo4j() = withNeoDB { readFromDB(graphViewModel.isDirected(), graphViewModel.isWeighted()).also { setNewGraph(it) } }
-    fun saveToNeo4j() = withNeoDB {
-        val graph = graphViewModel.graph
-        if (graph.getVertices().isEmpty()) {
-            println("Neo4j Save: graph empty")
-            return@withNeoDB
-        }
-        clearDatabase()
-        writeDB(graph)
-        println("Neo4j: graph saved successfully")
-    }
-
-    fun clearNeo4jDatabase() = withNeoDB { clearDatabase(); println("Neo4j: database cleared") }
 
     fun clearGraph() {
         val g = graphViewModel.graph
@@ -155,7 +141,6 @@ class MainScreenViewModel(
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 
-    // Algorithm triggers
     fun runFordBellman() {
         resetColor()
         _startName.value?.let { start ->
@@ -165,11 +150,25 @@ class MainScreenViewModel(
         }
     }
 
+    fun runDijkstra(){
+        resetColor()
+        _startName.value?.let { start ->
+            _endName.value?.let { end ->
+                graphViewModel.startDijkstra(start, end)
+            }
+        }
+    }
+
     fun runFindBridge() {
         resetColor()
         graphViewModel.startFindBridges()
 //        graphViewModel.updateGraph(graphViewModel.graph)
 //        graphViewModel.updateEdges(_showVerticesLabels, _showEdgesLabels)
+    }
+
+    fun runTarjan(){
+        resetColor()
+        graphViewModel.startTarjan()
     }
 
     // Vertex size binding
@@ -196,21 +195,24 @@ class MainScreenViewModel(
         _endName.value = name
     }
 
-    fun setUri(uri: String){
+    fun setUri(uri: String) {
         _uri.value = uri
     }
-    fun setUsername(user: String){
+
+    fun setUsername(user: String) {
         _user.value = user
 
-    }fun setPassword(pass: String){
+    }
+
+    fun setPassword(pass: String) {
         _pass.value = pass
     }
+
     fun resetColor() {
         graphViewModel.vertices.forEach { it.color = Color.Gray }
         graphViewModel.edges.forEach { it.color = Color.Gray }
     }
 
-    // Neo4j helper
     private fun withNeoDB(action: Neo4j.() -> Unit) {
         val uri = _uri.value;
         val usr = _user.value
@@ -219,6 +221,30 @@ class MainScreenViewModel(
         }
         Neo4j(uri, usr, _pass.value ?: "").action()
     }
+
+    fun runNeo4j() =
+        withNeoDB { }
+
+    fun uploadGraph() {
+        withNeoDB {
+            readFromDB(graphViewModel.isDirected(), graphViewModel.isWeighted()).also { setNewGraph(it) }
+        }
+    }
+
+    fun saveToNeo4j() =
+        withNeoDB {
+            val graph = graphViewModel.graph
+            if (graph.getVertices().isEmpty()) {
+                println("Neo4j Save: graph empty")
+                return@withNeoDB
+            }
+            clearDatabase()
+            writeDB(graph)
+            println("Neo4j: graph saved successfully")
+        }
+
+
+    fun clearNeo4jDatabase() = withNeoDB { clearDatabase(); }
 
     private fun setNewGraph(g: Graph) {
         graphViewModel = GraphViewModel(g, _showVerticesLabels, _showEdgesLabels)
