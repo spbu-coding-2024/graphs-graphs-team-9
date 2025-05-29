@@ -1,6 +1,7 @@
 package view.additionalButtons
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Switch
@@ -16,24 +17,14 @@ import androidx.compose.ui.unit.sp
 import viewModel.screen.MainScreenViewModel
 
 @Composable
-fun switch (
+fun switch(
     viewModel: MainScreenViewModel,
     showLabels: MutableState<Boolean>,
-){
-    Row {
-//        DropdownMenuItem(
-//            modifier = Modifier.fillMaxSize(),
-//            onClick = { showLabels.value = !showLabels.value }
-//        ) {
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .background(Color.Transparent),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Text("Graph", color = Color.White)
-//            }
-//        }
+) {
+    Row(
+        modifier = Modifier.clickable(onClick = { viewModel.showVerticesLabels = !viewModel.showVerticesLabels })
+            .fillMaxWidth()
+    ) {
         Switch(
             checked = viewModel.showVerticesLabels,
             onCheckedChange = { viewModel.showVerticesLabels = it }
