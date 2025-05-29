@@ -18,7 +18,7 @@ import viewModel.toosl.CoolColors
 fun GraphView(
         viewModel: GraphViewModel,
         scale: Float,
-        onVertexDrag: (VertexViewModel, Dp, Dp) -> Unit
+        // onVertexDrag: (VertexViewModel, Dp, Dp) -> Unit
 ) {
     val offset = remember { mutableStateOf(Offset.Zero) }
 
@@ -52,7 +52,7 @@ fun GraphView(
                 VertexView(
                         viewModel = v,
                         modifier = Modifier,
-                        onDragVertex = onVertexDrag
+                        // onDragVertex = onVertexDrag
                 )
             }
         }

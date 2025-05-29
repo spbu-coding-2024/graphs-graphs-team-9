@@ -19,6 +19,7 @@ import view.additionalButtons.VertexSizeSlider
 import view.additionalButtons.algoButton
 import view.additionalButtons.barButton
 import view.additionalButtons.switch
+import androidx.compose.ui.platform.LocalDensity
 import view.additionalScreen.diologistAddEdgeScreen
 import view.additionalScreen.diologistAddVertexScreen
 import view.additionalScreen.diologistDeleteEdgeScreen
@@ -32,10 +33,10 @@ import viewModel.toosl.CoolColors
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
-import model.graph.EmptyGraph
 import model.graph.Graph
 import model.graph.GraphFactory
 import model.graph.Vertex
+import viewModel.screen.layouts.ForceAtlas2
 
 val sampleGraph: Graph = GraphFactory.createDirectedUnweightedGraph().apply {
     addVertex(Vertex(1, "A"))
@@ -56,7 +57,7 @@ val sampleGraph: Graph = GraphFactory.createDirectedUnweightedGraph().apply {
 
 @Composable
 fun MainScreen() {
-    val viewModel = remember { MainScreenViewModel(GraphFactory.createUndirectedUnweightedGraph()) }
+    val viewModel = remember { MainScreenViewModel(GraphFactory.createUndirectedUnweightedGraph(), ForceAtlas2()) }
 //    val viewModel = remember { MainScreenViewModel(sampleGraph) }
 
     println(viewModel.getVertexs())
@@ -129,7 +130,7 @@ fun MainScreen() {
                     VertexSizeSlider(viewModel = viewModel, modifier = Modifier.padding(vertical = 4.dp))
                     DividerG()
                     Button(
-                        onClick = { viewModel.resetGraphView() },
+                        onClick = {  }, //viewModel.resetGraphView()
                         modifier = Modifier.fillMaxWidth()
                     ) { Text(text = "Reset Graph Layout") }
                     DividerG()
@@ -156,6 +157,10 @@ fun MainScreen() {
                     .clipToBounds()
                     .onSizeChanged { newSize ->
                         surfaceSize = newSize
+                        viewModel.updateCanvasSize(
+                                width = newSize.width.toDouble(),
+                                height = newSize.height.toDouble()
+                        )
                     }
                     .scrollable(
                         orientation = Orientation.Vertical,
@@ -168,16 +173,10 @@ fun MainScreen() {
                 val canvasWidthDp = maxWidth
                 val canvasHeightDp = maxHeight
 
-                LaunchedEffect(canvasWidthDp, canvasHeightDp, viewModel.graphViewModel.graph) {
-                    if (canvasWidthDp > 0.dp && canvasHeightDp > 0.dp) {
-                        viewModel.initializeOrUpdatePlacement(canvasWidthDp, canvasHeightDp)
-                    }
-                }
-
                 GraphView(
                     viewModel = viewModel.graphViewModel,
                     scale = scale.value,
-                    onVertexDrag = viewModel::processVertexDrag
+                    // onVertexDrag = viewModel.vertex.dra
                 )
             }
         }

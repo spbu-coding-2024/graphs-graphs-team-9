@@ -10,13 +10,12 @@ import model.graph.*
 import model.io.Neo4j.Neo4j
 import viewModel.graph.GraphViewModel
 import viewModel.graph.VertexViewModel
-import viewModel.screen.layouts.ForceAtlas2
 import viewModel.screen.layouts.RepresentationStrategy
 import kotlin.math.abs
 
 class MainScreenViewModel(
     initialGraph: Graph,
-    private val representationStrategy: RepresentationStrategy = ForceAtlas2(initialGraph)
+    val representationStrategy: RepresentationStrategy
 ) {
     private var _showVerticesLabels = mutableStateOf(false)
     var showVerticesLabels: Boolean
@@ -38,38 +37,20 @@ class MainScreenViewModel(
         _showEdgesLabels
     )
 
-    private var rawVertexPositions: Map<Vertex, Pair<Float, Float>>? = null
-    private var layoutApplied = false
-    private var lastCanvasW: Dp = 0.dp
-    private var lastCanvasH: Dp = 0.dp
-    private var lastGraphHash = graphViewModel.graph.hashCode()
+    private var currentCanvasWidth: Double = 1000.0
+    private var currentCanvasHeight: Double = 800.0
 
     init {
-        lastGraphHash = graphViewModel.graph.hashCode()
+        representationStrategy.layout(800.0, 1000.0, graphViewModel)
     }
 
-    fun initializeOrUpdatePlacement(canvasW: Dp, canvasH: Dp) {
-        val graphChanged = graphViewModel.graph.hashCode() != lastGraphHash
-        val sizeChanged = canvasW != lastCanvasW || canvasH != lastCanvasH
-        lastCanvasW = canvasW; lastCanvasH = canvasH
-
-        if (!layoutApplied || graphChanged) applyLayout(canvasW, canvasH)
-        else if (sizeChanged) reCenter(canvasW, canvasH)
+    fun updateCanvasSize(width: Double, height: Double) {
+        currentCanvasWidth = width
+        currentCanvasHeight = height
+        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
+    
 
-    fun processVertexDrag(vm: VertexViewModel, dx: Dp, dy: Dp) {
-        val diameter = vm.radius * 2
-        vm.x = lastCanvasW.clamp(vm.x + dx, diameter)
-        vm.y = lastCanvasH.clamp(vm.y + dy, diameter)
-    }
-
-    fun resetGraphView() {
-        resetColor()
-        layoutApplied = false
-        rawVertexPositions = null
-        if (lastCanvasW > 0.dp && lastCanvasH > 0.dp)
-            applyLayout(lastCanvasW, lastCanvasH)
-    }
     private var _vertex = mutableStateOf<String?>(null)
     val vertex: State<String?> = _vertex
 
@@ -83,17 +64,14 @@ class MainScreenViewModel(
         map[vertex.value] = i
         graphViewModel.graph.addVertex(Vertex(i++, vertex.value))
         graphViewModel.updateGraph(graphViewModel.graph)
-        lastGraphHash = graphViewModel.graph.hashCode()
-        resetGraphView()
+        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
 
     }
 
     fun delVertex(){
         graphViewModel.graph.removeVertex(graphViewModel.graph.getVertexByName(vertex.value ?: ""))
         graphViewModel.updateGraph(graphViewModel.graph)
-        lastGraphHash = graphViewModel.graph.hashCode()
-        resetGraphView()
-
+        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 
     private var _startVertex = mutableStateOf<String?>(null)
@@ -123,12 +101,8 @@ class MainScreenViewModel(
         val end = g.getVertexByName(endVertex.value ?: return false)
 
         graphViewModel.graph.addEdge(start, end, width.value)
-        lastGraphHash = graphViewModel.graph.hashCode()
         graphViewModel.updateGraph(graphViewModel.graph)
-        if (lastCanvasW > 0.dp && lastCanvasH > 0.dp) {
-            applyLayout(lastCanvasW, lastCanvasH)
-        }
-        resetGraphView()
+        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
 
         return true
     }
@@ -139,12 +113,8 @@ class MainScreenViewModel(
         val end = g.getVertexByName(endVertex.value ?: return false)
 
         graphViewModel.graph.removeEdge(start, end)
-        lastGraphHash = graphViewModel.graph.hashCode()
         graphViewModel.updateGraph(graphViewModel.graph)
-        if (lastCanvasW > 0.dp && lastCanvasH > 0.dp) {
-            applyLayout(lastCanvasW, lastCanvasH)
-        }
-        resetGraphView()
+        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
         return true
     }
 
@@ -180,10 +150,9 @@ class MainScreenViewModel(
             else -> GraphFactory.createUndirectedUnweightedGraph()
         }
         setNewGraph(newG)
-        layoutApplied = true
-        rawVertexPositions = emptyMap()
-        updatePositions(lastCanvasW, lastCanvasH)
+
         graphViewModel.updateGraph(g)
+        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 
     // Algorithm triggers
@@ -239,104 +208,6 @@ class MainScreenViewModel(
         graphViewModel.edges.forEach { it.color = Color.Gray }
     }
 
-    private fun applyLayout(canvasW: Dp, canvasH: Dp) {
-        rawVertexPositions = if (graphViewModel.graph.getVertices().isEmpty()) emptyMap()
-        else representationStrategy.layout(
-            graphViewModel.graph
-        )
-        layoutApplied = true
-        lastGraphHash = graphViewModel.graph.hashCode()
-        updatePositions(canvasW, canvasH)
-    }
-
-    private fun updatePositions(canvasW: Dp, canvasH: Dp) {
-        rawVertexPositions
-            ?.takeIf { it.isNotEmpty() }
-            ?.let { positions -> applyScaled(positions, canvasW, canvasH) }
-            ?: centerAll(canvasW, canvasH)
-    }
-
-    private fun computeScaleOffset(
-        raw: Map<Vertex, Pair<Float, Float>>, canvasW: Dp, canvasH: Dp,
-        padding: Dp = 50.dp
-    ): Triple<Float, Dp, Dp> {
-        var minX = Float.MAX_VALUE;
-        var maxX = Float.MIN_VALUE
-        var minY = Float.MAX_VALUE;
-        var maxY = Float.MIN_VALUE
-        raw.values.forEach { (x, y) ->
-            minX = minOf(minX, x); maxX = maxOf(maxX, x)
-            minY = minOf(minY, y); maxY = maxOf(maxY, y)
-        }
-        if (abs(maxX - minX) < 0.001f && abs(maxY - minY) < 0.001f) {
-            val cx = canvasW / 2f;
-            val cy = canvasH / 2f
-            return Triple(1f, cx - padding, cy - padding)
-        }
-
-        val rawW = maxX - minX;
-        val rawH = maxY - minY
-        val tgtW = (canvasW - padding * 2).coerceAtLeast(1.dp).value
-        val tgtH = (canvasH - padding * 2).coerceAtLeast(1.dp).value
-        val scale = maxOf(0.01f, minOf(tgtW / rawW, tgtH / rawH))
-        val scaledW = (rawW * scale).dp;
-        val scaledH = (rawH * scale).dp
-        val offX = padding + (canvasW - padding * 2 - scaledW) / 2 - (minX * scale).dp
-        val offY = padding + (canvasH - padding * 2 - scaledH) / 2 - (minY * scale).dp
-        return Triple(scale, offX, offY)
-    }
-
-    private fun applyScaled(
-        raw: Map<Vertex, Pair<Float, Float>>, canvasW: Dp, canvasH: Dp
-    ) {
-        val (scale, offX, offY) = computeScaleOffset(raw, canvasW, canvasH)
-        graphViewModel.vertices.forEach { vm ->
-            raw[vm.label]?.let { (x, y) ->
-                vm.x = (x * scale).dp + offX
-                vm.y = (y * scale).dp + offY
-            } ?: centerAll(canvasW, canvasH)
-        }
-    }
-
-    private fun reCenter(canvasW: Dp, canvasH: Dp) {
-        val verts = graphViewModel.vertices
-        if (verts.isEmpty()) return
-        var minX = Float.MAX_VALUE.dp;
-        var maxX = Float.MIN_VALUE.dp
-        var minY = Float.MAX_VALUE.dp;
-        var maxY = Float.MIN_VALUE.dp
-        verts.forEach { v ->
-            minX = minOf(minX, v.x)
-            maxX = maxOf(maxX, v.x + v.radius * 2)
-            minY = minOf(minY, v.y)
-            maxY = maxOf(maxY, v.y + v.radius * 2)
-        }
-        if (minX > maxX || minY > maxY) {
-            centerAll(canvasW, canvasH); return
-        }
-        val cx = (minX + maxX) / 2;
-        val cy = (minY + maxY) / 2
-        val shiftX = canvasW / 2f - cx;
-        val shiftY = canvasH / 2f - cy
-        verts.forEach { vm ->
-            vm.x = canvasW.clamp(vm.x + shiftX, vm.radius * 2)
-            vm.y = canvasH.clamp(vm.y + shiftY, vm.radius * 2)
-        }
-    }
-
-    private fun centerAll(canvasW: Dp, canvasH: Dp) {
-        val cx = canvasW / 2f;
-        val cy = canvasH / 2f
-        graphViewModel.vertices.forEach { v ->
-            v.x = cx - v.radius
-            v.y = cy - v.radius
-        }
-    }
-
-    // clamp a Dp position within [0, limit-diameter]
-    private fun Dp.clamp(pos: Dp, diameter: Dp): Dp = pos.coerceAtLeast(0.dp)
-        .coerceAtMost(this - diameter)
-
     // Neo4j helper
     private fun withNeoDB(action: Neo4j.() -> Unit) {
         val uri = _uri.value;
@@ -349,8 +220,6 @@ class MainScreenViewModel(
 
     private fun setNewGraph(g: Graph) {
         graphViewModel = GraphViewModel(g, _showVerticesLabels, _showEdgesLabels)
-        layoutApplied = false; rawVertexPositions = null
-        if (lastCanvasW > 0.dp && lastCanvasH > 0.dp)
-            applyLayout(lastCanvasW, lastCanvasH)
+        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 }
