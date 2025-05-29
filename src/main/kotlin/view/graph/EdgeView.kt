@@ -31,14 +31,14 @@ fun EdgeView(
         drawLine(
             start = start,
             end = end,
-            color = Color.Black
+            color = viewModel.color
         )
         if (isDirect) {
             drawArrow(
                 start = start,
                 end = end,
                 arrowSize = 20f,
-                color = Color.Black,
+                color = viewModel.color,
                 vertexSize
             )
         }
