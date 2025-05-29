@@ -30,18 +30,23 @@ fun diologistDijkstraScreen(
         AlertDialog(
             modifier = Modifier.padding(5.dp),
             onDismissRequest = { showDijkstraScreen.value = false },
-            title = { Text("Ford Bellman") },
+            title = { Text("Dijkstra") },
             text = {
                 Column {
                     OutlinedTextField(
                         value = startName.value ?: "",
-                        onValueChange = { startName.value = it },
+                        onValueChange = {
+                            viewModel.setStart(it)
+                            startName.value = it },
                         label = { Text("Start vertex") },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
                     OutlinedTextField(
                         value = endName.value ?: "",
-                        onValueChange = { endName.value = it },
+                        onValueChange = {
+                            viewModel.setEnd(it)
+                            endName.value = it
+                                        },
                         label = { Text("End Vertex") },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -50,7 +55,7 @@ fun diologistDijkstraScreen(
             confirmButton = {
                 Button(
                     onClick = {
-//                        viewModel::runFordBellman
+                        viewModel.runDijkstra()
                         showDijkstraScreen.value = false
                     }
                 ) {
