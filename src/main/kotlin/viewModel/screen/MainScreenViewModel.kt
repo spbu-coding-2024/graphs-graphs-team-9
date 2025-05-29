@@ -36,8 +36,8 @@ class MainScreenViewModel(
 
     var graphViewModel = GraphViewModel(graph, _showVerticesLabels, _showEdgesLabels)
 
-    private var currentCanvasWidth: Double = 1000.0
-    private var currentCanvasHeight: Double = 800.0
+    private var currentCanvasWidth: Double = 800.0
+    private var currentCanvasHeight: Double = 600.0
 
     init {
         representationStrategy.layout(800.0, 1000.0, graphViewModel)
