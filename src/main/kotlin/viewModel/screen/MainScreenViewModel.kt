@@ -62,17 +62,15 @@ class MainScreenViewModel(
         _vertex.value = name
     }
 
-    var i = 0
     val map: MutableMap<String?, Int> = mutableMapOf()
     fun addVertex() {
-        map[vertex.value] = i
-        graphViewModel.graph.addVertex(Vertex(i++, vertex.value))
+        graphViewModel.graph.addVertex(vertex.value ?: "")
         graphViewModel.refreshGraph()
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 
     fun delVertex() {
-        graphViewModel.graph.removeVertex(graphViewModel.graph.getVertexByName(vertex.value ?: ""))
+        graphViewModel.graph.removeVertex(graphViewModel.graph.getVertexByName(_vertex.value ?: "").toString())
         graphViewModel.refreshGraph()
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
@@ -103,7 +101,7 @@ class MainScreenViewModel(
         val start = g.getVertexByName(startVertex.value ?: return false)
         val end = g.getVertexByName(endVertex.value ?: return false)
 
-        graphViewModel.graph.addEdge(start, end, width.value)
+        graphViewModel.graph.addEdge(startVertex.value.toString(), endVertex.value.toString(), width.value)
         graphViewModel.refreshGraph()
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
 
@@ -115,7 +113,7 @@ class MainScreenViewModel(
         val start = g.getVertexByName(startVertex.value ?: return false)
         val end = g.getVertexByName(endVertex.value ?: return false)
 
-        graphViewModel.graph.removeEdge(start, end)
+        graphViewModel.graph.removeEdge(startVertex.value.toString(), endVertex.value.toString())
         graphViewModel.refreshGraph()
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
         return true

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.RepeatedTest
 import kotlin.random.Random
 import kotlin.test.assertEquals
@@ -14,10 +13,10 @@ import kotlin.test.assertTrue
 
 class GraphImplTestGroup {
 
-    private val vA = Vertex(1, "A")
-    private val vB = Vertex(2, "B")
-    private val vC = Vertex(3, "C")
-    private val vD = Vertex(4, "D")
+    private val vA = "A"
+    private val vB = "B"
+    private val vC = "C"
+    private val vD = "D"
 
     @Nested
     @DisplayName("Тесты для Неориентированного Невзвешенного Графа")
@@ -66,8 +65,8 @@ class GraphImplTestGroup {
 
             val vertices = graph.getVertices()
             assertEquals(2, vertices.size)
-            assertTrue(vertices.contains(vA))
-            assertTrue(vertices.contains(vB))
+            assertTrue(vertices.contains(graph.getVertexByName(vA)))
+            assertTrue(vertices.contains(graph.getVertexByName(vB)))
         }
 
         @Test
@@ -554,16 +553,14 @@ class GraphImplTestGroup {
     @Nested
     inner class GraphPropertyBasedTestGroup {
 
-        // Генератор случайных вершин с уникальными идентификаторами
-        private fun generateRandomVertex(): Vertex {
-            val id = Random.nextInt(1, 1000)
-            val name = ('A'..'Z').random().toString()
-            return Vertex(id, name)
+        // Генератор случайных вершин (строк)
+        private fun generateRandomVertex(): String {
+            return ('A'..'Z').random().toString() + Random.nextInt(1, 1000)
         }
 
         // Генератор случайного списка вершин
-        private fun generateRandomVertices(count: Int): List<Vertex> {
-            val vertices = mutableListOf<Vertex>()
+        private fun generateRandomVertices(count: Int): List<String> {
+            val vertices = mutableListOf<String>()
             repeat(count) {
                 vertices.add(generateRandomVertex())
             }
@@ -631,7 +628,7 @@ class GraphImplTestGroup {
                 var v2 = generateRandomVertex()
 
                 // Убедимся, что вершины разные
-                while (v1.id == v2.id) {
+                while (v1 == v2) {
                     v2 = generateRandomVertex()
                 }
 
@@ -661,7 +658,7 @@ class GraphImplTestGroup {
                 var v2 = generateRandomVertex()
 
                 // Убедимся, что вершины разные
-                while (v1.id == v2.id) {
+                while (v1 == v2) {
                     v2 = generateRandomVertex()
                 }
 
@@ -686,7 +683,7 @@ class GraphImplTestGroup {
                 vertices.forEach { graph.addVertex(it) }
 
                 // Создаем случайные ребра между вершинами
-                val edgePairs = mutableSetOf<Pair<Vertex, Vertex>>()
+                val edgePairs = mutableSetOf<Pair<String, String>>()
                 vertices.forEach { source ->
                     vertices.filter { it != source }.forEach { dest ->
                         if (Random.nextBoolean()) {
@@ -719,7 +716,7 @@ class GraphImplTestGroup {
                 var v2 = generateRandomVertex()
 
                 // Убедимся, что вершины разные
-                while (v1.id == v2.id) {
+                while (v1 == v2) {
                     v2 = generateRandomVertex()
                 }
 
@@ -742,7 +739,7 @@ class GraphImplTestGroup {
                 var v2 = generateRandomVertex()
 
                 // Убедимся, что вершины разные
-                while (v1.id == v2.id) {
+                while (v1 == v2) {
                     v2 = generateRandomVertex()
                 }
 
@@ -800,10 +797,10 @@ class GraphImplTestGroup {
             fun removingAllVerticesResultsInEmptyGraph() {
                 val vertices = generateRandomVertices(Random.nextInt(2, 8))
                 val graphs = listOf(
-                        GraphFactory.createUndirectedUnweightedGraph(),
-                        GraphFactory.createDirectedUnweightedGraph(),
-                        GraphFactory.createUndirectedWeightedGraph(),
-                        GraphFactory.createDirectedWeightedGraph()
+                    GraphFactory.createUndirectedUnweightedGraph(),
+                    GraphFactory.createDirectedUnweightedGraph(),
+                    GraphFactory.createUndirectedWeightedGraph(),
+                    GraphFactory.createDirectedWeightedGraph()
                 )
 
                 graphs.forEach { graph ->
@@ -849,7 +846,7 @@ class GraphImplTestGroup {
                 }
 
                 // Используем итератор для обхода графа
-                val visitedVertices = mutableSetOf<Vertex>()
+                val visitedVertices = mutableSetOf<String>()
                 val iterator = graph.iterator()
 
                 while (iterator.hasNext()) {
@@ -885,6 +882,15 @@ class GraphImplTestGroup {
                 // Проверяем, что количество ребер равно N-1
                 assertEquals(n - 1, graph.getEdgeCount())
             }
+
+            @RepeatedTest(10)
+            @DisplayName("Ребра с одинаковыми конечными вершинами считаются одним ребром")
+            fun duplicateEdgesAreCountedAsOne() {
+                val graph = GraphFactory.createUndirectedUnweightedGraph()
+                val v1 = generateRandomVertex()
+                val v2 = generateRandomVertex()
+
+                graph.addVertex
 
             @RepeatedTest(10)
             @DisplayName("Ребра с одинаковыми конечными вершинами считаются одним ребром")

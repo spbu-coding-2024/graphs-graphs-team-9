@@ -39,20 +39,20 @@ import model.graph.Vertex
 import viewModel.screen.layouts.ForceAtlas2
 
 val sampleGraph: Graph = GraphFactory.createDirectedUnweightedGraph().apply {
-    addVertex(Vertex(1, "A"))
-    addVertex(Vertex(2, "B"))
-    addVertex(Vertex(3, "C"))
-    addVertex(Vertex(4, "D"))
-    addVertex(Vertex(5, "E"))
-    addVertex(Vertex(6, "F"))
-    addVertex(Vertex(7, "G"))
+    addVertex("A")
+    addVertex("B")
+    addVertex("C")
+    addVertex("D")
+    addVertex("E")
+    addVertex("F")
+    addVertex("G")
 
-    addEdge(Vertex(1, "A"), Vertex(2, "B"), )
-    addEdge(Vertex(7, "G"), Vertex(3, "C"), )
-    addEdge(Vertex(2, "B"), Vertex(3, "C"), )
-    addEdge(Vertex(1, "A"), Vertex(5, "E"), )
-    addEdge(Vertex(1, "A"), Vertex(6, "F"), )
-    addEdge(Vertex(6, "F"), Vertex(7, "G"), )
+    addEdge("A", "B")
+    addEdge("G", "C")
+    addEdge("B", "C")
+    addEdge("A", "E")
+    addEdge("A", "F")
+    addEdge("F", "G")
 //    addVertex(Vertex(1, "A"))
 //    addVertex(Vertex(2, "B"))
 //    addVertex(Vertex(3, "C"))
@@ -139,7 +139,7 @@ fun MainScreen() {
                     VertexSizeSlider(viewModel = viewModel, modifier = Modifier.padding(vertical = 4.dp))
                     DividerG()
                     Button(
-                        onClick = {  }, //viewModel.resetGraphView()
+                        onClick = { }, //viewModel.resetGraphView()
                         modifier = Modifier.fillMaxWidth()
                     ) { Text(text = "Reset Graph Layout") }
                     DividerG()
@@ -167,8 +167,8 @@ fun MainScreen() {
                     .onSizeChanged { newSize ->
                         surfaceSize = newSize
                         viewModel.updateCanvasSize(
-                                width = newSize.width.toDouble(),
-                                height = newSize.height.toDouble()
+                            width = newSize.width.toDouble(),
+                            height = newSize.height.toDouble()
                         )
                     }
                     .scrollable(

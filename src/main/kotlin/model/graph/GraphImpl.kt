@@ -4,7 +4,7 @@ class GraphImpl(
     private val isDirected: Boolean = false,
     private val isWeighted: Boolean = false
 ) : Graph {
-
+    private var id = 1
     private val adjList: MutableMap<Vertex, MutableSet<Edge>> = mutableMapOf()
 
     override fun getMap(): Map<Vertex, List<Edge>> {
@@ -12,27 +12,31 @@ class GraphImpl(
         return map
     }
 
-    override fun addVertex(vertex: Vertex) {
-        if (!adjList.containsKey(vertex)) {
-            adjList[vertex] = mutableSetOf()
+    override fun addVertex(vertex: String) {
+        val v = getVertexByName(vertex)
+        if (!adjList.containsKey(Vertex(v.id, vertex))) {
+            adjList[Vertex(id++, vertex)] = mutableSetOf()
         }
     }
 
-    override fun removeVertex(vertex: Vertex) {
+    override fun removeVertex(vertex: String) {
+        val vertex = getVertexByName(vertex)
         adjList.remove(vertex)
         adjList.values.forEach { edges ->
             edges.removeAll { it.destination == vertex }
         }
     }
 
-    override fun addEdge(from: Vertex, to: Vertex, weight: Double?) {
-        if (!containsVertex(from) || !containsVertex(to)) {
+    override fun addEdge(fromName: String, toName: String, weight: Double?) {
+        val from = getVertexByName(fromName)
+        val to = getVertexByName(toName)
+        if (!containsVertex(fromName) || !containsVertex(toName)) {
             return
         }
 
         val actualWeight = if (isWeighted) weight else null
 
-        removeEdge(from, to)
+        removeEdge(fromName, toName)
 
         val edge = Edge(from, to, actualWeight)
         adjList.getOrPut(from) { mutableSetOf() }.add(edge)
@@ -43,7 +47,9 @@ class GraphImpl(
         }
     }
 
-    override fun removeEdge(from: Vertex, to: Vertex) {
+    override fun removeEdge(fromName: String, toName: String) {
+        val from = getVertexByName(fromName)
+        val to = getVertexByName(toName)
         adjList[from]?.removeAll { it.destination == to }
         if (!isDirected) {
             adjList[to]?.removeAll { it.destination == from }
@@ -54,8 +60,8 @@ class GraphImpl(
         return adjList[vertex]?.map { it.destination } ?: emptyList()
     }
 
-    override fun containsVertex(vertex: Vertex): Boolean {
-        return adjList.containsKey(vertex)
+    override fun containsVertex(vertex: String): Boolean {
+        return adjList.containsKey(getVertexByName(vertex))
     }
 
     override fun containsEdge(from: Vertex, to: Vertex): Boolean {
@@ -125,7 +131,7 @@ class GraphImpl(
     // Пофиксить
     override fun getVertexByName(name: String): Vertex {
         getVertices().forEach { i -> if (i.name == name) return i }
-        return Vertex(-1)
+        return Vertex(-1, "")
     }
 
     inner class Iterate : Iterator<Pair<Vertex, MutableSet<Edge>>> {
