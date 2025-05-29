@@ -1,15 +1,10 @@
 package model.io
 
-import model.algorithms.FindBridges
 import model.graph.Graph
 import model.graph.GraphFactory
-import model.graph.GraphImpl
-import model.graph.Vertex
 import model.io.Neo4j.Neo4j
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import org.neo4j.driver.exceptions.ClientException
 import kotlin.test.*
 
 @Tag("Wrong")
@@ -27,7 +22,7 @@ class Neo4jTest {
         graphDU = GraphFactory.createDirectedUnweightedGraph()
         graphUW = GraphFactory.createUndirectedWeightedGraph()
         graphUU = GraphFactory.createUndirectedUnweightedGraph()
-        neo4j = Neo4j("bolt://localhost:7687", "TestBD", "81726354")
+        neo4j = Neo4j("neo4j+s://fa95dca0.databases.neo4j.io", "neo4j", "stSmA0d-7tSoJfZtNt2Pkn02g2e2zNevvj7PuLE7X4M")
         neo4j.clearDatabase()
     }
 
@@ -108,8 +103,8 @@ class Neo4jTest {
 // добавить тесты для ошибок
 
     private fun createGraphDU() {
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
+        val a = "A"
+        val b = "B"
         graphDU.apply {
             addVertex(a)
             addVertex(b)
@@ -118,8 +113,8 @@ class Neo4jTest {
     }
 
     private fun createGraphDW() {
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
+        val a = "A"
+        val b = "B"
         graphDW.apply {
             addVertex(a)
             addVertex(b)
@@ -128,8 +123,8 @@ class Neo4jTest {
     }
 
     private fun createGraphUW() {
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
+        val a = "A"
+        val b = "B"
         graphUW.apply {
             addVertex(a)
             addVertex(b)
@@ -138,8 +133,8 @@ class Neo4jTest {
     }
 
     private fun createGraphUU() {
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
+        val a = "A"
+        val b = "B"
         graphUU.apply {
             addVertex(a)
             addVertex(b)

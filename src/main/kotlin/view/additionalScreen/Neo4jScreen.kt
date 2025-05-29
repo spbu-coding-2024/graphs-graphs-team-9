@@ -79,9 +79,14 @@ fun diologistNeo4j(
             confirmButton = {
                 Button(
                     onClick = {
-                        viewModel.runNeo4j()
-                        showSaveClearButton.value = true
-                        showNeo4j.value = false
+                        try {
+                            viewModel.runNeo4j()
+                            showSaveClearButton.value = true
+                            showNeo4j.value = false
+                        } catch (e: Exception) {
+                            showSaveClearButton.value = false
+                            viewModel.handleError(e)
+                        }
                     }
                 ) {
                     Text("Connect")

@@ -38,7 +38,7 @@ import model.graph.GraphFactory
 import model.graph.Vertex
 import viewModel.screen.layouts.ForceAtlas2
 
-val sampleGraph: Graph = GraphFactory.createDirectedUnweightedGraph().apply {
+val sampleGraph: Graph = GraphFactory.createDirectedWeightedGraph().apply {
     addVertex("A")
     addVertex("B")
     addVertex("C")
@@ -47,12 +47,12 @@ val sampleGraph: Graph = GraphFactory.createDirectedUnweightedGraph().apply {
     addVertex("F")
     addVertex("G")
 
-    addEdge("A", "B")
-    addEdge("G", "C")
-    addEdge("B", "C")
-    addEdge("A", "E")
-    addEdge("A", "F")
-    addEdge("F", "G")
+    addEdge("A", "B", 1.1)
+    addEdge("G", "C", 32.3)
+    addEdge("B", "C", 44.0)
+    addEdge("A", "E", 32.1)
+    addEdge("A", "F",.3)
+    addEdge("F", "G", 3.2)
 //    addVertex(Vertex(1, "A"))
 //    addVertex(Vertex(2, "B"))
 //    addVertex(Vertex(3, "C"))
@@ -139,7 +139,7 @@ fun MainScreen() {
                     VertexSizeSlider(viewModel = viewModel, modifier = Modifier.padding(vertical = 4.dp))
                     DividerG()
                     Button(
-                        onClick = { }, //viewModel.resetGraphView()
+                        onClick = { viewModel.resetGraphView() }, //viewModel.resetGraphView()
                         modifier = Modifier.fillMaxWidth()
                     ) { Text(text = "Reset Graph Layout") }
                     DividerG()
@@ -184,6 +184,7 @@ fun MainScreen() {
         }
     }
     diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel, viewModel)
+    ErrorDialog(viewModel.showErrorDialog.value, viewModel.errorMessage.value, { viewModel.clearError() })
 }
 
 @Composable
@@ -193,12 +194,22 @@ fun DividerG() {
         modifier = Modifier.fillMaxWidth().height(1.dp)
     )
 }
-
-//@Composable
-//fun GraphViewWrapper(viewModel: MainScreenViewModel, scale: Float) {
-//    val graphViewState = remember { viewModel.graphViewModel }
-//    GraphView(
-//        viewModel = graphViewState,
-//        scale = scale
-//    )
-//}
+@Composable
+fun ErrorDialog(
+    showDialog: Boolean,
+    message: String?,
+    onDismiss: () -> Unit
+) {
+    if (showDialog && message != null) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("Error") },
+            text = { Text(message) },
+            confirmButton = {
+                Button(onClick = onDismiss) {
+                    Text("Ok")
+                }
+            }
+        )
+    }
+}

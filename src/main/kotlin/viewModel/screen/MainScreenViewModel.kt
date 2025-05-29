@@ -53,7 +53,7 @@ class MainScreenViewModel(
         currentCanvasHeight = height
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
-    
+
 
     private var _vertex = mutableStateOf<String?>(null)
     val vertex: State<String?> = _vertex
@@ -119,11 +119,11 @@ class MainScreenViewModel(
         return true
     }
 
-    fun getVertexes(): Map<Vertex, List<Edge>>{
+    fun getVertexes(): Map<Vertex, List<Edge>> {
         return graphViewModel.graph.getMap()
     }
 
-    fun createGraph(isDirected: Boolean, isWeighted: Boolean){
+    fun createGraph(isDirected: Boolean, isWeighted: Boolean) {
         graphViewModel.graph = GraphImpl(isDirected, isWeighted)
         graphViewModel.refreshGraph()
     }
@@ -151,7 +151,7 @@ class MainScreenViewModel(
         }
     }
 
-    fun runDijkstra(){
+    fun runDijkstra() {
         resetColor()
         _startName.value?.let { start ->
             _endName.value?.let { end ->
@@ -167,7 +167,7 @@ class MainScreenViewModel(
 //        graphViewModel.updateEdges(_showVerticesLabels, _showEdgesLabels)
     }
 
-    fun runTarjan(){
+    fun runTarjan() {
         resetColor()
         graphViewModel.startTarjan()
     }
@@ -176,7 +176,23 @@ class MainScreenViewModel(
     val vertexSize: State<Float> get() = graphViewModel.vertexSize
     fun updateVertexSize(v: Float) = graphViewModel.updateVertexSize(v)
 
-    // Credentials/state
+
+    private var _errorMessage = mutableStateOf<String?>(null)
+    val errorMessage: State<String?> = _errorMessage
+
+    private var _showErrorDialog = mutableStateOf(false)
+    val showErrorDialog: State<Boolean> = _showErrorDialog
+
+    fun clearError() {
+        _errorMessage.value = null
+        _showErrorDialog.value = false
+    }
+
+    fun handleError(error: Throwable) {
+        _errorMessage.value = error.message ?: "Exception"
+        _showErrorDialog.value = true
+    }
+
     private var _startName = mutableStateOf<String?>(null)
     val startName: State<String?> = _startName
     private var _endName = mutableStateOf<String?>(null)
@@ -214,7 +230,6 @@ class MainScreenViewModel(
         graphViewModel.edges.forEach { it.color = Color.Gray }
     }
 
-    // Neo4j helper
     private fun withNeoDB(action: Neo4j.() -> Unit) {
         val uri = _uri.value;
         val usr = _user.value
@@ -228,25 +243,42 @@ class MainScreenViewModel(
         withNeoDB { }
 
     fun uploadGraph() {
-        withNeoDB {
-            readFromDB(graphViewModel.isDirected(), graphViewModel.isWeighted()).also { setNewGraph(it) }
+        try {
+            withNeoDB {
+                readFromDB(graphViewModel.isDirected(), graphViewModel.isWeighted()).also { setNewGraph(it) }
+            }
+        } catch (e: Exception) {
+            handleError(e)
+        }
+        graphViewModel.refreshGraph()
+        resetGraphView()
+    }
+
+    fun saveToNeo4j() {
+        try {
+            withNeoDB {
+                val graph = graphViewModel.graph
+                if (graph.getVertices().isEmpty()) {
+                    throw Exception("Graph is empty")
+                }
+                clearDatabase()
+                writeDB(graph)
+            }
+        } catch (e: Exception) {
+            handleError(e)
         }
     }
 
-    fun saveToNeo4j() =
-        withNeoDB {
-            val graph = graphViewModel.graph
-            if (graph.getVertices().isEmpty()) {
-                println("Neo4j Save: graph empty")
-                return@withNeoDB
+
+    fun clearNeo4jDatabase() {
+        try {
+            withNeoDB {
+                clearDatabase()
             }
-            clearDatabase()
-            writeDB(graph)
-            println("Neo4j: graph saved successfully")
+        } catch (e: Exception) {
+            handleError(e)
         }
-
-
-    fun clearNeo4jDatabase() = withNeoDB { clearDatabase(); }
+    }
 
     private fun setNewGraph(g: Graph) {
         graphViewModel = GraphViewModel(g, _showVerticesLabels, _showEdgesLabels)
