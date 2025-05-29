@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role.Companion.Switch
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import viewModel.screen.MainScreenViewModel
@@ -30,9 +31,10 @@ fun switch(
             onCheckedChange = { viewModel.showVerticesLabels = it }
         )
         Text(
-            text = "Vertexes and edges",
-            fontSize = 14.sp,
-            modifier = Modifier.padding(8.dp)
+            text = if (viewModel.graphViewModel.isWeighted())  "Vertexes and edges" else "Vertexes",
+            fontSize = if (viewModel.graphViewModel.isWeighted()) 14.sp else 18.sp,
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
+//            textAlign = TextAlign.Center
         )
     }
 }
