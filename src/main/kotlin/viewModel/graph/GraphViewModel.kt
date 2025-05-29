@@ -52,8 +52,8 @@ class GraphViewModel(
     }
     fun startFindBridges(){
         val bridges = FindBridges(graph).findBridges()
-        for (ed in bridges){
-            _edges[graph.getEdgeByVertex(ed.first, ed.second)]?.color = Color.LightGray
+        bridges.forEach{ edge ->
+            _edges[graph.getEdgeByVertex(edge.first, edge.second)]?.color = Color.Red
         }
     }
     fun startNeo4j(uri: String, username: String, password: String){
@@ -61,7 +61,7 @@ class GraphViewModel(
     }
 
     fun clearGraph(){
-        graph = GraphImpl(isWeighted =  graph.isWeighted(), isDirected = graph.isDirected())
+        graph = GraphImpl(isWeighted = graph.isWeighted(), isDirected = graph.isDirected())
     }
 
     private val _vertexSize = mutableStateOf(25f)
@@ -107,11 +107,7 @@ class GraphViewModel(
 
     fun updateGraph(newGraph: Graph) {
         graph = newGraph
-        _vertices = newGraph.getVertices().associateWith { v ->
-            _vertices[v]?.let { existing ->
-                VertexViewModel(existing.x, existing.y, existing.color, v, showVerticesLabels1)
-            } ?: VertexViewModel(0.dp, 0.dp, Color.Gray, v, showVerticesLabels1)
-        }
+        _vertices = updateVertices(showVerticesLabels1)
         _edges = updateEdges(showVerticesLabels1, showEdgesLabels1)
     }
 }

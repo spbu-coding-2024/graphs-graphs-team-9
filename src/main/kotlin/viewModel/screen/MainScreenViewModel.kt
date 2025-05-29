@@ -168,6 +168,8 @@ class MainScreenViewModel(
     fun runFindBridge() {
         resetColor()
         graphViewModel.startFindBridges()
+//        graphViewModel.updateGraph(graphViewModel.graph)
+//        graphViewModel.updateEdges(_showVerticesLabels, _showEdgesLabels)
     }
 
     // Vertex size binding
