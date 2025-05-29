@@ -2,6 +2,7 @@ package viewModel.graph
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import model.graph.Vertex
@@ -48,4 +49,9 @@ class VertexViewModel (
 
     val labelVisible
         get() = _labelVisible.value
+
+    fun onDrag(offset: Offset) {
+        _x.value += offset.x.dp
+        _y.value += offset.y.dp
+    }
 }
