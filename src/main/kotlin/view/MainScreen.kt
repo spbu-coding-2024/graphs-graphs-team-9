@@ -164,13 +164,6 @@ fun MainScreen() {
                     .weight(1f)
                     .background(CoolColors.backgroundBasic)
                     .clipToBounds()
-                    .onSizeChanged { newSize ->
-                        surfaceSize = newSize
-                        viewModel.updateCanvasSize(
-                            width = newSize.width.toDouble(),
-                            height = newSize.height.toDouble()
-                        )
-                    }
                     .scrollable(
                         orientation = Orientation.Vertical,
                         state = rememberScrollableState { delta ->
