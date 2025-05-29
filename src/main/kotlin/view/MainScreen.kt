@@ -47,20 +47,33 @@ val sampleGraph: Graph = GraphFactory.createDirectedUnweightedGraph().apply {
     addVertex(Vertex(6, "F"))
     addVertex(Vertex(7, "G"))
 
-    addEdge(Vertex(1, "A"), Vertex(2, "B"))
-    addEdge(Vertex(1, "A"), Vertex(3, "C"))
-    addEdge(Vertex(1, "A"), Vertex(4, "D"))
-    addEdge(Vertex(1, "A"), Vertex(5, "E"))
-    addEdge(Vertex(1, "A"), Vertex(6, "F"))
-    addEdge(Vertex(1, "A"), Vertex(7, "G"))
+    addEdge(Vertex(1, "A"), Vertex(2, "B"), )
+    addEdge(Vertex(7, "G"), Vertex(3, "C"), )
+    addEdge(Vertex(2, "B"), Vertex(3, "C"), )
+    addEdge(Vertex(1, "A"), Vertex(5, "E"), )
+    addEdge(Vertex(1, "A"), Vertex(6, "F"), )
+    addEdge(Vertex(6, "F"), Vertex(7, "G"), )
+//    addVertex(Vertex(1, "A"))
+//    addVertex(Vertex(2, "B"))
+//    addVertex(Vertex(3, "C"))
+//    addVertex(Vertex(4, "D"))
+//    addVertex(Vertex(5, "E"))
+//    addVertex(Vertex(6, "F"))
+//    addVertex(Vertex(7, "G"))
+//
+//    addEdge(Vertex(1, "A"), Vertex(2, "B"), 1.2)
+//    addEdge(Vertex(1, "A"), Vertex(3, "C"), 3.2)
+//    addEdge(Vertex(1, "A"), Vertex(4, "D"), 3.4)
+//    addEdge(Vertex(1, "A"), Vertex(5, "E"), 5.2)
+//    addEdge(Vertex(1, "A"), Vertex(6, "F"), 43.1)
+//    addEdge(Vertex(1, "A"), Vertex(7, "G"), .43)
 }
 
 @Composable
 fun MainScreen() {
-    val viewModel = remember { MainScreenViewModel(GraphFactory.createUndirectedUnweightedGraph(), ForceAtlas2()) }
+    val viewModel = remember { MainScreenViewModel(sampleGraph, ForceAtlas2()) }
 //    val viewModel = remember { MainScreenViewModel(sampleGraph) }
 
-    println(viewModel.getVertexs())
 
     val showGraphPanel = remember { mutableStateOf(false) }
     val showAlgoButtons = remember { mutableStateOf(false) }
@@ -71,10 +84,6 @@ fun MainScreen() {
     val showNeo4jDialog = remember { mutableStateOf(false) }
     val showNeo4jSaveClearButtonsPanel = remember { mutableStateOf(false) }
     val showSQLiteSaveClearButtonsPanel = remember { mutableStateOf(false) }
-
-    val uri = remember { viewModel.uri }
-    val username = remember { viewModel.username }
-    val password = remember { viewModel.password }
 
 //    DBButtons(
 //        showNeo4jSaveClearButtonsPanel,
@@ -110,8 +119,8 @@ fun MainScreen() {
                     Button(
                         onClick = {
                             showUploadSaveButtons.value = !showUploadSaveButtons.value
-                            showSQLiteSaveClearButtonsPanel.value = false
-                            showNeo4jSaveClearButtonsPanel.value = false
+//                            showSQLiteSaveClearButtonsPanel.value = false
+//                            showNeo4jSaveClearButtonsPanel.value = false
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) { Text("Upload/Save") }
@@ -181,7 +190,7 @@ fun MainScreen() {
             }
         }
     }
-    diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel, viewModel, viewModel.uri, viewModel.username, viewModel.password)
+    diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel, viewModel)
 }
 
 @Composable
@@ -191,3 +200,12 @@ fun DividerG() {
         modifier = Modifier.fillMaxWidth().height(1.dp)
     )
 }
+
+//@Composable
+//fun GraphViewWrapper(viewModel: MainScreenViewModel, scale: Float) {
+//    val graphViewState = remember { viewModel.graphViewModel }
+//    GraphView(
+//        viewModel = graphViewState,
+//        scale = scale
+//    )
+//}

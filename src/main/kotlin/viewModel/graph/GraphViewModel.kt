@@ -4,13 +4,16 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import model.algorithms.DijkstraAlgorithm
 import model.algorithms.FindBridges
 import model.algorithms.FordBellman
+import model.algorithms.TarjanAlgorithm
 import model.graph.Edge
 import model.graph.Graph
 import model.graph.GraphImpl
 import model.graph.Vertex
 import model.io.Neo4j.Neo4j
+import kotlin.random.Random
 
 
 class GraphViewModel(
@@ -38,22 +41,41 @@ class GraphViewModel(
     val edges: Collection<EdgeViewModel>
         get() = _edges.values
 
-    fun startFordBellman(startName: String?, endName: String?): Boolean {
+    fun startFordBellman(startName: String?, endName: String?) {
         val bellman = FordBellman.fordBellman(graph, graph.getVertexByName(startName ?: ""), graph.getVertexByName(endName ?: ""))
-        val path = bellman.first ?: return false
+        val path = bellman.first ?: return
 
         for (i in 0..path.size - 1) {
-            _vertices[path[i]]?.color = Color.Red
+            _vertices[path[i]]?.color = Color.Cyan
             if (i + 1 != path.size) {
-                _edges[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Yellow
+                _edges[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Blue
             }
         }
-        return true
     }
     fun startFindBridges(){
         val bridges = FindBridges(graph).findBridges()
         bridges.forEach{ edge ->
-            _edges[graph.getEdgeByVertex(edge.first, edge.second)]?.color = Color.Red
+            _edges[graph.getEdgeByVertex(edge.first, edge.second)]?.color = Color.Cyan
+        }
+    }
+    fun startDijkstra(start: String, end: String){
+        val d = DijkstraAlgorithm().findShortestPath(graph, graph.getVertexByName(start), graph.getVertexByName(end))
+        val path = d?.path ?: return
+
+        for (i in 0..path.size - 1) {
+            _vertices[path[i]]?.color = Color.Cyan
+            if (i + 1 != path.size) {
+                _edges[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Blue
+            }
+        }
+    }
+    fun startTarjan(){
+        val T = TarjanAlgorithm().findStronglyConnectedComponents(graph)
+        T.forEach { s ->
+            val color = Color(Random.nextInt() % 256, Random.nextInt() % 256, Random.nextInt() % 256)
+            s.forEach { v ->
+                _vertices[v]?.color = color
+            }
         }
     }
     fun startNeo4j(uri: String, username: String, password: String){
