@@ -22,7 +22,7 @@ fun algoButton(
     showAlgoButtons: MutableState<Boolean>,
 //    showFordBellman: MutableState<Boolean>,
 //    showDijkstra: MutableState<Boolean>,
-    ) {
+) {
 
     val showDijkstra = remember { mutableStateOf(false) }
     val showFordBellman = remember { mutableStateOf(false) }
@@ -33,12 +33,13 @@ fun algoButton(
             modifier = Modifier
                 .absolutePadding(left = 8.dp, right = 8.dp)
         ) {
-
-            Button(
-                onClick = {showDijkstra.value = !showDijkstra.value},
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Dijkstra")
+            if (viewModel.graphViewModel.isWeighted()) {
+                Button(
+                    onClick = { showDijkstra.value = !showDijkstra.value },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Dijkstra")
+                }
             }
             Button(
                 onClick = viewModel::runFindBridge,
@@ -53,7 +54,7 @@ fun algoButton(
                 Text("Ford Bellman")
             }
             Button(
-                onClick = {},
+                onClick = viewModel::runTarjan,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Tarjan")
