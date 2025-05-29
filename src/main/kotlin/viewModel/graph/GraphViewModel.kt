@@ -86,18 +86,16 @@ class GraphViewModel(
 
         for (i in 0..path.size - 1) {
             _vertices.value[path[i]]?.color = Color.Red
-            _vertices[path[i]]?.color = Color.Cyan
+            _vertices.value[path[i]]?.color = Color.Cyan
             if (i + 1 != path.size) {
-                _edges.value[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Yellow
-                _edges[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Blue
+                _edges.value[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Blue
             }
         }
     }
     fun startFindBridges(){
         val bridges = FindBridges(graph).findBridges()
         bridges.forEach{ edge ->
-            _edges.value[graph.getEdgeByVertex(edge.first, edge.second)]?.color = Color.Red
-            _edges[graph.getEdgeByVertex(edge.first, edge.second)]?.color = Color.Cyan
+            _edges.value[graph.getEdgeByVertex(edge.first, edge.second)]?.color = Color.Cyan
         }
     }
     fun startDijkstra(start: String, end: String){
@@ -105,9 +103,9 @@ class GraphViewModel(
         val path = d?.path ?: return
 
         for (i in 0..path.size - 1) {
-            _vertices[path[i]]?.color = Color.Cyan
+            _vertices.value[path[i]]?.color = Color.Cyan
             if (i + 1 != path.size) {
-                _edges[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Blue
+                _edges.value[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Blue
             }
         }
     }
@@ -116,7 +114,7 @@ class GraphViewModel(
         T.forEach { s ->
             val color = Color(Random.nextInt() % 256, Random.nextInt() % 256, Random.nextInt() % 256)
             s.forEach { v ->
-                _vertices[v]?.color = color
+                _vertices.value[v]?.color = color
             }
         }
     }
