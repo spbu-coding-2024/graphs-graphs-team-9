@@ -22,17 +22,15 @@ fun diologistAddEdgeScreen(
 ) {
     val errorMessage = remember { mutableStateOf<String?>(null) }
 
-    val firstVertex = mutableStateOf<String?>(null)
-    val secondVertex = mutableStateOf<String?>(null)
-    val weight = mutableStateOf<Double?>(null)
+    val firstVertex = mutableStateOf("")
+    val secondVertex = mutableStateOf("")
+    val weight =  mutableStateOf("")
 
     AnimatedVisibility(
         visible = showAddEdge.value,
     ) {
         AlertDialog(
-            modifier = Modifier.width(250.dp).padding(5.dp)
-//                .wrapContentHeight()
-            ,
+            modifier = Modifier.width(250.dp).padding(5.dp),
             properties = DialogProperties(
                 dismissOnBackPress = true,
                 dismissOnClickOutside = true
@@ -40,14 +38,13 @@ fun diologistAddEdgeScreen(
             onDismissRequest = { showAddEdge.value = false },
             title = { Text("Edge") },
             text = {
-//                Spacer(modifier = Modifier.height(80.dp))
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                 ) {
                     OutlinedTextField(
-                        value = firstVertex.value ?: "",
+                        value = firstVertex.value,
                         onValueChange = {
                             firstVertex.value = it
                             viewModel.setStartVertex(it)
@@ -57,7 +54,7 @@ fun diologistAddEdgeScreen(
                     )
                     Spacer(modifier = Modifier)
                     OutlinedTextField(
-                        value = secondVertex.value ?: "",
+                        value = secondVertex.value,
                         onValueChange = {
                             secondVertex.value = it
                             viewModel.setEndVertex(it)
@@ -65,14 +62,33 @@ fun diologistAddEdgeScreen(
                         label = { Text("Second vertex") },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
+                    if (viewModel.graphViewModel.isWeighted()) {
+                        Spacer(modifier = Modifier)
+                        OutlinedTextField(
+                            value = weight.value,
+                            onValueChange = {
+                                weight.value = it
+                                it.toDoubleOrNull()?.let { doubleValue ->
+                                    viewModel.setWidthVertex(doubleValue)
+                                }
+                            },
+                            label = { Text("Weight") },
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        )
+                    }
                 }
             },
             confirmButton = {
                 Row {
                     Button(
                         onClick = {
-                            viewModel.addEdge()
-                            showAddEdge.value = false
+                            if (!viewModel.graphViewModel.isWeighted() ||
+                                weight.value.toDoubleOrNull() != null) {
+                                viewModel.addEdge()
+                                showAddEdge.value = false
+                            } else {
+                                errorMessage.value = "Please enter a valid weight"
+                            }
                         },
                         modifier = Modifier.padding(horizontal = 10.dp)
                     ) {
