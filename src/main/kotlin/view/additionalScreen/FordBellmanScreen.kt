@@ -35,13 +35,19 @@ fun diologistFordBellman(
                 Column {
                     OutlinedTextField(
                         value = startName.value ?: "",
-                        onValueChange = { startName.value = it },
+                        onValueChange = {
+                            viewModel.setStart(it)
+                            startName.value = it
+                        },
                         label = { Text("Start vertex") },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
                     OutlinedTextField(
                         value = endName.value ?: "",
-                        onValueChange = { endName.value = it },
+                        onValueChange = {
+                            viewModel.setEnd(it)
+                            endName.value = it
+                        },
                         label = { Text("End Vertex") },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -50,8 +56,7 @@ fun diologistFordBellman(
             confirmButton = {
                 Button(
                     onClick = {
-//                        viewModel::runFordBellman
-
+                        viewModel.runFordBellman()
                         showFordBellman.value = false
                     }
                 ) {

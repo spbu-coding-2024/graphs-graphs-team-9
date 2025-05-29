@@ -73,7 +73,7 @@ fun DBButtons(
                 visible = showNeo4jSaveUploadButton.value,
             ) {
                 Button(
-                    onClick = { viewModel::clearGraph },
+                    onClick = {  },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Upload Graph")
