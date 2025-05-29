@@ -50,7 +50,7 @@ fun VertexView(
                     modifier = Modifier
                             .align(Alignment.Center)
                             .offset(0.dp, 0.dp),
-                    text = viewModel.label.name.toString(),
+                    text = viewModel.vertex.name.toString(),
                     color = Color.White,
             )
         }

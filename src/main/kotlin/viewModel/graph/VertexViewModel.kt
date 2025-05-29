@@ -13,7 +13,7 @@ class VertexViewModel (
         y: Dp = 0.dp,
         color: Color,
         private val v: Vertex,
-        private val _labelVisible: State<Boolean>,
+        val _labelVisible: State<Boolean>,
 ){
     val Id
         get() = v.id
@@ -44,7 +44,7 @@ class VertexViewModel (
             _color.value = value
         }
 
-    val label
+    val vertex
         get() = v
 
     val labelVisible

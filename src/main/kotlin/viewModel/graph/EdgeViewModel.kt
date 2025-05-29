@@ -10,7 +10,7 @@ class EdgeViewModel (
     val v: VertexViewModel,
     color: Color,
     private val e: Edge,
-    private val _labelVisible: State<Boolean>,
+    var _labelVisible: State<Boolean>,
     private val _weightVisible: State<Boolean>,
     width: Double?,
 ) {

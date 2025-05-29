@@ -1,7 +1,6 @@
 package viewModel.screen
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -12,9 +11,13 @@ import viewModel.graph.GraphViewModel
 import viewModel.graph.VertexViewModel
 import viewModel.screen.layouts.RepresentationStrategy
 import kotlin.math.abs
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
 class MainScreenViewModel(
-    initialGraph: Graph,
+    private val graph: Graph,
     val representationStrategy: RepresentationStrategy
 ) {
     private var _showVerticesLabels = mutableStateOf(false)
@@ -31,11 +34,7 @@ class MainScreenViewModel(
             _showEdgesLabels.value = v
         }
 
-    var graphViewModel = GraphViewModel(
-        initialGraph,
-        _showVerticesLabels,
-        _showEdgesLabels
-    )
+    var graphViewModel = GraphViewModel(graph, _showVerticesLabels, _showEdgesLabels)
 
     private var currentCanvasWidth: Double = 1000.0
     private var currentCanvasHeight: Double = 800.0
@@ -44,12 +43,17 @@ class MainScreenViewModel(
         representationStrategy.layout(800.0, 1000.0, graphViewModel)
     }
 
+    fun resetGraphView() {
+        representationStrategy.layout(800.0, 600.0, graphViewModel)
+        graphViewModel.vertices.forEach { v -> v.color = Color.Gray }
+    }
+
     fun updateCanvasSize(width: Double, height: Double) {
         currentCanvasWidth = width
         currentCanvasHeight = height
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
-
+    
 
     private var _vertex = mutableStateOf<String?>(null)
     val vertex: State<String?> = _vertex
@@ -63,14 +67,13 @@ class MainScreenViewModel(
     fun addVertex() {
         map[vertex.value] = i
         graphViewModel.graph.addVertex(Vertex(i++, vertex.value))
-        graphViewModel.updateGraph(graphViewModel.graph)
+        graphViewModel.refreshGraph()
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
-
     }
 
     fun delVertex() {
         graphViewModel.graph.removeVertex(graphViewModel.graph.getVertexByName(vertex.value ?: ""))
-        graphViewModel.updateGraph(graphViewModel.graph)
+        graphViewModel.refreshGraph()
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 
@@ -101,7 +104,7 @@ class MainScreenViewModel(
         val end = g.getVertexByName(endVertex.value ?: return false)
 
         graphViewModel.graph.addEdge(start, end, width.value)
-        graphViewModel.updateGraph(graphViewModel.graph)
+        graphViewModel.refreshGraph()
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
 
         return true
@@ -113,18 +116,18 @@ class MainScreenViewModel(
         val end = g.getVertexByName(endVertex.value ?: return false)
 
         graphViewModel.graph.removeEdge(start, end)
-        graphViewModel.updateGraph(graphViewModel.graph)
+        graphViewModel.refreshGraph()
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
         return true
     }
 
-    fun getVertexes(): Map<Vertex, List<Edge>> {
+    fun getVertexes(): Map<Vertex, List<Edge>>{
         return graphViewModel.graph.getMap()
     }
 
-    fun createGraph(isDirected: Boolean, isWeighted: Boolean) {
+    fun createGraph(isDirected: Boolean, isWeighted: Boolean){
         graphViewModel.graph = GraphImpl(isDirected, isWeighted)
-        graphViewModel.updateGraph(graphViewModel.graph)
+        graphViewModel.refreshGraph()
     }
 
     fun clearGraph() {
@@ -213,6 +216,7 @@ class MainScreenViewModel(
         graphViewModel.edges.forEach { it.color = Color.Gray }
     }
 
+    // Neo4j helper
     private fun withNeoDB(action: Neo4j.() -> Unit) {
         val uri = _uri.value;
         val usr = _user.value
