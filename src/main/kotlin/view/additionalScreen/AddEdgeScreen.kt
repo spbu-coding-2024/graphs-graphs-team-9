@@ -2,10 +2,7 @@ package view.additionalScreen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -74,6 +71,14 @@ fun diologistAddEdgeScreen(
                             },
                             label = { Text("Weight") },
                             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        )
+                    }
+                    if (errorMessage.value != null) {
+                        Text(
+                            text = errorMessage.value?: "",
+                            color = MaterialTheme.colors.error,
+                            style = MaterialTheme.typography.caption,
+                            modifier = Modifier.padding(top = 4.dp)
                         )
                     }
                 }
