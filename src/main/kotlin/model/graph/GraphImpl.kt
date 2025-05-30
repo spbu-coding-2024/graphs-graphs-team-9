@@ -13,8 +13,7 @@ class GraphImpl(
     }
 
     override fun addVertex(vertex: String) {
-        val v = getVertexByName(vertex)
-        if (!adjList.containsKey(Vertex(v.id, vertex))) {
+        if (getVertexByName(vertex) == null) {
             adjList[Vertex(id++, vertex)] = mutableSetOf()
         }
     }
@@ -28,11 +27,8 @@ class GraphImpl(
     }
 
     override fun addEdge(fromName: String, toName: String, weight: Double?) {
-        val from = getVertexByName(fromName)
-        val to = getVertexByName(toName)
-        if (!containsVertex(fromName) || !containsVertex(toName)) {
-            return
-        }
+        val from = getVertexByName(fromName) ?: return
+        val to = getVertexByName(toName) ?: return
 
         val actualWeight = if (isWeighted) weight else null
 
@@ -61,7 +57,7 @@ class GraphImpl(
     }
 
     override fun containsVertex(vertex: String): Boolean {
-        return adjList.containsKey(getVertexByName(vertex))
+        return getVertexByName(vertex) != null
     }
 
     override fun containsEdge(from: Vertex, to: Vertex): Boolean {
@@ -128,10 +124,10 @@ class GraphImpl(
         }
         return null
     }
-    // Пофиксить
-    override fun getVertexByName(name: String): Vertex {
+
+    override fun getVertexByName(name: String): Vertex? {
         getVertices().forEach { i -> if (i.name == name) return i }
-        return Vertex(-1, "")
+        return null
     }
 
     inner class Iterate : Iterator<Pair<Vertex, MutableSet<Edge>>> {

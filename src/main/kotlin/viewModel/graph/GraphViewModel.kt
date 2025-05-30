@@ -81,7 +81,7 @@ class GraphViewModel(
     }
 
     fun startFordBellman(startName: String?, endName: String?) {
-        val bellman = FordBellman.fordBellman(graph, graph.getVertexByName(startName ?: ""), graph.getVertexByName(endName ?: ""))
+        val bellman = FordBellman.fordBellman(graph, graph.getVertexByName(startName ?: "") ?: return, graph.getVertexByName(endName ?: "") ?: return)
         val path = bellman.first ?: return
 
         for (i in 0..path.size - 1) {
@@ -99,7 +99,7 @@ class GraphViewModel(
         }
     }
     fun startDijkstra(start: String, end: String){
-        val d = DijkstraAlgorithm().findShortestPath(graph, graph.getVertexByName(start), graph.getVertexByName(end))
+        val d = DijkstraAlgorithm().findShortestPath(graph, graph.getVertexByName(start) ?: return, graph.getVertexByName(end) ?: return)
         val path = d?.path ?: return
 
         for (i in 0..path.size - 1) {

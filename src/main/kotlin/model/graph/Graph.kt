@@ -21,5 +21,5 @@ interface Graph {
     fun getVertexByKey(id: Int): Vertex?
     fun getEdgeByVertex(firstV: Vertex, secondV: Vertex): Edge?
     operator fun iterator(): Iterator<Pair<Vertex, MutableSet<Edge>>>
-    fun getVertexByName(name: String): Vertex
+    fun getVertexByName(name: String): Vertex?
 }
