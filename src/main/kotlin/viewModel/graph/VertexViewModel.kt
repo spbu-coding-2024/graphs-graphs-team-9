@@ -28,13 +28,13 @@ class VertexViewModel (
     private var _x = mutableStateOf(x)
     var x: Dp
         get() = _x.value
-        set(value) { // Публичный сеттер
+        set(value) {
             _x.value = value
         }
     private var _y = mutableStateOf(y)
     var y: Dp
         get() = _y.value
-        set(value) { // Публичный сеттер
+        set(value) {
             _y.value = value
         }
     private var _color = mutableStateOf(color)
