@@ -5,7 +5,12 @@ class GraphImpl(
     private val isWeighted: Boolean = false
 ) : Graph {
     private var id = 1
+    var positive = 0
     private val adjList: MutableMap<Vertex, MutableSet<Edge>> = mutableMapOf()
+
+    override fun getPositive(): Boolean{
+        return positive >= 0
+    }
 
     override fun getMap(): Map<Vertex, List<Edge>> {
         val map = adjList.mapValues { it.value.toList() }
@@ -27,6 +32,9 @@ class GraphImpl(
     }
 
     override fun addEdge(fromName: String, toName: String, weight: Double?) {
+        if ((weight ?: 0.0) < 0.0) {
+            positive--
+        }
         val from = getVertexByName(fromName) ?: return
         val to = getVertexByName(toName) ?: return
 
@@ -44,8 +52,11 @@ class GraphImpl(
     }
 
     override fun removeEdge(fromName: String, toName: String) {
-        val from = getVertexByName(fromName)
-        val to = getVertexByName(toName)
+        val from = getVertexByName(fromName) ?: return
+        val to = getVertexByName(toName) ?: return
+        if ((getEdgeByVertex(from, to)?.weight ?: 0.0) < 0.0) {
+            positive--
+        }
         adjList[from]?.removeAll { it.destination == to }
         if (!isDirected) {
             adjList[to]?.removeAll { it.destination == from }

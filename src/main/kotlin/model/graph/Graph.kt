@@ -22,4 +22,5 @@ interface Graph {
     fun getEdgeByVertex(firstV: Vertex, secondV: Vertex): Edge?
     operator fun iterator(): Iterator<Pair<Vertex, MutableSet<Edge>>>
     fun getVertexByName(name: String): Vertex?
+    fun getPositive(): Boolean
 }
