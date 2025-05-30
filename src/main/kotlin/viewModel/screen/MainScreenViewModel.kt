@@ -41,20 +41,13 @@ class MainScreenViewModel(
     private var currentCanvasHeight: Double = 600.0
 
     init {
-        representationStrategy.layout(800.0, 1000.0, graphViewModel)
-    }
-
-    fun resetGraphView() {
-        representationStrategy.layout(800.0, 600.0, graphViewModel)
-        graphViewModel.vertices.forEach { v -> v.color = Color.Gray }
-    }
-
-    fun updateCanvasSize(width: Double, height: Double) {
-        currentCanvasWidth = width
-        currentCanvasHeight = height
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 
+    fun resetGraphView() {
+        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
+        graphViewModel.vertices.forEach { v -> v.color = Color.Gray }
+    }
 
     private var _vertex = mutableStateOf<String?>(null)
     val vertex: State<String?> = _vertex
