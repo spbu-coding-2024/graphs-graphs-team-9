@@ -73,8 +73,6 @@ val sampleGraph: Graph = GraphFactory.createDirectedWeightedGraph().apply {
 @Composable
 fun MainScreen() {
     val viewModel = remember { MainScreenViewModel(sampleGraph, ForceAtlas2()) }
-//    val viewModel = remember { MainScreenViewModel(sampleGraph) }
-
 
     val showGraphPanel = remember { mutableStateOf(false) }
     val showAlgoButtons = remember { mutableStateOf(false) }
@@ -86,13 +84,6 @@ fun MainScreen() {
     val showNeo4jSaveClearButtonsPanel = remember { mutableStateOf(false) }
     val showSQLiteSaveClearButtonsPanel = remember { mutableStateOf(false) }
     val showSQLiteDialog = remember { mutableStateOf(false) }
-
-//    DBButtons(
-//        showNeo4jSaveClearButtonsPanel,
-//        showSQLiteSaveClearButtonsPanel,
-//        showUploadSaveButtons,
-//        showNeo4jDialog
-//    )
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -143,10 +134,7 @@ fun MainScreen() {
                     DividerG()
                     Button(
                         onClick = { viewModel.resetGraphView()
-                                    viewModel.resetColor() },
-                        onClick = {
-                            viewModel.resetGraphView()
-                            viewModel.resetColor()
+                                    viewModel.resetColor()
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) { Text(text = "Reset Graph Layout") }
@@ -180,13 +168,9 @@ fun MainScreen() {
                         }
                     )
             ) {
-                val canvasWidthDp = maxWidth
-                val canvasHeightDp = maxHeight
-
                 GraphView(
                     viewModel = viewModel.graphViewModel,
                     scale = scale.value,
-                    // onVertexDrag = viewModel.vertex.dra
                 )
             }
         }
