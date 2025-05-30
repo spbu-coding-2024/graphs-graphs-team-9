@@ -130,8 +130,7 @@ class GraphViewModel(
         val path = bellman.first ?: return
 
         for (i in 0..path.size - 1) {
-            _vertices.value[path[i]]?.color = Color.Red
-            _vertices.value[path[i]]?.color = Color.Cyan
+            _vertices.value[path[i]]?.color = Color(93, 167, 250)
             if (i + 1 != path.size) {
                 _edges.value[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Blue
             }
@@ -140,12 +139,12 @@ class GraphViewModel(
 
     /**
      * Запускает алгоритм поиска мостов в графе.
-     * Найденные мосты (рёбра) подсвечиваются на графе цветом [Color.Cyan].
+     * Найденные мосты (рёбра) подсвечиваются на графе цветом [Color(93, 167, 250)].
      */
     fun startFindBridges(){
         val bridges = FindBridges(graph).findBridges()
         bridges.forEach{ edge ->
-            _edges.value[graph.getEdgeByVertex(edge.first, edge.second)]?.color = Color.Cyan
+            _edges.value[graph.getEdgeByVertex(edge.first, edge.second)]?.color = Color(93, 167, 250)
         }
     }
 
@@ -163,7 +162,7 @@ class GraphViewModel(
         val path = d?.path ?: return
 
         for (i in 0..path.size - 1) {
-            _vertices.value[path[i]]?.color = Color.Cyan
+            _vertices.value[path[i]]?.color = Color(93, 167, 250)
             if (i + 1 != path.size) {
                 _edges.value[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Blue
             }

@@ -11,57 +11,57 @@ import viewModel.screen.MainScreenViewModel
 
 @Composable
 fun diologistSQLite(
-        showSQLiteDialog: MutableState<Boolean>,
-        showSQLiteSaveClearButtonsPanel: MutableState<Boolean>,
-        viewModel: MainScreenViewModel
+    showSQLiteDialog: MutableState<Boolean>,
+    showSQLiteSaveClearButtonsPanel: MutableState<Boolean>,
+    viewModel: MainScreenViewModel
 ) {
     if (showSQLiteDialog.value) {
         Dialog(
-                onDismissRequest = { showSQLiteDialog.value = false }
+            onDismissRequest = { showSQLiteDialog.value = false }
         ) {
             Surface(
-                    modifier = Modifier
-                            .wrapContentWidth()
-                            .wrapContentHeight(),
-                    shape = MaterialTheme.shapes.large
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .wrapContentHeight(),
+                shape = MaterialTheme.shapes.large
             ) {
                 Column(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                            text = "SQLite Database Configuration",
-                            style = MaterialTheme.typography.h6,
-                            modifier = Modifier.padding(bottom = 16.dp)
+                        text = "SQLite Database Configuration",
+                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.padding(bottom = 16.dp)
                     )
 
                     OutlinedTextField(
-                            value = viewModel.dbPath.value ?: "",
-                            onValueChange = { viewModel.setDbPath(it) },
-                            label = { Text("Database Path") },
-                            placeholder = { Text("path/to/database.db") },
-                            modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 8.dp)
+                        value = viewModel.dbPath.value ?: "",
+                        onValueChange = { viewModel.setDbPath(it) },
+                        label = { Text("Database Path") },
+                        placeholder = { Text("path/to/database.db") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
                     )
 
                     Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         Button(
-                                onClick = {
-                                    viewModel.initializeSQLiteDB()
-                                }
+                            onClick = {
+                                viewModel.initializeSQLiteDB()
+                            }
                         ) {
                             Text("Initialize DB")
                         }
 
                         Button(
-                                onClick = {
-                                    showSQLiteDialog.value = false
-                                    showSQLiteSaveClearButtonsPanel.value = true
-                                }
+                            onClick = {
+                                showSQLiteDialog.value = false
+                                showSQLiteSaveClearButtonsPanel.value = true
+                            }
                         ) {
                             Text("Connect")
                         }
@@ -70,7 +70,10 @@ fun diologistSQLite(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Button(
-                            onClick = { showSQLiteDialog.value = false }
+                        onClick = {
+                            showSQLiteDialog.value = false
+                            showSQLiteSaveClearButtonsPanel.value = false
+                        }
                     ) {
                         Text("Cancel")
                     }

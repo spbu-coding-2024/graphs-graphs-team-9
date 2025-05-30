@@ -52,7 +52,7 @@ val sampleGraph: Graph = GraphFactory.createDirectedWeightedGraph().apply {
     addEdge("G", "C", 32.3)
     addEdge("B", "C", 44.0)
     addEdge("A", "E", 32.1)
-    addEdge("A", "F",.3)
+    addEdge("A", "F", .3)
     addEdge("F", "G", 3.2)
 //    addVertex(Vertex(1, "A"))
 //    addVertex(Vertex(2, "B"))
@@ -128,12 +128,12 @@ fun MainScreen() {
                     ) { Text("Upload/Save") }
 
                     DBButtons(
-                            viewModel,
-                            showNeo4jSaveClearButtonsPanel,
-                            showSQLiteSaveClearButtonsPanel,
-                            showUploadSaveButtons,
-                            showNeo4jDialog,
-                            showSQLiteDialog // Добавить этот параметр
+                        viewModel,
+                        showNeo4jSaveClearButtonsPanel,
+                        showSQLiteSaveClearButtonsPanel,
+                        showUploadSaveButtons,
+                        showNeo4jDialog,
+                        showSQLiteDialog // Добавить этот параметр
                     )
                     DividerG()
                     switch(viewModel, remember { mutableStateOf(viewModel.showVerticesLabels) })
@@ -142,7 +142,10 @@ fun MainScreen() {
                     VertexSizeSlider(viewModel = viewModel, modifier = Modifier.padding(vertical = 4.dp))
                     DividerG()
                     Button(
-                        onClick = { viewModel.resetGraphView() }, //viewModel.resetGraphView()
+                        onClick = {
+                            viewModel.resetGraphView()
+                            viewModel.resetColor()
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) { Text(text = "Reset Graph Layout") }
                     DividerG()
