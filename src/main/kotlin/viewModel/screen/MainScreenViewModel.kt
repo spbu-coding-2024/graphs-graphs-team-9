@@ -64,7 +64,7 @@ class MainScreenViewModel(
     }
 
     fun delVertex() {
-        graphViewModel.graph.removeVertex(graphViewModel.graph.getVertexByName(_vertex.value ?: "").toString())
+        graphViewModel.graph.removeVertex(_vertex.value ?: "")
         graphViewModel.refreshGraph()
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
@@ -75,8 +75,8 @@ class MainScreenViewModel(
     private var _endVertex = mutableStateOf<String?>(null)
     val endVertex: State<String?> = _endVertex
 
-    private var _width = mutableStateOf<Double?>(null)
-    val width: State<Double?> = _width
+    private var _weight = mutableStateOf<Double?>(null)
+    val width: State<Double?> = _weight
 
     fun setStartVertex(startV: String) {
         _startVertex.value = startV
@@ -87,15 +87,11 @@ class MainScreenViewModel(
     }
 
     fun setWidthVertex(width: Double?) {
-        _width.value = width
+        _weight.value = width
     }
 
     fun addEdge(): Boolean {
-        val g = graphViewModel.graph
-        val start = g.getVertexByName(startVertex.value ?: return false)
-        val end = g.getVertexByName(endVertex.value ?: return false)
-
-        graphViewModel.graph.addEdge(startVertex.value.toString(), endVertex.value.toString(), width.value)
+        graphViewModel.graph.addEdge(startVertex.value ?: "", endVertex.value ?: "", width.value)
         graphViewModel.refreshGraph()
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
 
@@ -103,11 +99,7 @@ class MainScreenViewModel(
     }
 
     fun delEdge(): Boolean {
-        val g = graphViewModel.graph
-        val start = g.getVertexByName(startVertex.value ?: return false)
-        val end = g.getVertexByName(endVertex.value ?: return false)
-
-        graphViewModel.graph.removeEdge(startVertex.value.toString(), endVertex.value.toString())
+        graphViewModel.graph.removeEdge(_startVertex.value ?: "", _endVertex.value ?: "")
         graphViewModel.refreshGraph()
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
         return true
@@ -167,6 +159,11 @@ class MainScreenViewModel(
         graphViewModel.startTarjan()
     }
 
+    fun runFindKey(){
+        resetGraphView()
+        graphViewModel.startFindKeyVertex()
+    }
+
     // Vertex size binding
     val vertexSize: State<Float> get() = graphViewModel.vertexSize
     fun updateVertexSize(v: Float) = graphViewModel.updateVertexSize(v)
@@ -199,6 +196,17 @@ class MainScreenViewModel(
     private var _pass = mutableStateOf<String?>(null)
     val password: State<String?> = _pass
 
+    private var _isDirect = mutableStateOf<Boolean>(false)
+    val isDirect: State<Boolean> = _isDirect
+    private var _isWeight = mutableStateOf<Boolean>(false)
+    val isWeight: State<Boolean> = _isWeight
+
+    fun setIsDirect(f: Boolean){
+        _isDirect.value = f
+    }
+    fun setIsWeight(f: Boolean){
+        _isWeight.value = f
+    }
     fun setStart(name: String) {
         _startName.value = name
     }
@@ -213,7 +221,6 @@ class MainScreenViewModel(
 
     fun setUsername(user: String) {
         _user.value = user
-
     }
 
     fun setPassword(pass: String) {
@@ -240,7 +247,7 @@ class MainScreenViewModel(
     fun uploadGraph() {
         try {
             withNeoDB {
-                readFromDB(graphViewModel.isDirected(), graphViewModel.isWeighted()).also { setNewGraph(it) }
+                readFromDB(isDirect.value, isWeight.value).also { setNewGraph(it) }
             }
         } catch (e: Exception) {
             handleError(e)

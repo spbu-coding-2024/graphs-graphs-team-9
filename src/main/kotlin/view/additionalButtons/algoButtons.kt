@@ -33,7 +33,7 @@ fun algoButton(
             modifier = Modifier
                 .absolutePadding(left = 8.dp, right = 8.dp)
         ) {
-            if (viewModel.graphViewModel.isWeighted()) {
+            if (viewModel.graphViewModel.isWeighted() && viewModel.graphViewModel.graph.getPositive()) {
                 Button(
                     onClick = { showDijkstra.value = !showDijkstra.value },
                     modifier = Modifier.fillMaxWidth()
@@ -58,6 +58,12 @@ fun algoButton(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Tarjan")
+            }
+            Button(
+                onClick = viewModel::runFindKey,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Find key vertex")
             }
         }
     }

@@ -4,10 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import model.algorithms.DijkstraAlgorithm
-import model.algorithms.FindBridges
-import model.algorithms.FordBellman
-import model.algorithms.TarjanAlgorithm
+import model.algorithms.*
 import model.graph.Edge
 import model.graph.Graph
 import model.graph.GraphImpl
@@ -182,6 +179,13 @@ class GraphViewModel(
             }
         }
     }
+    // проблема
+    fun startFindKeyVertex(){
+        val fkv = HarmonicCentrality(graph).centrality
+        _vertices.value.forEach { t, u ->
+            u.radius = u.radius + (((fkv[t] ?: (0.1 * 5))).dp)
+        }
+    }
 
     /**
      * Загружает граф из базы данных Neo4j, заменяя текущий граф.
@@ -194,8 +198,8 @@ class GraphViewModel(
      * @param password Пароль для подключения.
      * @throws Exception если происходит ошибка при подключении или чтении из Neo4j.
      */
-    fun startNeo4j(uri: String, username: String, password: String){
-        graph = Neo4j(uri, username, password).readFromDB(graph.isDirected(), graph.isWeighted())
+    fun startNeo4j(uri: String, username: String, password: String, isDirected: Boolean, isWeighted: Boolean){
+        graph = Neo4j(uri, username, password).readFromDB(isDirected, isWeighted)
                 // доработать
     }
 
