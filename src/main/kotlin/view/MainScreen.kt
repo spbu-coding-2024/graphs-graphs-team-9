@@ -39,6 +39,17 @@ import model.graph.Vertex
 import viewModel.screen.layouts.ForceAtlas2
 import view.additionalScreen.SaveAsSQLiteDialog
 
+import javax.swing.JFileChooser
+import javax.swing.filechooser.FileNameExtensionFilter
+import java.io.File
+import javax.swing.UIManager
+
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
+
 val sampleGraph: Graph = GraphFactory.createDirectedWeightedGraph().apply {
     addVertex("A")
     addVertex("B")
@@ -111,8 +122,6 @@ fun MainScreen() {
                     Button(
                         onClick = {
                             showUploadSaveButtons.value = !showUploadSaveButtons.value
-//                            showSQLiteSaveClearButtonsPanel.value = false
-//                            showNeo4jSaveClearButtonsPanel.value = false
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) { Text("Upload/Save") }
@@ -143,8 +152,6 @@ fun MainScreen() {
                     ) { Text("Algorithms") }
                     algoButton(viewModel, showAlgoButtons)
                     DividerG()
-
-
                 }
             }
 

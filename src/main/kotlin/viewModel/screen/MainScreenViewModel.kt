@@ -1,25 +1,19 @@
 package viewModel.screen
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import model.graph.*
 import model.io.Neo4j.Neo4j
 import viewModel.graph.GraphViewModel
-import viewModel.graph.VertexViewModel
 import viewModel.screen.layouts.RepresentationStrategy
-import kotlin.math.abs
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import model.io.SQLGraph
+import androidx.compose.runtime.derivedStateOf
+import model.io.SQLite.SQLGraph
 import java.io.File
+import model.io.SQLite.SQLiteService
 
 class MainScreenViewModel(
-    private val graph: Graph,
+    private var graph: Graph,
     val representationStrategy: RepresentationStrategy
 ) {
     private var _showVerticesLabels = mutableStateOf(false)
@@ -276,22 +270,27 @@ class MainScreenViewModel(
         }
     }
 
-    private var _dbPath = mutableStateOf<String?>(null)
-    val dbPath: State<String?> = _dbPath
+    // --- Экземпляр SQLiteService ---
+    private val sqliteService = SQLiteService()
 
+    // --- Состояния UI для диалога "Save As SQLite" ---
     private val _showSaveAsSQLiteDialog = mutableStateOf(false)
     val showSaveAsSQLiteDialog: State<Boolean> = _showSaveAsSQLiteDialog
 
-    private val _saveAsFileName = mutableStateOf("database.db")
+    private val _saveAsFileName = mutableStateOf("my_graph.db")
     val saveAsFileName: State<String> = _saveAsFileName
     fun setSaveAsFileName(name: String) { _saveAsFileName.value = name }
 
-    private val _saveAsDirectoryPath = mutableStateOf<String?>(null)
+    private val _saveAsDirectoryPath = mutableStateOf<String?>(System.getProperty("user.home"))
     val saveAsDirectoryPath: State<String?> = _saveAsDirectoryPath
     fun setSaveAsDirectoryPath(path: String?) { _saveAsDirectoryPath.value = path }
 
+    val currentSQLiteDbPath: State<String?> = derivedStateOf { sqliteService.getDbPath() }
+
     fun openSaveAsSQLiteDialog() {
-        _saveAsDirectoryPath.value = null
+        val currentPath = sqliteService.getDbPath()
+        _saveAsDirectoryPath.value = currentPath?.let { File(it).parent } ?: System.getProperty("user.home")
+        _saveAsFileName.value = currentPath?.let { File(it).name } ?: "database.db"
         _showSaveAsSQLiteDialog.value = true
     }
 
@@ -299,84 +298,55 @@ class MainScreenViewModel(
         _showSaveAsSQLiteDialog.value = false
     }
 
-    private fun withSQLiteDB(action: SQLGraph.() -> Unit) {
-        val path = _dbPath.value
-        if (path.isNullOrBlank()) {
-            println("SQLite: missing database path")
-            return
-        }
-        try {
-            SQLGraph(path).action()
-        } catch (e: Exception) {
-            println("SQLite error: ${e.message}")
-            e.printStackTrace()
-        }
-    }
-
-    fun initializeSQLiteDB() {
-        withSQLiteDB {
-            initializeDatabase()
-            println("SQLite: database initialized successfully")
-        }
-    }
-
     fun confirmSaveAsSQLite() {
         val dirPath = _saveAsDirectoryPath.value
         val fileName = _saveAsFileName.value
 
         if (dirPath.isNullOrBlank()) {
-            handleError(IllegalArgumentException("Directory path not selected."))
+            handleError(IllegalArgumentException("Directory path not selected for saving."))
             return
         }
         if (fileName.isBlank()) {
-            handleError(IllegalArgumentException("File name cannot be empty."))
+            handleError(IllegalArgumentException("File name cannot be empty for saving."))
             return
         }
 
-        val finalFileName = if (!fileName.endsWith(".db", ignoreCase = true) &&
-                !fileName.endsWith(".sqlite", ignoreCase = true) &&
-                !fileName.endsWith(".sqlite3", ignoreCase = true)
-        ) {
-            "$fileName.db"
-        } else {
-            fileName
-        }
+        val result = sqliteService.saveGraphToNewFile(graphViewModel.graph, dirPath, fileName)
 
-        val fullPath = File(dirPath, finalFileName).absolutePath
-        _dbPath.value = fullPath
-
-        withSQLiteDB {
-            val currentGraph = graphViewModel.graph
-            if (currentGraph.getVertices().isEmpty()) {
-                handleError(IllegalStateException("Cannot save an empty graph."))
-                return@withSQLiteDB
-            }
-
-            if (currentGraph is GraphImpl) {
-                saveGraph(currentGraph)
-                println("SQLite: graph saved successfully to $fullPath")
-            } else {
-                handleError(IllegalStateException("Graph is not a GraphImpl instance, cannot save to SQLite."))
-            }
-        }
-        _showSaveAsSQLiteDialog.value = false
-    }
-
-    fun uploadFromSQLite() {
-        withSQLiteDB {
-            val loadedGraph = loadGraph()
-            if (loadedGraph != null) {
-                setNewGraph(loadedGraph)
-                println("SQLite: graph loaded successfully")
-            } else {
-                println("SQLite: no graph found or database not initialized")
-            }
+        result.onSuccess { savedFilePath ->
+            _showSaveAsSQLiteDialog.value = false
+            println("succes")
+        }.onFailure { exception ->
+            println("fail")
         }
     }
 
-    fun setDbPath(path: String) {
-        _dbPath.value = path
+    fun onSQLiteFileSelectedForOpen(filePath: String) {
+        val result = sqliteService.loadGraphFromFile(filePath)
+
+        result.onSuccess { loadedGraph ->
+            setNewGraph(loadedGraph)
+            println("succes")
+        }.onFailure { exception ->
+            println("fail")
+        }
     }
+
+    fun saveToCurrentSQLiteFile() {
+        val currentPath = sqliteService.getDbPath()
+        if (currentPath == null) {
+            openSaveAsSQLiteDialog()
+            return
+        }
+        val result = sqliteService.saveGraphToCurrentFile(graphViewModel.graph)
+
+        result.onSuccess {
+            println("succes")
+        }.onFailure { exception ->
+            println("fail")
+        }
+    }
+
 
     private fun setNewGraph(g: Graph) {
         graphViewModel = GraphViewModel(g, _showVerticesLabels, _showEdgesLabels)
