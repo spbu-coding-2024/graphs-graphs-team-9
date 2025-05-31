@@ -35,7 +35,7 @@ class Neo4j(private val uri: String, private val user: String, private val passw
                         "MERGE (v: Vertex {id: \$id, name: \$name})",
                         parameters(
                             "id", g.first.id,
-                            "name", g.first.name
+                            "name", g.first.name,
                         )
                     ).consume()
                 }
