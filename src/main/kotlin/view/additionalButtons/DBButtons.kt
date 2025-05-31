@@ -19,7 +19,6 @@ fun DBButtons(
     showSQLiteSaveUploadButton: MutableState<Boolean>,
     showUploadSaveButtons: MutableState<Boolean>,
     showNeo4jScreen: MutableState<Boolean>,
-    showSQLiteScreen: MutableState<Boolean>,
 ) {
     AnimatedVisibility(
         visible = showUploadSaveButtons.value,
@@ -31,7 +30,7 @@ fun DBButtons(
 
             Button(
                 onClick = {
-                    showSQLiteScreen.value = true
+                    showSQLiteSaveUploadButton.value = true
                     showNeo4jSaveUploadButton.value = false
                 },
                 modifier = Modifier.fillMaxWidth()

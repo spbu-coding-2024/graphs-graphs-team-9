@@ -1,6 +1,5 @@
 package view
 
-import viewModel.additionalScreen.diologistSQLite
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -84,7 +83,6 @@ fun MainScreen() {
     val showNeo4jDialog = remember { mutableStateOf(false) }
     val showNeo4jSaveClearButtonsPanel = remember { mutableStateOf(false) }
     val showSQLiteSaveClearButtonsPanel = remember { mutableStateOf(false) }
-    val showSQLiteDialog = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -125,7 +123,6 @@ fun MainScreen() {
                         showSQLiteSaveClearButtonsPanel,
                         showUploadSaveButtons,
                         showNeo4jDialog,
-                        showSQLiteDialog // Добавить этот параметр
                     )
                     DividerG()
                     switch(viewModel, remember { mutableStateOf(viewModel.showVerticesLabels) })
@@ -177,8 +174,7 @@ fun MainScreen() {
         }
     }
     diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel, viewModel)
-    diologistSQLite(showSQLiteDialog, showSQLiteSaveClearButtonsPanel, viewModel)
-    SaveAsSQLiteDialog( // Добавляем вызов нового диалога
+    SaveAsSQLiteDialog(
             showDialog = viewModel.showSaveAsSQLiteDialog.value,
             viewModel = viewModel,
             onDismissRequest = { viewModel.cancelSaveAsSQLiteDialog() }
