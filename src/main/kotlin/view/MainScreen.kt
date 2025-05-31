@@ -96,42 +96,42 @@ fun MainScreen() {
     val showSQLiteSaveClearButtonsPanel = remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize()
     ) {
         barButton(showGraphPanel, viewModel)
 
         Divider(
-            color = Color.Black,
-            modifier = Modifier.fillMaxWidth().height(1.dp)
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth().height(1.dp)
         )
         Row(
-            modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize()
         ) {
             AnimatedVisibility(
-                visible = showGraphPanel.value,
+                    visible = showGraphPanel.value,
             ) {
                 Column(
-                    modifier = Modifier
-                        .width(232.dp)
-                        .padding(horizontal = 8.dp)
-                        .scrollable(rememberScrollableState { 0f }, orientation = Orientation.Vertical)
+                        modifier = Modifier
+                                .width(232.dp)
+                                .padding(horizontal = 8.dp)
+                                .scrollable(rememberScrollableState { 0f }, orientation = Orientation.Vertical)
                 ) {
                     Spacer(modifier = Modifier.height(4.dp))
                     DividerG()
 
                     Button(
-                        onClick = {
-                            showUploadSaveButtons.value = !showUploadSaveButtons.value
-                        },
-                        modifier = Modifier.fillMaxWidth()
+                            onClick = {
+                                showUploadSaveButtons.value = !showUploadSaveButtons.value
+                            },
+                            modifier = Modifier.fillMaxWidth()
                     ) { Text("Upload/Save") }
 
                     DBButtons(
-                        viewModel,
-                        showNeo4jSaveClearButtonsPanel,
-                        showSQLiteSaveClearButtonsPanel,
-                        showUploadSaveButtons,
-                        showNeo4jDialog,
+                            viewModel,
+                            showNeo4jSaveClearButtonsPanel,
+                            showSQLiteSaveClearButtonsPanel,
+                            showUploadSaveButtons,
+                            showNeo4jDialog,
                     )
                     DividerG()
                     switch(viewModel, remember { mutableStateOf(viewModel.showVerticesLabels) })
@@ -140,15 +140,15 @@ fun MainScreen() {
                     VertexSizeSlider(viewModel = viewModel, modifier = Modifier.padding(vertical = 4.dp))
                     DividerG()
                     Button(
-                        onClick = { viewModel.resetGraphView()
-                                    viewModel.resetColor()
-                        },
-                        modifier = Modifier.fillMaxWidth()
+                            onClick = { viewModel.resetGraphView()
+                                viewModel.resetColor()
+                            },
+                            modifier = Modifier.fillMaxWidth()
                     ) { Text(text = "Reset Graph Layout") }
                     DividerG()
                     Button(
-                        onClick = { showAlgoButtons.value = !showAlgoButtons.value },
-                        modifier = Modifier.fillMaxWidth(),
+                            onClick = { showAlgoButtons.value = !showAlgoButtons.value },
+                            modifier = Modifier.fillMaxWidth(),
                     ) { Text("Algorithms") }
                     algoButton(viewModel, showAlgoButtons)
                     DividerG()
@@ -156,26 +156,26 @@ fun MainScreen() {
             }
 
             Divider(
-                color = Color.Black,
-                modifier = Modifier.fillMaxHeight().width(1.dp)
+                    color = Color.Black,
+                    modifier = Modifier.fillMaxHeight().width(1.dp)
             )
 
             BoxWithConstraints(
-                modifier = Modifier
-                    .weight(1f)
-                    .background(CoolColors.backgroundBasic)
-                    .clipToBounds()
-                    .scrollable(
-                        orientation = Orientation.Vertical,
-                        state = rememberScrollableState { delta ->
-                            scale.value = (scale.value * (1f + delta / 500f)).coerceIn(0.1f, 5f)
-                            delta
-                        }
-                    )
+                    modifier = Modifier
+                            .weight(1f)
+                            .background(CoolColors.backgroundBasic)
+                            .clipToBounds()
+                            .scrollable(
+                                    orientation = Orientation.Vertical,
+                                    state = rememberScrollableState { delta ->
+                                        scale.value = (scale.value * (1f + delta / 500f)).coerceIn(0.1f, 5f)
+                                        delta
+                                    }
+                            )
             ) {
                 GraphView(
-                    viewModel = viewModel.graphViewModel,
-                    scale = scale.value,
+                        viewModel = viewModel.graphViewModel,
+                        scale = scale.value,
                 )
             }
         }
@@ -185,33 +185,33 @@ fun MainScreen() {
             showDialog = viewModel.showSaveAsSQLiteDialog.value,
             viewModel = viewModel,
             onDismissRequest = { viewModel.cancelSaveAsSQLiteDialog() }
-            )
+    )
     ErrorDialog(viewModel.showErrorDialog.value, viewModel.errorMessage.value, { viewModel.clearError() })
 }
 
 @Composable
 fun DividerG() {
     Divider(
-        color = Color.Black,
-        modifier = Modifier.fillMaxWidth().height(1.dp)
+            color = Color.Black,
+            modifier = Modifier.fillMaxWidth().height(1.dp)
     )
 }
 @Composable
 fun ErrorDialog(
-    showDialog: Boolean,
-    message: String?,
-    onDismiss: () -> Unit
+        showDialog: Boolean,
+        message: String?,
+        onDismiss: () -> Unit
 ) {
     if (showDialog && message != null) {
         AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text("Error") },
-            text = { Text(message) },
-            confirmButton = {
-                Button(onClick = onDismiss) {
-                    Text("Ok")
+                onDismissRequest = onDismiss,
+                title = { Text("Error") },
+                text = { Text(message) },
+                confirmButton = {
+                    Button(onClick = onDismiss) {
+                        Text("Ok")
+                    }
                 }
-            }
         )
     }
 }

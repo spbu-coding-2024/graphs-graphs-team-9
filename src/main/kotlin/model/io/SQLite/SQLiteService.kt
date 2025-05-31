@@ -1,22 +1,24 @@
 package model.io.SQLite
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import model.graph.GraphImpl
 import model.graph.Graph
 import java.io.File
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.Result
 
 class SQLiteService {
-    private var dbPath: String? = null
+    private val _internalDbPath = mutableStateOf<String?>(null)
+    val currentDbPathState: State<String?> = _internalDbPath
 
     fun getDbPath(): String? {
-        return dbPath
+        return _internalDbPath.value
     }
 
     fun setDbPath(path: String) {
-        dbPath = path
+        _internalDbPath.value = path
     }
 
     private fun initializeDatabaseAtPath(dbFilePath: String): Result<Unit> {
@@ -53,7 +55,7 @@ class SQLiteService {
             initializeDatabaseAtPath(fullPath).getOrThrow()
             SQLGraph(fullPath).saveGraph(graphToSave)
 
-            dbPath = fullPath
+            _internalDbPath.value = fullPath
             return Result.success(fullPath)
 
         } catch (e: Exception) {
@@ -62,7 +64,7 @@ class SQLiteService {
     }
 
     fun saveGraphToCurrentFile(graphToSave: Graph): Result<Unit> {
-        val path = dbPath
+        val path = _internalDbPath.value
         if (path.isNullOrBlank()) {
             return Result.failure(IllegalStateException("No current SQLite database file set. Use 'Save As...' first."))
         }
@@ -87,7 +89,7 @@ class SQLiteService {
         return try {
             val loadedGraph = SQLGraph(filePath).loadGraph()
             if (loadedGraph != null) {
-                dbPath = filePath
+                _internalDbPath.value = filePath
                 Result.success(loadedGraph)
             } else {
                 Result.failure(FileNotFoundOrInvalidFormatException("No graph data found in the file, or the file is not a valid graph database: $filePath"))

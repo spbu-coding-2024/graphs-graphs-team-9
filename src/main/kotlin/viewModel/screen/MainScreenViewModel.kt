@@ -270,14 +270,12 @@ class MainScreenViewModel(
         }
     }
 
-    // --- Экземпляр SQLiteService ---
     private val sqliteService = SQLiteService()
 
-    // --- Состояния UI для диалога "Save As SQLite" ---
     private val _showSaveAsSQLiteDialog = mutableStateOf(false)
     val showSaveAsSQLiteDialog: State<Boolean> = _showSaveAsSQLiteDialog
 
-    private val _saveAsFileName = mutableStateOf("my_graph.db")
+    private val _saveAsFileName = mutableStateOf("database.db")
     val saveAsFileName: State<String> = _saveAsFileName
     fun setSaveAsFileName(name: String) { _saveAsFileName.value = name }
 
@@ -285,10 +283,10 @@ class MainScreenViewModel(
     val saveAsDirectoryPath: State<String?> = _saveAsDirectoryPath
     fun setSaveAsDirectoryPath(path: String?) { _saveAsDirectoryPath.value = path }
 
-    val currentSQLiteDbPath: State<String?> = derivedStateOf { sqliteService.getDbPath() }
+    val currentSQLiteDbPath: State<String?> = sqliteService.currentDbPathState
 
     fun openSaveAsSQLiteDialog() {
-        val currentPath = sqliteService.getDbPath()
+        val currentPath = sqliteService.currentDbPathState.value
         _saveAsDirectoryPath.value = currentPath?.let { File(it).parent } ?: System.getProperty("user.home")
         _saveAsFileName.value = currentPath?.let { File(it).name } ?: "database.db"
         _showSaveAsSQLiteDialog.value = true
@@ -315,9 +313,9 @@ class MainScreenViewModel(
 
         result.onSuccess { savedFilePath ->
             _showSaveAsSQLiteDialog.value = false
-            println("succes")
+            println("Graph saved successfully to: $savedFilePath")
         }.onFailure { exception ->
-            println("fail")
+            handleError(exception)
         }
     }
 
@@ -326,31 +324,32 @@ class MainScreenViewModel(
 
         result.onSuccess { loadedGraph ->
             setNewGraph(loadedGraph)
-            println("succes")
+            println("Graph loaded successfully from: $filePath")
         }.onFailure { exception ->
-            println("fail")
+            handleError(exception)
         }
     }
 
     fun saveToCurrentSQLiteFile() {
-        val currentPath = sqliteService.getDbPath()
+        val currentPath = sqliteService.currentDbPathState.value
         if (currentPath == null) {
+            handleError(IllegalStateException("No current SQLite database file set. Use 'Save As...' first."))
             openSaveAsSQLiteDialog()
             return
         }
         val result = sqliteService.saveGraphToCurrentFile(graphViewModel.graph)
 
         result.onSuccess {
-            println("succes")
+            println("Graph saved successfully to current file: $currentPath")
         }.onFailure { exception ->
-            println("fail")
+            handleError(exception)
         }
     }
 
 
     private fun setNewGraph(g: Graph) {
-        graphViewModel = GraphViewModel(g, _showVerticesLabels, _showEdgesLabels)
-        graphViewModel.refreshGraph()
+        graphViewModel.updateGraph(g) // Обновляем граф в GraphViewModel
+        // graphViewModel.refreshGraph() // refreshGraph() вызывается внутри updateGraph
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 }

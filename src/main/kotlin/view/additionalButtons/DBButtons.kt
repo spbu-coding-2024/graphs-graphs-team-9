@@ -42,97 +42,106 @@ private fun showSQLiteOpenFileChooser(
     }
 }
 
+
 @Composable
 fun DBButtons(
-    viewModel: MainScreenViewModel,
-    showNeo4jSaveUploadButton: MutableState<Boolean>,
-    showSQLiteSaveUploadButton: MutableState<Boolean>,
-    showUploadSaveButtons: MutableState<Boolean>,
-    showNeo4jScreen: MutableState<Boolean>,
+        viewModel: MainScreenViewModel,
+        showNeo4jSaveUploadButton: MutableState<Boolean>,
+        showSQLiteSaveUploadButton: MutableState<Boolean>,
+        showUploadSaveButtons: MutableState<Boolean>,
+        showNeo4jScreen: MutableState<Boolean>,
 ) {
     AnimatedVisibility(
-        visible = showUploadSaveButtons.value,
+            visible = showUploadSaveButtons.value,
     ) {
         Column(
-            modifier = Modifier
-                .absolutePadding(left = 8.dp, right = 8.dp)
+                modifier = Modifier
+                        .absolutePadding(left = 8.dp, right = 8.dp)
         ) {
 
             Button(
-                onClick = {
-                    showSQLiteSaveUploadButton.value = true
-                    showNeo4jSaveUploadButton.value = false
-                },
-                modifier = Modifier.fillMaxWidth()
+                    onClick = {
+                        showSQLiteSaveUploadButton.value = !showSQLiteSaveUploadButton.value
+                        if (showSQLiteSaveUploadButton.value) {
+                            showNeo4jSaveUploadButton.value = false
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
             ) {
                 Text("SQLite")
             }
             Button(
-                onClick = {
-                    showNeo4jScreen.value = true
-//                    showNeo4jSaveClearButton.value = !showNeo4jSaveClearButton.value
-                    showSQLiteSaveUploadButton.value = false
-                },
-                modifier = Modifier.fillMaxWidth()
+                    onClick = {
+                        showNeo4jScreen.value = true
+                        showSQLiteSaveUploadButton.value = false // Ensure SQLite buttons are hidden when Neo4j is chosen
+                        showNeo4jSaveUploadButton.value = true // Show Neo4j buttons
+                    },
+                    modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Neo4j")
             }
+
             AnimatedVisibility(
-                visible = showSQLiteSaveUploadButton.value,
+                    visible = showSQLiteSaveUploadButton.value,
             ) {
-                Button(
-                        onClick = {
-                            showSQLiteOpenFileChooser(
-                                    initialDirectory = viewModel.currentSQLiteDbPath.value?.let { File(it).parent }
-                                            ?: System.getProperty("user.home"),
-                                    onFileSelected = { filePath ->
-                                        viewModel.onSQLiteFileSelectedForOpen(filePath)
-                                    }
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Open as")
+                Column {
+                    Button(
+                            onClick = {
+                                showSQLiteOpenFileChooser(
+                                        initialDirectory = viewModel.currentSQLiteDbPath.value?.let { File(it).parent }
+                                                ?: System.getProperty("user.home"),
+                                        onFileSelected = { filePath ->
+                                            viewModel.onSQLiteFileSelectedForOpen(filePath)
+                                        }
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Open as")
+                    }
+                    Button(
+                            onClick = { viewModel.openSaveAsSQLiteDialog() },
+                            modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Save as")
+                    }
+                    Button(
+                            onClick = { viewModel.saveToCurrentSQLiteFile() },
+                            enabled = viewModel.currentSQLiteDbPath.value != null,
+                            modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Save")
+                    }
                 }
             }
+
             AnimatedVisibility(
-                visible = showSQLiteSaveUploadButton.value,
+                    visible = showNeo4jSaveUploadButton.value,
             ) {
-                Button(
-                        onClick = { viewModel.openSaveAsSQLiteDialog() },
-                        modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Save as")
+                Column {
+                    Button(
+                            onClick = { viewModel.uploadGraph() },
+                            modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Upload Graph")
+                    }
+                    Button(
+                            onClick = { viewModel.saveToNeo4j() },
+                            modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Save Graph")
+                    }
                 }
             }
+
             AnimatedVisibility(
-                visible = showNeo4jSaveUploadButton.value,
-            ) {
-                Button(
-                    onClick = { viewModel.uploadGraph() },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Upload Graph")
-                }
-            }
-            AnimatedVisibility(
-                visible = showNeo4jSaveUploadButton.value,
-            ) {
-                Button(
-                    onClick = { viewModel.saveToNeo4j() },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Save Graph")
-                }
-            }
-            AnimatedVisibility(
-                visible = showSQLiteSaveUploadButton.value || showNeo4jSaveUploadButton.value,
+                    visible = showSQLiteSaveUploadButton.value || showNeo4jSaveUploadButton.value,
             ) {
                 Button(
                         onClick = {
                             if (showSQLiteSaveUploadButton.value) {
                                 viewModel.clearGraph()
-                            } else {
+                            } else if (showNeo4jSaveUploadButton.value) { // check if Neo4j buttons are active
                                 viewModel.clearNeo4jDatabase()
                             }
                         },
