@@ -38,6 +38,7 @@ import model.graph.Graph
 import model.graph.GraphFactory
 import model.graph.Vertex
 import viewModel.screen.layouts.ForceAtlas2
+import view.additionalScreen.SaveAsSQLiteDialog
 
 val sampleGraph: Graph = GraphFactory.createDirectedWeightedGraph().apply {
     addVertex("A")
@@ -177,6 +178,11 @@ fun MainScreen() {
     }
     diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel, viewModel)
     diologistSQLite(showSQLiteDialog, showSQLiteSaveClearButtonsPanel, viewModel)
+    SaveAsSQLiteDialog( // Добавляем вызов нового диалога
+            showDialog = viewModel.showSaveAsSQLiteDialog.value,
+            viewModel = viewModel,
+            onDismissRequest = { viewModel.cancelSaveAsSQLiteDialog() }
+            )
     ErrorDialog(viewModel.showErrorDialog.value, viewModel.errorMessage.value, { viewModel.clearError() })
 }
 

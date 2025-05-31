@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import model.io.SQLGraph
+import java.io.File
 
 class MainScreenViewModel(
     private val graph: Graph,
@@ -278,6 +279,26 @@ class MainScreenViewModel(
     private var _dbPath = mutableStateOf<String?>(null)
     val dbPath: State<String?> = _dbPath
 
+    private val _showSaveAsSQLiteDialog = mutableStateOf(false)
+    val showSaveAsSQLiteDialog: State<Boolean> = _showSaveAsSQLiteDialog
+
+    private val _saveAsFileName = mutableStateOf("database.db")
+    val saveAsFileName: State<String> = _saveAsFileName
+    fun setSaveAsFileName(name: String) { _saveAsFileName.value = name }
+
+    private val _saveAsDirectoryPath = mutableStateOf<String?>(null)
+    val saveAsDirectoryPath: State<String?> = _saveAsDirectoryPath
+    fun setSaveAsDirectoryPath(path: String?) { _saveAsDirectoryPath.value = path }
+
+    fun openSaveAsSQLiteDialog() {
+        _saveAsDirectoryPath.value = null
+        _showSaveAsSQLiteDialog.value = true
+    }
+
+    fun cancelSaveAsSQLiteDialog() {
+        _showSaveAsSQLiteDialog.value = false
+    }
+
     private fun withSQLiteDB(action: SQLGraph.() -> Unit) {
         val path = _dbPath.value
         if (path.isNullOrBlank()) {
@@ -299,22 +320,46 @@ class MainScreenViewModel(
         }
     }
 
-    fun saveToSQLite() {
+    fun confirmSaveAsSQLite() {
+        val dirPath = _saveAsDirectoryPath.value
+        val fileName = _saveAsFileName.value
+
+        if (dirPath.isNullOrBlank()) {
+            handleError(IllegalArgumentException("Directory path not selected."))
+            return
+        }
+        if (fileName.isBlank()) {
+            handleError(IllegalArgumentException("File name cannot be empty."))
+            return
+        }
+
+        val finalFileName = if (!fileName.endsWith(".db", ignoreCase = true) &&
+                !fileName.endsWith(".sqlite", ignoreCase = true) &&
+                !fileName.endsWith(".sqlite3", ignoreCase = true)
+        ) {
+            "$fileName.db"
+        } else {
+            fileName
+        }
+
+        val fullPath = File(dirPath, finalFileName).absolutePath
+        _dbPath.value = fullPath
+
         withSQLiteDB {
-            val graph = graphViewModel.graph
-            if (graph.getVertices().isEmpty()) {
-                println("SQLite Save: graph empty")
+            val currentGraph = graphViewModel.graph
+            if (currentGraph.getVertices().isEmpty()) {
+                handleError(IllegalStateException("Cannot save an empty graph."))
                 return@withSQLiteDB
             }
 
-            // Проверяем, что graph это GraphImpl
-            if (graph is GraphImpl) {
-                saveGraph(graph)
-                println("SQLite: graph saved successfully")
+            if (currentGraph is GraphImpl) {
+                saveGraph(currentGraph)
+                println("SQLite: graph saved successfully to $fullPath")
             } else {
-                println("SQLite Save: graph must be GraphImpl instance")
+                handleError(IllegalStateException("Graph is not a GraphImpl instance, cannot save to SQLite."))
             }
         }
+        _showSaveAsSQLiteDialog.value = false
     }
 
     fun uploadFromSQLite() {

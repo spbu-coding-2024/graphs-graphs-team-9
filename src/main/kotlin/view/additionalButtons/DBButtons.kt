@@ -52,20 +52,20 @@ fun DBButtons(
                 visible = showSQLiteSaveUploadButton.value,
             ) {
                 Button(
-                        onClick = { viewModel.uploadFromSQLite() }, // Вызываем функцию загрузки
+                        onClick = { viewModel.uploadFromSQLite() },
                         modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Upload Graph")
+                    Text("Open as")
                 }
             }
             AnimatedVisibility(
                 visible = showSQLiteSaveUploadButton.value,
             ) {
                 Button(
-                        onClick = { viewModel.saveToSQLite() },
+                        onClick = { viewModel.openSaveAsSQLiteDialog() },
                         modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Save Graph")
+                    Text("Save as")
                 }
             }
             AnimatedVisibility(
