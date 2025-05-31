@@ -1,7 +1,5 @@
 package model.io.SQLite
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import model.graph.GraphImpl
 import model.graph.Graph
 import java.io.File
@@ -10,17 +8,6 @@ import java.nio.file.Paths
 import kotlin.Result
 
 class SQLiteService {
-    private val _internalDbPath = mutableStateOf<String?>(null)
-    val currentDbPathState: State<String?> = _internalDbPath
-
-    fun getDbPath(): String? {
-        return _internalDbPath.value
-    }
-
-    fun setDbPath(path: String) {
-        _internalDbPath.value = path
-    }
-
     private fun initializeDatabaseAtPath(dbFilePath: String): Result<Unit> {
         return try {
             if (dbFilePath.isBlank()) {
@@ -55,7 +42,6 @@ class SQLiteService {
             initializeDatabaseAtPath(fullPath).getOrThrow()
             SQLGraph(fullPath).saveGraph(graphToSave)
 
-            _internalDbPath.value = fullPath
             return Result.success(fullPath)
 
         } catch (e: Exception) {
@@ -63,9 +49,8 @@ class SQLiteService {
         }
     }
 
-    fun saveGraphToCurrentFile(graphToSave: Graph): Result<Unit> {
-        val path = _internalDbPath.value
-        if (path.isNullOrBlank()) {
+    fun saveGraphToCurrentFile(graphToSave: Graph, currentDbPath: String): Result<Unit> {
+        if (currentDbPath.isBlank()) {
             return Result.failure(IllegalStateException("No current SQLite database file set. Use 'Save As...' first."))
         }
 
@@ -74,14 +59,14 @@ class SQLiteService {
         }
 
         return try {
-            SQLGraph(path).saveGraph(graphToSave)
+            SQLGraph(currentDbPath).saveGraph(graphToSave)
             Result.success(Unit)
         } catch (e: Exception) {
-            Result.failure(Exception("Failed to save graph to current SQLite file at $path", e))
+            Result.failure(Exception("Failed to save graph to current SQLite file at $currentDbPath", e))
         }
     }
 
-    fun loadGraphFromFile(filePath: String): Result<GraphImpl> {
+    fun loadGraphFromFile(filePath: String): Result<Pair<GraphImpl, String>> {
         if (filePath.isBlank()) {
             return Result.failure(IllegalArgumentException("File path cannot be blank for loading."))
         }
@@ -89,8 +74,7 @@ class SQLiteService {
         return try {
             val loadedGraph = SQLGraph(filePath).loadGraph()
             if (loadedGraph != null) {
-                _internalDbPath.value = filePath
-                Result.success(loadedGraph)
+                Result.success(Pair(loadedGraph, filePath))
             } else {
                 Result.failure(FileNotFoundOrInvalidFormatException("No graph data found in the file, or the file is not a valid graph database: $filePath"))
             }
