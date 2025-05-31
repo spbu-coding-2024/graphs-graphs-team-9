@@ -11,6 +11,9 @@ import androidx.compose.runtime.derivedStateOf
 import model.io.SQLite.SQLGraph
 import java.io.File
 import model.io.SQLite.SQLiteService
+import javax.swing.JFileChooser
+import javax.swing.UIManager
+import javax.swing.filechooser.FileNameExtensionFilter
 
 class MainScreenViewModel(
     private var graph: Graph,
@@ -153,8 +156,6 @@ class MainScreenViewModel(
     fun runFindBridge() {
         resetColor()
         graphViewModel.startFindBridges()
-//        graphViewModel.updateGraph(graphViewModel.graph)
-//        graphViewModel.updateEdges(_showVerticesLabels, _showEdgesLabels)
     }
 
     fun runTarjan() {
@@ -208,7 +209,6 @@ class MainScreenViewModel(
 
     fun setUsername(user: String) {
         _user.value = user
-
     }
 
     fun setPassword(pass: String) {
@@ -268,6 +268,36 @@ class MainScreenViewModel(
         } catch (e: Exception) {
             handleError(e)
         }
+    }
+
+    private fun showSQLiteOpenFileChooserPlatform(
+            initialDirectory: String?,
+            onFileSelected: (String) -> Unit
+    ) {
+        try {
+            for (info in UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus" == info.getName()) {
+                    UIManager.setLookAndFeel(info.getClassName())
+                    break
+                }
+            }
+        } catch (e: Exception) {
+        }
+
+        val chooser = JFileChooser(initialDirectory ?: System.getProperty("user.home"))
+        chooser.dialogTitle = "Open SQLite Database File"
+        chooser.fileFilter = FileNameExtensionFilter("SQLite Databases (*.db, *.sqlite, *.sqlite3)", "db", "sqlite", "sqlite3")
+        chooser.fileSelectionMode = JFileChooser.FILES_ONLY
+
+        val result = chooser.showOpenDialog(null)
+        if (result == JFileChooser.APPROVE_OPTION) {
+            onFileSelected(chooser.selectedFile.absolutePath)
+        }
+    }
+
+    fun requestSQLiteFileOpen() {
+        val initialDir = currentSQLiteDbPath.value?.let { File(it).parent } ?: System.getProperty("user.home")
+        showSQLiteOpenFileChooserPlatform(initialDir, this::onSQLiteFileSelectedForOpen)
     }
 
     private val sqliteService = SQLiteService()
@@ -346,10 +376,8 @@ class MainScreenViewModel(
         }
     }
 
-
     private fun setNewGraph(g: Graph) {
-        graphViewModel.updateGraph(g) // Обновляем граф в GraphViewModel
-        // graphViewModel.refreshGraph() // refreshGraph() вызывается внутри updateGraph
+        graphViewModel.updateGraph(g)
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 }
