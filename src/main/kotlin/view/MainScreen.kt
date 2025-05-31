@@ -8,47 +8,25 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import view.additionalButtons.DBButtons
 import view.additionalButtons.VertexSizeSlider
 import view.additionalButtons.algoButton
 import view.additionalButtons.barButton
 import view.additionalButtons.switch
-import androidx.compose.ui.platform.LocalDensity
-import view.additionalScreen.diologistAddEdgeScreen
-import view.additionalScreen.diologistAddVertexScreen
-import view.additionalScreen.diologistDeleteEdgeScreen
-import view.additionalScreen.diologistDeleteVertexScreen
 import view.graph.GraphView
-import viewModel.additionalScreen.diologistDijkstraScreen
-import viewModel.additionalScreen.diologistFordBellman
 import viewModel.additionalScreen.diologistNeo4j
 import viewModel.screen.MainScreenViewModel
 import viewModel.toosl.CoolColors
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import model.graph.Graph
 import model.graph.GraphFactory
-import model.graph.Vertex
 import viewModel.screen.layouts.ForceAtlas2
 import view.additionalScreen.SaveAsSQLiteDialog
-
-import javax.swing.JFileChooser
-import javax.swing.filechooser.FileNameExtensionFilter
-import java.io.File
-import javax.swing.UIManager
-
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.wrapContentSize
 
 val sampleGraph: Graph = GraphFactory.createDirectedWeightedGraph().apply {
     addVertex("A")

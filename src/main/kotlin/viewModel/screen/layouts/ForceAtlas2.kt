@@ -59,6 +59,7 @@ class ForceAtlas2: RepresentationStrategy {
         }
         algorithm.endAlgo()
 
+        // Дальше идет фулл иишный код, который пытается разместить все вершины графа в зоне видимости экрана
         var minX = Float.MAX_VALUE
         var maxX = Float.MIN_VALUE
         var minY = Float.MAX_VALUE

@@ -7,8 +7,6 @@ import model.io.Neo4j.Neo4j
 import viewModel.graph.GraphViewModel
 import viewModel.screen.layouts.RepresentationStrategy
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
-import model.io.SQLite.SQLGraph
 import java.io.File
 import model.io.SQLite.SQLiteService
 import javax.swing.JFileChooser

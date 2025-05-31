@@ -24,12 +24,6 @@ import viewModel.screen.MainScreenViewModel
 fun barButton(
     showGraph: MutableState<Boolean>,
     viewModel: MainScreenViewModel,
-//    showSettingsMenu: MutableState<Boolean>,
-//    showAddMenu: MutableState<Boolean>,
-//    showAddVertex: MutableState<Boolean>,
-//    showDeleteVertex: MutableState<Boolean>,
-//    showAddEdgeDialog: MutableState<Boolean>,
-//    showDeleteEdge: MutableState<Boolean>,
 ) {
     val showAddMenu = remember { mutableStateOf(false) }
     val showSettingsMenu = remember { mutableStateOf(false) }

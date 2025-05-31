@@ -20,8 +20,6 @@ import viewModel.screen.MainScreenViewModel
 fun algoButton(
     viewModel: MainScreenViewModel,
     showAlgoButtons: MutableState<Boolean>,
-//    showFordBellman: MutableState<Boolean>,
-//    showDijkstra: MutableState<Boolean>,
 ) {
 
     val showDijkstra = remember { mutableStateOf(false) }
