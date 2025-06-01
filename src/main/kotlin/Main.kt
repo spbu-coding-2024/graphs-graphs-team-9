@@ -5,9 +5,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import model.graph.*
 import view.MainScreen
-import viewModel.screen.MainScreenViewModel
 import java.awt.Dimension
 
 
@@ -15,7 +13,6 @@ import java.awt.Dimension
 @Composable
 @Preview
 fun App() {
-
 
 }
 

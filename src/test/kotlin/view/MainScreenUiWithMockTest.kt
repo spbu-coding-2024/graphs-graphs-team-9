@@ -4,14 +4,19 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import io.mockk.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import model.graph.GraphImpl
 import model.graph.GraphFactory
 import model.io.SQLite.SQLiteService
 import org.junit.Rule
 import org.junit.Test
 import org.junit.Before
+import org.junit.After
 import viewModel.screen.MainScreenViewModel
 import viewModel.screen.layouts.ForceAtlas2
 import kotlin.Result
@@ -26,8 +31,12 @@ class MainScreenUiWithMockTest {
     private lateinit var viewModel: MainScreenViewModel
     private lateinit var graphToSave: GraphImpl
 
+    private val testDispatcher = StandardTestDispatcher()
+
     @Before
-    fun setUp() = runTest {
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+
         mockSqliteService = mockk()
         graphToSave = GraphFactory.createDirectedWeightedGraph().apply {
             addVertex("TestV1")
@@ -52,9 +61,13 @@ class MainScreenUiWithMockTest {
         }
     }
 
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
     @Test
-    fun sqliteSaveButton_becomesEnabled_afterSuccessfulSaveAs() = runTest {
-        // Open UI panels to make SQLite buttons visible
+    fun sqliteSaveButton_becomesEnabled_afterSuccessfulSaveAs() = runTest(testDispatcher) {
         composeTestRule.onNodeWithText("Graph", useUnmergedTree = true).performClick()
         composeTestRule.onNodeWithTag("uploadSaveButton").performClick()
         composeTestRule.onNodeWithTag("sqliteSectionButton").performClick()
@@ -69,6 +82,7 @@ class MainScreenUiWithMockTest {
         viewModel.setSaveAsFileName("test_graph.db")
 
         viewModel.confirmSaveAsSQLite()
+        testDispatcher.scheduler.runCurrent()
         composeTestRule.waitForIdle() // Wait for UI to update after state change
 
         // Verify "Save" button is now enabled
@@ -85,7 +99,7 @@ class MainScreenUiWithMockTest {
     }
 
     @Test
-    fun clickingSaveAsButton_thenCancellingDialog_saveButtonRemainsDisabled() = runTest {
+    fun clickingSaveAsButton_thenCancellingDialog_saveButtonRemainsDisabled() = runTest(testDispatcher) {
         // Open UI panels
         composeTestRule.onNodeWithText("Graph", useUnmergedTree = true).performClick()
         composeTestRule.onNodeWithTag("uploadSaveButton").performClick()

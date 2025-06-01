@@ -13,12 +13,18 @@ import model.io.SQLite.SQLiteService
 import javax.swing.JFileChooser
 import javax.swing.UIManager
 import javax.swing.filechooser.FileNameExtensionFilter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class MainScreenViewModel(
     private var graph: Graph,
     val representationStrategy: RepresentationStrategy,
     private val sqliteServiceInstance: SQLiteService = SQLiteService()
 ) {
+    private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
     private var _showVerticesLabels = mutableStateOf(false)
     var showVerticesLabels: Boolean
         get() = _showVerticesLabels.value
@@ -125,9 +131,6 @@ class MainScreenViewModel(
             else -> GraphFactory.createUndirectedUnweightedGraph()
         }
         setNewGraph(newG)
-
-        graphViewModel.updateGraph(g)
-        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 
     val findResult = mutableStateOf<String?>(null)
@@ -164,7 +167,7 @@ class MainScreenViewModel(
         graphViewModel.startTarjan()
     }
 
-    fun runFindKey(){
+    fun runFindKey() {
         resetGraphView()
         graphViewModel.startFindKeyVertex()
     }
@@ -206,12 +209,14 @@ class MainScreenViewModel(
     private var _isWeight = mutableStateOf<Boolean>(false)
     val isWeight: State<Boolean> = _isWeight
 
-    fun setIsDirect(f: Boolean){
+    fun setIsDirect(f: Boolean) {
         _isDirect.value = f
     }
-    fun setIsWeight(f: Boolean){
+
+    fun setIsWeight(f: Boolean) {
         _isWeight.value = f
     }
+
     fun setStart(name: String) {
         _startName.value = name
     }
@@ -358,26 +363,28 @@ class MainScreenViewModel(
             return
         }
 
-        val result = sqliteService.saveGraphToNewFile(graphViewModel.graph, dirPath, fileName)
-
-        result.onSuccess { savedFilePath ->
-            _currentSQLiteDbPath.value = savedFilePath
-            _showSaveAsSQLiteDialog.value = false
-            println("Graph saved successfully to: $savedFilePath")
-        }.onFailure { exception ->
-            handleError(exception)
+        viewModelScope.launch {
+            val result = sqliteService.saveGraphToNewFile(graphViewModel.graph, dirPath, fileName)
+            result.onSuccess { savedFilePath ->
+                _currentSQLiteDbPath.value = savedFilePath
+                _showSaveAsSQLiteDialog.value = false
+                println("Graph saved successfully to: $savedFilePath")
+            }.onFailure { exception ->
+                handleError(exception)
+            }
         }
     }
 
     fun onSQLiteFileSelectedForOpen(filePath: String) {
-        val result = sqliteService.loadGraphFromFile(filePath)
-
-        result.onSuccess { (loadedGraph, path) ->
-            setNewGraph(loadedGraph)
-            _currentSQLiteDbPath.value = path
-            println("Graph loaded successfully from: $path")
-        }.onFailure { exception ->
-            handleError(exception)
+        viewModelScope.launch {
+            val result = sqliteService.loadGraphFromFile(filePath)
+            result.onSuccess { (loadedGraph, path) ->
+                setNewGraph(loadedGraph)
+                _currentSQLiteDbPath.value = path
+                println("Graph loaded successfully from: $path")
+            }.onFailure { exception ->
+                handleError(exception)
+            }
         }
     }
 
@@ -388,12 +395,13 @@ class MainScreenViewModel(
             openSaveAsSQLiteDialog()
             return
         }
-        val result = sqliteService.saveGraphToCurrentFile(graphViewModel.graph, currentPath)
-
-        result.onSuccess {
-            println("Graph saved successfully to current file: $currentPath")
-        }.onFailure { exception ->
-            handleError(exception)
+        viewModelScope.launch {
+            val result = sqliteService.saveGraphToCurrentFile(graphViewModel.graph, currentPath)
+            result.onSuccess {
+                println("Graph saved successfully to current file: $currentPath")
+            }.onFailure { exception ->
+                handleError(exception)
+            }
         }
     }
 
