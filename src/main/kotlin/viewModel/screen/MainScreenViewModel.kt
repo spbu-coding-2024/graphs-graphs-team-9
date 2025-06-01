@@ -7,6 +7,7 @@ import model.io.Neo4j.Neo4j
 import viewModel.graph.GraphViewModel
 import viewModel.screen.layouts.RepresentationStrategy
 import androidx.compose.runtime.State
+import androidx.compose.ui.unit.dp
 import java.io.File
 import model.io.SQLite.SQLiteService
 import javax.swing.JFileChooser
@@ -43,7 +44,10 @@ class MainScreenViewModel(
 
     fun resetGraphView() {
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
-        graphViewModel.vertices.forEach { v -> v.color = Color.Gray }
+        graphViewModel.vertices.forEach { v ->
+            v.color = Color.Gray
+            v.radius = 25.dp
+        }
     }
 
     private var _vertex = mutableStateOf<String?>(null)
@@ -126,11 +130,17 @@ class MainScreenViewModel(
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
     }
 
+    val findResult = mutableStateOf<String?>(null)
+
+    fun getFindResult(): String{
+        return findResult.value ?: ""
+    }
+
     fun runFordBellman() {
         resetColor()
         _startName.value?.let { start ->
             _endName.value?.let { end ->
-                graphViewModel.startFordBellman(start, end)
+                graphViewModel.startFordBellman(start, end, findResult)
             }
         }
     }
@@ -139,7 +149,7 @@ class MainScreenViewModel(
         resetColor()
         _startName.value?.let { start ->
             _endName.value?.let { end ->
-                graphViewModel.startDijkstra(start, end)
+                graphViewModel.startDijkstra(start, end, findResult)
             }
         }
     }
