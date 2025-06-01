@@ -28,7 +28,9 @@ dependencies {
     implementation("org.neo4j.driver:neo4j-java-driver:5.14.0")
     testImplementation("io.mockk:mockk:1.13.8")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.10.0")
-
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
     testImplementation(compose.desktop.uiTestJUnit4)
 }
 
