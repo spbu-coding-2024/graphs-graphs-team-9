@@ -8,8 +8,6 @@ import org.gephi.project.api.ProjectController
 import org.openide.util.Lookup
 import viewModel.graph.GraphViewModel
 import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.random.Random
 
 class ForceAtlas2: RepresentationStrategy {
