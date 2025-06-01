@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import viewModel.screen.MainScreenViewModel
 
@@ -27,7 +28,12 @@ fun diologistDeleteVertexScreen(
         AlertDialog(
             modifier = Modifier.padding(5.dp).width(250.dp),
             onDismissRequest = { showDeleteVertex.value = false },
-            title = { Text("Vertex") },
+            title = {
+                Text(
+                    text = "Vertex",
+                    modifier = Modifier.testTag("deleteVertexDialogTitle")
+                )
+            },
             text = {
                 Column {
                     OutlinedTextField(
@@ -36,7 +42,7 @@ fun diologistDeleteVertexScreen(
                             vertex.value = it
                             viewModel.setVertex(it) },
                         label = { Text("Vertex") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).testTag("vertexNameInput")
                     )
                 }
             },

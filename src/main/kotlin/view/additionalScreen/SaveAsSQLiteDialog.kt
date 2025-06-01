@@ -5,6 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import viewModel.screen.MainScreenViewModel
@@ -51,7 +52,7 @@ fun SaveAsSQLiteDialog(
                             onValueChange = { viewModel.setSaveAsFileName(it) },
                             label = { Text("File Name (e.g., mygraph.db)") },
                             singleLine = true,
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp).testTag("fileNameInputTextField")
                     )
 
                     Row(
@@ -115,7 +116,8 @@ fun SaveAsSQLiteDialog(
                                     viewModel.confirmSaveAsSQLite()
                                 },
                                 enabled = !viewModel.saveAsDirectoryPath.value.isNullOrBlank() &&
-                                        viewModel.saveAsFileName.value.isNotBlank()
+                                        viewModel.saveAsFileName.value.isNotBlank(),
+                                modifier = Modifier.testTag("saveDialogSaveButton")
                         ) {
                             Text("Save")
                         }
