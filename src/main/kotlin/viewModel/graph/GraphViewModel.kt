@@ -1,5 +1,6 @@
 package viewModel.graph
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
@@ -122,9 +123,14 @@ class GraphViewModel(
      * @param endName Имя конечной вершины. Если null или пустая строка, или вершина не найдена, метод завершится.
      * @throws IllegalStateException если граф содержит отрицательный цикл (согласно реализации [FordBellman]).
      */
-    fun startFordBellman(startName: String?, endName: String?) {
+    fun startFordBellman(startName: String?, endName: String?, pathR: MutableState<String?>) {
         val bellman = FordBellman.fordBellman(graph, graph.getVertexByName(startName ?: "") ?: return, graph.getVertexByName(endName ?: "") ?: return)
+        if (bellman.first == null){
+            pathR.value = ""
+            return
+        }
         val path = bellman.first ?: return
+        pathR.value = bellman.second.toString()
 
         for (i in 0..path.size - 1) {
             _vertices.value[path[i]]?.color = Color(93, 167, 250)
@@ -154,9 +160,14 @@ class GraphViewModel(
      * @param end Имя конечной вершины.
      * @throws IllegalArgumentException если граф содержит рёбра с отрицательным весом (согласно реализации [DijkstraAlgorithm]).
      */
-    fun startDijkstra(start: String, end: String){
+    fun startDijkstra(start: String, end: String, pathR: MutableState<String?>){
         val d = DijkstraAlgorithm().findShortestPath(graph, graph.getVertexByName(start) ?: return, graph.getVertexByName(end) ?: return)
-        val path = d?.path ?: return
+        if (d?.path == null){
+            pathR.value = ""
+            return
+        }
+        val path = d.path
+        pathR.value = d.distance.toString()
 
         for (i in 0..path.size - 1) {
             _vertices.value[path[i]]?.color = Color(93, 167, 250)
@@ -179,11 +190,23 @@ class GraphViewModel(
             }
         }
     }
-    // проблема
-    fun startFindKeyVertex(){
-        val fkv = HarmonicCentrality(graph).centrality
-        _vertices.value.forEach { t, u ->
-            u.radius = u.radius + (((fkv[t] ?: (0.1 * 5))).dp)
+    fun startFindKeyVertex() {
+        val centrality = HarmonicCentrality(graph).centrality
+        val minCentrality = centrality.values.minOrNull() ?: 0.0
+        val maxCentrality = centrality.values.maxOrNull() ?: 1.0
+
+        val minSize = 25.dp
+        val maxSize = 50.dp
+
+        _vertices.value.forEach { (vertex, viewModel) ->
+            val normalizedCentrality = if (maxCentrality - minCentrality != 0.0) {
+                ((centrality[vertex] ?: 0.0) - minCentrality) / (maxCentrality - minCentrality)
+            } else {
+                0.5
+            }
+
+            val newSize = minSize + (minSize) * normalizedCentrality.toFloat()
+            viewModel.radius = newSize
         }
     }
 
@@ -229,7 +252,7 @@ class GraphViewModel(
      *                Это значение будет преобразовано в [Dp] для установки радиуса.
      */
     fun updateVertexSize(newSize: Float) {
-        _vertexSize.value = newSize
+        _vertexSize.value += (newSize - _vertexSize.value )
         _vertices.value.values.forEach { vertex ->
             vertex.radius = newSize.dp
         }
