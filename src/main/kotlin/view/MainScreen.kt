@@ -27,6 +27,7 @@ import model.graph.GraphFactory
 import viewModel.screen.layouts.ForceAtlas2
 import view.additionalScreen.SaveAsSQLiteDialog
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.platform.testTag
 
 val sampleGraph: Graph = GraphFactory.createDirectedWeightedGraph().apply {
     addVertex("A")
@@ -60,8 +61,7 @@ val sampleGraph: Graph = GraphFactory.createDirectedWeightedGraph().apply {
 }
 
 @Composable
-fun MainScreen() {
-    val viewModel = remember { MainScreenViewModel(sampleGraph, ForceAtlas2()) }
+fun MainScreen(viewModel: MainScreenViewModel = remember { MainScreenViewModel(sampleGraph, ForceAtlas2()) }) {
 
     val showGraphPanel = remember { mutableStateOf(false) }
     val showAlgoButtons = remember { mutableStateOf(false) }
@@ -101,7 +101,7 @@ fun MainScreen() {
                             onClick = {
                                 showUploadSaveButtons.value = !showUploadSaveButtons.value
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().testTag("uploadSaveButton")
                     ) { Text("Upload/Save") }
 
                     DBButtons(
