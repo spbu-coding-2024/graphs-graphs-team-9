@@ -1,13 +1,8 @@
 package viewModel.additionalScreen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +15,7 @@ import viewModel.screen.MainScreenViewModel
 fun diologistFordBellman(
     showFordBellman: MutableState<Boolean>,
     viewModel: MainScreenViewModel,
+    showResult: MutableState<Boolean>
 ) {
 
     val startName = mutableStateOf<String?>(null)
@@ -57,6 +53,7 @@ fun diologistFordBellman(
                 Button(
                     onClick = {
                         viewModel.runFordBellman()
+                        showResult.value = if (viewModel.graphViewModel.isWeighted()) true else false
                         showFordBellman.value = false
                     }
                 ) {

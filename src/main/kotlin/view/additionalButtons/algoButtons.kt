@@ -20,10 +20,12 @@ import viewModel.screen.MainScreenViewModel
 fun algoButton(
     viewModel: MainScreenViewModel,
     showAlgoButtons: MutableState<Boolean>,
+    showResult: MutableState<Boolean>,
 ) {
 
     val showDijkstra = remember { mutableStateOf(false) }
     val showFordBellman = remember { mutableStateOf(false) }
+
     AnimatedVisibility(
         visible = showAlgoButtons.value,
     ) {
@@ -33,38 +35,53 @@ fun algoButton(
         ) {
             if (viewModel.graphViewModel.isWeighted() && viewModel.graphViewModel.graph.getPositive()) {
                 Button(
-                    onClick = { showDijkstra.value = !showDijkstra.value },
+                    onClick = {
+                        showResult.value = false
+                        showDijkstra.value = !showDijkstra.value
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Dijkstra")
                 }
             }
             Button(
-                onClick = viewModel::runFindBridge,
+                onClick = {
+                    showResult.value = false
+                    viewModel.runFindBridge()
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Find Bridges")
             }
             Button(
-                onClick = { showFordBellman.value = !showFordBellman.value },
+                onClick = {
+                    showResult.value = false
+                    showFordBellman.value = !showFordBellman.value
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Ford Bellman")
             }
             Button(
-                onClick = viewModel::runTarjan,
+                onClick = {
+                    showResult.value = false
+                    viewModel.runTarjan()
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Tarjan")
             }
             Button(
-                onClick = viewModel::runFindKey,
+                onClick = {
+                    showResult.value = false
+                    viewModel.runFindKey()
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Find key vertex")
             }
         }
     }
-    diologistDijkstraScreen(showDijkstra, viewModel)
-    diologistFordBellman(showFordBellman, viewModel)
+    diologistDijkstraScreen(showDijkstra, viewModel, showResult)
+    diologistFordBellman(showFordBellman, viewModel, showResult)
 }

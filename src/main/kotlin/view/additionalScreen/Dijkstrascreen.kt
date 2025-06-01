@@ -19,6 +19,7 @@ import viewModel.screen.MainScreenViewModel
 fun diologistDijkstraScreen(
     showDijkstraScreen: MutableState<Boolean>,
     viewModel: MainScreenViewModel,
+    showResult: MutableState<Boolean>
 ) {
 
     val startName = mutableStateOf<String?>(null)
@@ -55,6 +56,7 @@ fun diologistDijkstraScreen(
                 Button(
                     onClick = {
                         viewModel.runDijkstra()
+                        showResult.value = if (viewModel.graphViewModel.isWeighted()) true else false
                         showDijkstraScreen.value = false
                     }
                 ) {
