@@ -9,16 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.Dp
 import viewModel.graph.GraphViewModel
-import viewModel.graph.VertexViewModel
 import viewModel.toosl.CoolColors
 
 @Composable
 fun GraphView(
         viewModel: GraphViewModel,
         scale: Float,
-        // onVertexDrag: (VertexViewModel, Dp, Dp) -> Unit
 ) {
     val offset = remember { mutableStateOf(Offset.Zero) }
 
@@ -52,7 +49,6 @@ fun GraphView(
                 VertexView(
                         viewModel = v,
                         modifier = Modifier,
-                        // onDragVertex = onVertexDrag
                 )
             }
         }

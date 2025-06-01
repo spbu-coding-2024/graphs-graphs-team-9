@@ -11,91 +11,101 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import viewModel.screen.MainScreenViewModel
+import androidx.compose.ui.platform.testTag
 
 @Composable
 fun DBButtons(
-    viewModel: MainScreenViewModel,
-    showNeo4jSaveUploadButton: MutableState<Boolean>,
-    showSQLiteSaveUploadButton: MutableState<Boolean>,
-    showUploadSaveButtons: MutableState<Boolean>,
-    showNeo4jScreen: MutableState<Boolean>,
-    showSQLiteScreen: MutableState<Boolean>,
+        viewModel: MainScreenViewModel,
+        showNeo4jSaveUploadButton: MutableState<Boolean>,
+        showSQLiteSaveUploadButton: MutableState<Boolean>,
+        showUploadSaveButtons: MutableState<Boolean>,
+        showNeo4jScreen: MutableState<Boolean>,
 ) {
     AnimatedVisibility(
-        visible = showUploadSaveButtons.value,
+            visible = showUploadSaveButtons.value,
     ) {
         Column(
-            modifier = Modifier
-                .absolutePadding(left = 8.dp, right = 8.dp)
+                modifier = Modifier
+                        .absolutePadding(left = 8.dp, right = 8.dp)
         ) {
 
             Button(
-                onClick = {
-                    showSQLiteScreen.value = true
-                    showNeo4jSaveUploadButton.value = false
-                },
-                modifier = Modifier.fillMaxWidth()
+                    onClick = {
+                        showSQLiteSaveUploadButton.value = !showSQLiteSaveUploadButton.value
+                        if (showSQLiteSaveUploadButton.value) {
+                            showNeo4jSaveUploadButton.value = false
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().testTag("sqliteSectionButton")
             ) {
                 Text("SQLite")
             }
             Button(
-                onClick = {
-                    showNeo4jScreen.value = true
-//                    showNeo4jSaveClearButton.value = !showNeo4jSaveClearButton.value
-                    showSQLiteSaveUploadButton.value = false
-                },
-                modifier = Modifier.fillMaxWidth()
+                    onClick = {
+                        showNeo4jScreen.value = true
+                        showSQLiteSaveUploadButton.value = false
+                        showNeo4jSaveUploadButton.value = true
+                    },
+                    modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Neo4j")
             }
+
             AnimatedVisibility(
-                visible = showSQLiteSaveUploadButton.value,
+                    visible = showSQLiteSaveUploadButton.value,
             ) {
-                Button(
-                        onClick = { viewModel.uploadFromSQLite() }, // Вызываем функцию загрузки
-                        modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Upload Graph")
+                Column {
+                    Button(
+                            onClick = {
+                                viewModel.requestSQLiteFileOpen()
+                            },
+                            modifier = Modifier.fillMaxWidth().testTag("sqliteOpenAsButton")
+                    ) {
+                        Text("Open as")
+                    }
+                    Button(
+                            onClick = { viewModel.openSaveAsSQLiteDialog() },
+                            modifier = Modifier.fillMaxWidth().testTag("sqliteSaveAsButton")
+                    ) {
+                        Text("Save as")
+                    }
+                    Button(
+                            onClick = { viewModel.saveToCurrentSQLiteFile() },
+                            enabled = viewModel.currentSQLiteDbPath.value != null,
+                            modifier = Modifier.fillMaxWidth().testTag("sqliteSaveButton")
+                    ) {
+                        Text("Save")
+                    }
                 }
             }
+
             AnimatedVisibility(
-                visible = showSQLiteSaveUploadButton.value,
+                    visible = showNeo4jSaveUploadButton.value,
             ) {
-                Button(
-                        onClick = { viewModel.saveToSQLite() },
-                        modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Save Graph")
+                Column {
+                    Button(
+                            onClick = { viewModel.uploadGraph() },
+                            modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Upload Graph")
+                    }
+                    Button(
+                            onClick = { viewModel.saveToNeo4j() },
+                            modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Save Graph")
+                    }
                 }
             }
+
             AnimatedVisibility(
-                visible = showNeo4jSaveUploadButton.value,
-            ) {
-                Button(
-                    onClick = { viewModel.uploadGraph() },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Upload Graph")
-                }
-            }
-            AnimatedVisibility(
-                visible = showNeo4jSaveUploadButton.value,
-            ) {
-                Button(
-                    onClick = { viewModel.saveToNeo4j() },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Save Graph")
-                }
-            }
-            AnimatedVisibility(
-                visible = showSQLiteSaveUploadButton.value || showNeo4jSaveUploadButton.value,
+                    visible = showSQLiteSaveUploadButton.value || showNeo4jSaveUploadButton.value,
             ) {
                 Button(
                         onClick = {
                             if (showSQLiteSaveUploadButton.value) {
                                 viewModel.clearGraph()
-                            } else {
+                            } else if (showNeo4jSaveUploadButton.value) {
                                 viewModel.clearNeo4jDatabase()
                             }
                         },

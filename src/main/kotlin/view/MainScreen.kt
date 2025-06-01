@@ -1,6 +1,5 @@
 package view
 
-import viewModel.additionalScreen.diologistSQLite
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -9,35 +8,26 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import view.additionalButtons.DBButtons
 import view.additionalButtons.VertexSizeSlider
 import view.additionalButtons.algoButton
 import view.additionalButtons.barButton
 import view.additionalButtons.switch
-import androidx.compose.ui.platform.LocalDensity
-import view.additionalScreen.diologistAddEdgeScreen
-import view.additionalScreen.diologistAddVertexScreen
-import view.additionalScreen.diologistDeleteEdgeScreen
-import view.additionalScreen.diologistDeleteVertexScreen
 import view.graph.GraphView
-import viewModel.additionalScreen.diologistDijkstraScreen
-import viewModel.additionalScreen.diologistFordBellman
 import viewModel.additionalScreen.diologistNeo4j
 import viewModel.screen.MainScreenViewModel
 import viewModel.toosl.CoolColors
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import model.graph.Graph
 import model.graph.GraphFactory
-import model.graph.Vertex
 import viewModel.screen.layouts.ForceAtlas2
+import view.additionalScreen.SaveAsSQLiteDialog
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.platform.testTag
 
 val sampleGraph: Graph = GraphFactory.createDirectedWeightedGraph().apply {
     addVertex("A")
@@ -52,7 +42,7 @@ val sampleGraph: Graph = GraphFactory.createDirectedWeightedGraph().apply {
     addEdge("G", "C", 32.3)
     addEdge("B", "C", 44.0)
     addEdge("A", "E", 32.1)
-    addEdge("A", "F", .3)
+    addEdge("A", "F",.3)
     addEdge("F", "G", 3.2)
 //    addVertex(Vertex(1, "A"))
 //    addVertex(Vertex(2, "B"))
@@ -71,10 +61,7 @@ val sampleGraph: Graph = GraphFactory.createDirectedWeightedGraph().apply {
 }
 
 @Composable
-fun MainScreen() {
-    val viewModel = remember { MainScreenViewModel(sampleGraph, ForceAtlas2()) }
-//    val viewModel = remember { MainScreenViewModel(sampleGraph) }
-
+fun MainScreen(viewModel: MainScreenViewModel = remember { MainScreenViewModel(sampleGraph, ForceAtlas2()) }) {
 
     val showGraphPanel = remember { mutableStateOf(false) }
     val showAlgoButtons = remember { mutableStateOf(false) }
@@ -85,55 +72,44 @@ fun MainScreen() {
     val showNeo4jDialog = remember { mutableStateOf(false) }
     val showNeo4jSaveClearButtonsPanel = remember { mutableStateOf(false) }
     val showSQLiteSaveClearButtonsPanel = remember { mutableStateOf(false) }
-    val showSQLiteDialog = remember { mutableStateOf(false) }
-
-//    DBButtons(
-//        showNeo4jSaveClearButtonsPanel,
-//        showSQLiteSaveClearButtonsPanel,
-//        showUploadSaveButtons,
-//        showNeo4jDialog
-//    )
 
     Column(
-        modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize()
     ) {
         barButton(showGraphPanel, viewModel)
 
         Divider(
-            color = Color.Black,
-            modifier = Modifier.fillMaxWidth().height(1.dp)
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth().height(1.dp)
         )
         Row(
-            modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize()
         ) {
             AnimatedVisibility(
-                visible = showGraphPanel.value,
+                    visible = showGraphPanel.value,
             ) {
                 Column(
-                    modifier = Modifier
-                        .width(232.dp)
-                        .padding(horizontal = 8.dp)
-                        .scrollable(rememberScrollableState { 0f }, orientation = Orientation.Vertical)
+                        modifier = Modifier
+                                .width(232.dp)
+                                .padding(horizontal = 8.dp)
+                                .scrollable(rememberScrollableState { 0f }, orientation = Orientation.Vertical)
                 ) {
                     Spacer(modifier = Modifier.height(4.dp))
                     DividerG()
 
                     Button(
-                        onClick = {
-                            showUploadSaveButtons.value = !showUploadSaveButtons.value
-//                            showSQLiteSaveClearButtonsPanel.value = false
-//                            showNeo4jSaveClearButtonsPanel.value = false
-                        },
-                        modifier = Modifier.fillMaxWidth()
+                            onClick = {
+                                showUploadSaveButtons.value = !showUploadSaveButtons.value
+                            },
+                            modifier = Modifier.fillMaxWidth().testTag("uploadSaveButton")
                     ) { Text("Upload/Save") }
 
                     DBButtons(
-                        viewModel,
-                        showNeo4jSaveClearButtonsPanel,
-                        showSQLiteSaveClearButtonsPanel,
-                        showUploadSaveButtons,
-                        showNeo4jDialog,
-                        showSQLiteDialog // Добавить этот параметр
+                            viewModel,
+                            showNeo4jSaveClearButtonsPanel,
+                            showSQLiteSaveClearButtonsPanel,
+                            showUploadSaveButtons,
+                            showNeo4jDialog,
                     )
                     DividerG()
                     switch(viewModel, remember { mutableStateOf(viewModel.showVerticesLabels) })
@@ -142,81 +118,78 @@ fun MainScreen() {
                     VertexSizeSlider(viewModel = viewModel, modifier = Modifier.padding(vertical = 4.dp))
                     DividerG()
                     Button(
-                        onClick = {
-                            viewModel.resetGraphView()
-                            viewModel.resetColor()
-                        },
-                        modifier = Modifier.fillMaxWidth()
+                            onClick = { viewModel.resetGraphView()
+                                viewModel.resetColor()
+                            },
+                            modifier = Modifier.fillMaxWidth()
                     ) { Text(text = "Reset Graph Layout") }
                     DividerG()
                     Button(
-                        onClick = { showAlgoButtons.value = !showAlgoButtons.value },
-                        modifier = Modifier.fillMaxWidth(),
+                            onClick = { showAlgoButtons.value = !showAlgoButtons.value },
+                            modifier = Modifier.fillMaxWidth(),
                     ) { Text("Algorithms") }
                     algoButton(viewModel, showAlgoButtons)
                     DividerG()
-
-
                 }
             }
 
             Divider(
-                color = Color.Black,
-                modifier = Modifier.fillMaxHeight().width(1.dp)
+                    color = Color.Black,
+                    modifier = Modifier.fillMaxHeight().width(1.dp)
             )
 
             BoxWithConstraints(
-                modifier = Modifier
-                    .weight(1f)
-                    .background(CoolColors.backgroundBasic)
-                    .clipToBounds()
-                    .scrollable(
-                        orientation = Orientation.Vertical,
-                        state = rememberScrollableState { delta ->
-                            scale.value = (scale.value * (1f + delta / 500f)).coerceIn(0.1f, 5f)
-                            delta
-                        }
-                    )
+                    modifier = Modifier
+                            .weight(1f)
+                            .background(CoolColors.backgroundBasic)
+                            .clipToBounds()
+                            .scrollable(
+                                    orientation = Orientation.Vertical,
+                                    state = rememberScrollableState { delta ->
+                                        scale.value = (scale.value * (1f + delta / 500f)).coerceIn(0.1f, 5f)
+                                        delta
+                                    }
+                            )
             ) {
-                val canvasWidthDp = maxWidth
-                val canvasHeightDp = maxHeight
-
                 GraphView(
-                    viewModel = viewModel.graphViewModel,
-                    scale = scale.value,
-                    // onVertexDrag = viewModel.vertex.dra
+                        viewModel = viewModel.graphViewModel,
+                        scale = scale.value,
                 )
             }
         }
     }
     diologistNeo4j(showNeo4jDialog, showNeo4jSaveClearButtonsPanel, viewModel)
-    diologistSQLite(showSQLiteDialog, showSQLiteSaveClearButtonsPanel, viewModel)
+    SaveAsSQLiteDialog(
+            showDialog = viewModel.showSaveAsSQLiteDialog.value,
+            viewModel = viewModel,
+            onDismissRequest = { viewModel.cancelSaveAsSQLiteDialog() }
+    )
     ErrorDialog(viewModel.showErrorDialog.value, viewModel.errorMessage.value, { viewModel.clearError() })
 }
 
 @Composable
 fun DividerG() {
     Divider(
-        color = Color.Black,
-        modifier = Modifier.fillMaxWidth().height(1.dp)
+            color = Color.Black,
+            modifier = Modifier.fillMaxWidth().height(1.dp)
     )
 }
 @Composable
 fun ErrorDialog(
-    showDialog: Boolean,
-    message: String?,
-    onDismiss: () -> Unit
+        showDialog: Boolean,
+        message: String?,
+        onDismiss: () -> Unit
 ) {
     if (showDialog && message != null) {
         AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text("Error") },
-            text = { Text(message) },
-            confirmButton = {
-                Button(onClick = onDismiss) {
-                    Text("Ok")
+                onDismissRequest = onDismiss,
+                title = { Text("Error") },
+                text = { Text(message) },
+                confirmButton = {
+                    Button(onClick = onDismiss) {
+                        Text("Ok")
+                    }
                 }
-            }
         )
     }
 }

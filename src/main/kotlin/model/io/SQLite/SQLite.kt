@@ -1,4 +1,4 @@
-package model.io
+package model.io.SQLite
 
 import model.graph.GraphImpl
 import model.graph.Vertex

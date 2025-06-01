@@ -21,7 +21,6 @@ import viewModel.graph.VertexViewModel
 fun VertexView(
         viewModel: VertexViewModel,
         modifier: Modifier = Modifier,
-        // onDragVertex: (VertexViewModel, Dp, Dp) -> Unit
 ) {
     val density = LocalDensity.current
     Box(modifier = modifier
@@ -40,7 +39,6 @@ fun VertexView(
                         deltaXDp = dragAmount.x.toDp()
                         deltaYDp = dragAmount.y.toDp()
                     }
-                    // onDragVertex(viewModel, deltaXDp, deltaYDp)
                     viewModel.onDrag(dragAmount)
                 }
             }
