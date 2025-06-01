@@ -25,6 +25,8 @@ fun diologistNeo4j(
     val password = remember { mutableStateOf("") }
     val isDirected = remember { mutableStateOf(false) }
     val isWighted = remember { mutableStateOf(false) }
+    val showErrorDialog = remember { mutableStateOf(false) }
+    val errorMessage = remember { mutableStateOf("") }
 
     AnimatedVisibility(
         visible = showNeo4j.value,
@@ -36,7 +38,6 @@ fun diologistNeo4j(
             text = {
                 Spacer(modifier = Modifier.height(8.dp))
                 Column {
-//                    try {
                     OutlinedTextField(
                         value = uri.value,
                         onValueChange = {
@@ -64,12 +65,8 @@ fun diologistNeo4j(
                             viewModel.setPassword(it)
                         },
                         label = { Text("Password") },
-//                                    visualTransformation = PasswordVisualTransformation(),
                         modifier = Modifier.fillMaxWidth()
                     )
-//                    } catch (e: Exception) {
-//                        throw Exception("Failed to write graph", e)
-//                    }
                     Spacer(modifier = Modifier.padding(4.dp))
                     Row {
                         Row(modifier = Modifier.fillMaxWidth(0.5f).clickable(onClick = {isDirected.value = !isDirected.value})) {
@@ -90,21 +87,33 @@ fun diologistNeo4j(
                 }
             },
             confirmButton = {
-//                if (uri.value == "" || username.value == "" || password.value == ""){
-//
-//                }
-
                 Button(
                     onClick = {
-                        try {
-                            viewModel.setIsDirect(isDirected.value)
-                            viewModel.setIsWeight(isWighted.value)
-                            viewModel.runNeo4j()
-                            showSaveClearButton.value = true
-                            showNeo4j.value = false
-                        } catch (e: Exception) {
-                            showSaveClearButton.value = false
-                            viewModel.handleError(e)
+                        when {
+                            uri.value.isBlank() -> {
+                                errorMessage.value = "URI cannot be empty"
+                                showErrorDialog.value = true
+                            }
+                            username.value.isBlank() -> {
+                                errorMessage.value = "Username cannot be empty"
+                                showErrorDialog.value = true
+                            }
+                            password.value.isBlank() -> {
+                                errorMessage.value = "Password cannot be empty"
+                                showErrorDialog.value = true
+                            }
+                            else -> {
+                                try {
+                                    viewModel.setIsDirect(isDirected.value)
+                                    viewModel.setIsWeight(isWighted.value)
+                                    viewModel.runNeo4j()
+                                    showSaveClearButton.value = true
+                                    showNeo4j.value = false
+                                } catch (e: Exception) {
+                                    showSaveClearButton.value = false
+                                    viewModel.handleError(e)
+                                }
+                            }
                         }
                     }
                 ) {
@@ -114,12 +123,23 @@ fun diologistNeo4j(
             dismissButton = {
                 Button(
                     onClick = {
-                        viewModel.createGraph(true, false)
                         showSaveClearButton.value = false
                         showNeo4j.value = false
                     }
                 ) {
                     Text("Cancel")
+                }
+            }
+        )
+    }
+    if (showErrorDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showErrorDialog.value = false },
+            title = { Text("Error") },
+            text = { Text(errorMessage.value) },
+            confirmButton = {
+                Button(onClick = { showErrorDialog.value = false }) {
+                    Text("OK")
                 }
             }
         )
