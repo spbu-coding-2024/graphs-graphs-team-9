@@ -168,7 +168,7 @@ class MainScreenViewModel(
     }
 
     fun runFindKey() {
-        resetGraphView()
+//        resetGraphView()
         graphViewModel.startFindKeyVertex()
     }
 
