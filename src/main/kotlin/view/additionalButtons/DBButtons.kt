@@ -11,6 +11,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import viewModel.screen.MainScreenViewModel
+import androidx.compose.ui.platform.testTag
 
 @Composable
 fun DBButtons(
@@ -35,7 +36,7 @@ fun DBButtons(
                             showNeo4jSaveUploadButton.value = false
                         }
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().testTag("sqliteSectionButton")
             ) {
                 Text("SQLite")
             }
@@ -58,20 +59,20 @@ fun DBButtons(
                             onClick = {
                                 viewModel.requestSQLiteFileOpen()
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().testTag("sqliteOpenAsButton")
                     ) {
                         Text("Open as")
                     }
                     Button(
                             onClick = { viewModel.openSaveAsSQLiteDialog() },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().testTag("sqliteSaveAsButton")
                     ) {
                         Text("Save as")
                     }
                     Button(
                             onClick = { viewModel.saveToCurrentSQLiteFile() },
                             enabled = viewModel.currentSQLiteDbPath.value != null,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().testTag("sqliteSaveButton")
                     ) {
                         Text("Save")
                     }

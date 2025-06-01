@@ -15,7 +15,8 @@ import javax.swing.filechooser.FileNameExtensionFilter
 
 class MainScreenViewModel(
     private var graph: Graph,
-    val representationStrategy: RepresentationStrategy
+    val representationStrategy: RepresentationStrategy,
+    private val sqliteServiceInstance: SQLiteService = SQLiteService()
 ) {
     private var _showVerticesLabels = mutableStateOf(false)
     var showVerticesLabels: Boolean
@@ -298,7 +299,8 @@ class MainScreenViewModel(
         showSQLiteOpenFileChooserPlatform(initialDir, this::onSQLiteFileSelectedForOpen)
     }
 
-    private val sqliteService = SQLiteService()
+    // Для моков
+    private val sqliteService = sqliteServiceInstance
 
     private val _showSaveAsSQLiteDialog = mutableStateOf(false)
     val showSaveAsSQLiteDialog: State<Boolean> = _showSaveAsSQLiteDialog
@@ -377,7 +379,7 @@ class MainScreenViewModel(
         }
     }
 
-    private fun setNewGraph(newGraph: Graph) {
+    fun setNewGraph(newGraph: Graph) {
         this.graph = newGraph
         graphViewModel.updateGraph(newGraph)
         representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
