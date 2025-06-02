@@ -184,7 +184,15 @@ class MainScreenViewModel(
 
     fun runTarjan() {
         resetColor()
-        graphViewModel.startTarjan()
+        viewModelScope.launch {
+            try {
+                val components = graphViewModel.startTarjan()
+                graphViewModel.highlightTarjanComponents(components)
+            } catch (e: Exception) {
+                findResult.value = "Произошла ошибка при поиске компонент"
+                handleError(e)
+            }
+        }
     }
 
     fun runFindKey() {
@@ -270,7 +278,7 @@ class MainScreenViewModel(
     }
 
     fun runNeo4j() =
-        withNeoDB { }
+            withNeoDB { }
 
     fun uploadGraph() {
         try {

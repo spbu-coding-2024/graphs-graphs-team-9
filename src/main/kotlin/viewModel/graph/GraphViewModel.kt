@@ -129,10 +129,15 @@ class GraphViewModel(
         }
     }
 
-    fun startTarjan(){
-        val T = TarjanAlgorithm().findStronglyConnectedComponents(graph)
-        T.forEach { s ->
-            val color = Color(Random.nextInt() % 256, Random.nextInt() % 256, Random.nextInt() % 256)
+    suspend fun startTarjan(): List<Set<Vertex>> {
+        return withContext(Dispatchers.Default) {
+            TarjanAlgorithm().findStronglyConnectedComponents(graph)
+        }
+    }
+
+    fun highlightTarjanComponents(components: List<Set<Vertex>>) {
+        components.forEach { s ->
+            val color = Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
             s.forEach { v ->
                 _vertices.value[v]?.color = color
             }
