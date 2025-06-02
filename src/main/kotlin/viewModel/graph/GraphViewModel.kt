@@ -147,8 +147,13 @@ class GraphViewModel(
         }
     }
 
-    fun startFindKeyVertex() {
-        val centrality = HarmonicCentrality(graph).centrality
+    suspend fun startFindKeyVertex(): Map<Vertex, Double> {
+        return withContext(Dispatchers.Default) {
+            HarmonicCentrality(graph).centrality
+        }
+    }
+
+    fun applyKeyVertexVisuals(centrality: Map<Vertex, Double>) {
         val minCentrality = centrality.values.minOrNull() ?: 0.0
         val maxCentrality = centrality.values.maxOrNull() ?: 1.0
 
@@ -161,8 +166,7 @@ class GraphViewModel(
             } else {
                 0.5
             }
-
-            val newSize = minSize + (minSize) * normalizedCentrality.toFloat()
+            val newSize = minSize + (maxSize - minSize) * normalizedCentrality.toFloat()
             viewModel.radius = newSize
         }
     }

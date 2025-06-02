@@ -219,7 +219,15 @@ class MainScreenViewModel(
     }
 
     fun runFindKey() {
-        graphViewModel.startFindKeyVertex()
+        viewModelScope.launch {
+            try {
+                val centralityMap = graphViewModel.startFindKeyVertex()
+                graphViewModel.applyKeyVertexVisuals(centralityMap)
+            } catch (e: Exception) {
+                findResult.value = "Произошла ошибка при поиске ключевых вершин"
+                handleError(e)
+            }
+        }
     }
 
     val vertexSize: State<Float> get() = graphViewModel.vertexSize
