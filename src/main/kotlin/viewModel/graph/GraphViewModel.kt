@@ -12,6 +12,8 @@ import model.graph.GraphImpl
 import model.graph.Vertex
 import model.io.Neo4j.Neo4j
 import kotlin.random.Random
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class GraphViewModel(
         var graph: Graph,
@@ -20,7 +22,7 @@ class GraphViewModel(
 ) {
     val showVerticesLabels = _showVerticesLabels
     val showEdgesLabels = _showEdgesLabels
-    
+
     private val _vertices = mutableStateOf(
             graph.getVertices().associateWith { v ->
                 VertexViewModel(
@@ -109,18 +111,19 @@ class GraphViewModel(
         }
     }
 
-    fun startDijkstra(start: String, end: String, pathR: MutableState<String?>){
-        val d = DijkstraAlgorithm().findShortestPath(graph, graph.getVertexByName(start) ?: return, graph.getVertexByName(end) ?: return)
-        if (d?.path == null){
-            pathR.value = ""
-            return
-        }
-        val path = d.path
-        pathR.value = d.distance.toString()
+    suspend fun startDijkstra(start: String, end: String): DijkstraAlgorithm.PathResult? {
+        val startVertex = graph.getVertexByName(start) ?: return null
+        val endVertex = graph.getVertexByName(end) ?: return null
 
-        for (i in 0..path.size - 1) {
+        return withContext(Dispatchers.Default) {
+            DijkstraAlgorithm().findShortestPath(graph, startVertex, endVertex)
+        }
+    }
+
+    fun highlightDijkstraPath(path: List<Vertex>) {
+        for (i in path.indices) {
             _vertices.value[path[i]]?.color = Color(93, 167, 250)
-            if (i + 1 != path.size) {
+            if (i + 1 < path.size) {
                 _edges.value[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Blue
             }
         }

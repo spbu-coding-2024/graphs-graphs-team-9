@@ -150,9 +150,29 @@ class MainScreenViewModel(
 
     fun runDijkstra() {
         resetColor()
-        _startName.value?.let { start ->
-            _endName.value?.let { end ->
-                graphViewModel.startDijkstra(start, end, findResult)
+        val startNodeName = _startName.value
+        val endNodeName = _endName.value
+
+        if (startNodeName.isNullOrBlank() || endNodeName.isNullOrBlank()) {
+            findResult.value = "Не указана начальная или конечная вершина"
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                val result = graphViewModel.startDijkstra(startNodeName, endNodeName)
+                if (result != null) {
+                    findResult.value = result.distance.toString()
+                    graphViewModel.highlightDijkstraPath(result.path)
+                } else {
+                    findResult.value = ""
+                }
+            } catch (e: IllegalArgumentException) {
+                findResult.value = "Ошибка: ${e.message}"
+                handleError(e)
+            } catch (e: Exception) {
+                findResult.value = "Произошла ошибка"
+                handleError(e)
             }
         }
     }
@@ -168,11 +188,9 @@ class MainScreenViewModel(
     }
 
     fun runFindKey() {
-//        resetGraphView()
         graphViewModel.startFindKeyVertex()
     }
 
-    // Vertex size binding
     val vertexSize: State<Float> get() = graphViewModel.vertexSize
     fun updateVertexSize(v: Float) = graphViewModel.updateVertexSize(v)
 
