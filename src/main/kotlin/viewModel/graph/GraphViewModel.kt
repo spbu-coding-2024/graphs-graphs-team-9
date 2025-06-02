@@ -1,6 +1,5 @@
 package viewModel.graph
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
@@ -87,18 +86,22 @@ class GraphViewModel(
         }
     }
 
-    fun startFordBellman(startName: String?, endName: String?, pathR: MutableState<String?>) {
-        val bellman = FordBellman.fordBellman(graph, graph.getVertexByName(startName ?: "") ?: return, graph.getVertexByName(endName ?: "") ?: return)
-        if (bellman.first == null){
-            pathR.value = ""
+    suspend fun startFordBellman(startName: String?, endName: String?): Pair<List<Vertex>?, Double?> {
+        val startVertex = graph.getVertexByName(startName ?: "") ?: return null to null
+        val endVertex = graph.getVertexByName(endName ?: "") ?: return null to null
+        return withContext(Dispatchers.Default) {
+            FordBellman.fordBellman(graph, startVertex, endVertex)
+        }
+    }
+
+    fun highlightFordBellmanPath(result: Pair<List<Vertex>?, Double?>) {
+        val path = result.first
+        if (path == null) {
             return
         }
-        val path = bellman.first ?: return
-        pathR.value = bellman.second.toString()
-
-        for (i in 0..path.size - 1) {
+        for (i in path.indices) {
             _vertices.value[path[i]]?.color = Color(93, 167, 250)
-            if (i + 1 != path.size) {
+            if (i + 1 < path.size) {
                 _edges.value[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Blue
             }
         }
@@ -166,7 +169,7 @@ class GraphViewModel(
 
     fun startNeo4j(uri: String, username: String, password: String, isDirected: Boolean, isWeighted: Boolean){
         graph = Neo4j(uri, username, password).readFromDB(isDirected, isWeighted)
-                // доработать
+        // доработать
     }
 
     fun clearGraph(){

@@ -141,9 +141,32 @@ class MainScreenViewModel(
 
     fun runFordBellman() {
         resetColor()
-        _startName.value?.let { start ->
-            _endName.value?.let { end ->
-                graphViewModel.startFordBellman(start, end, findResult)
+        val startNodeName = _startName.value
+        val endNodeName = _endName.value
+
+        if (startNodeName.isNullOrBlank() || endNodeName.isNullOrBlank()) {
+            findResult.value = "Не указана начальная или конечная вершина"
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                val result = graphViewModel.startFordBellman(startNodeName, endNodeName)
+                if (result.first != null && result.second != null && result.second != Double.POSITIVE_INFINITY) {
+                    findResult.value = result.second.toString()
+                    graphViewModel.highlightFordBellmanPath(result)
+                } else if (result.second == Double.POSITIVE_INFINITY) {
+                    findResult.value = ""
+                } else {
+                    findResult.value = "Ошибка при поиске пути"
+                }
+            } catch (e: IllegalStateException) {
+                findResult.value = "Ошибка: ${e.message}"
+                handleError(e)
+            }
+            catch (e: Exception) {
+                findResult.value = "Произошла ошибка"
+                handleError(e)
             }
         }
     }
