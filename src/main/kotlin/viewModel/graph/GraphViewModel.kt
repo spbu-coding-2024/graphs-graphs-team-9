@@ -107,10 +107,23 @@ class GraphViewModel(
         }
     }
 
-    fun startFindBridges(){
-        val bridges = FindBridges(graph).findBridges()
-        bridges.forEach{ edge ->
-            _edges.value[graph.getEdgeByVertex(edge.first, edge.second)]?.color = Color(93, 167, 250)
+    suspend fun startFindBridges(): List<Pair<Vertex, Vertex>> {
+        return withContext(Dispatchers.Default) {
+            FindBridges(graph).findBridges()
+        }
+    }
+
+    fun highlightBridges(bridges: List<Pair<Vertex, Vertex>>) {
+        bridges.forEach { edgePair ->
+            val edge = graph.getEdgeByVertex(edgePair.first, edgePair.second)
+            if (edge != null) {
+                _edges.value[edge]?.color = Color(93, 167, 250)
+            }
+            // Для неориентированных графов, мост может быть сохранен в обратном направлении
+            val reverseEdge = graph.getEdgeByVertex(edgePair.second, edgePair.first)
+            if (reverseEdge != null) {
+                _edges.value[reverseEdge]?.color = Color(93, 167, 250)
+            }
         }
     }
 

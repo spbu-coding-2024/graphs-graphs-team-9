@@ -202,7 +202,15 @@ class MainScreenViewModel(
 
     fun runFindBridge() {
         resetColor()
-        graphViewModel.startFindBridges()
+        viewModelScope.launch {
+            try {
+                val bridges = graphViewModel.startFindBridges()
+                graphViewModel.highlightBridges(bridges)
+            } catch (e: Exception) {
+                findResult.value = "Произошла ошибка при поиске мостов"
+                handleError(e)
+            }
+        }
     }
 
     fun runTarjan() {
