@@ -40,26 +40,26 @@ class GraphViewModel(
     val edges: Collection<EdgeViewModel>
         get() = _edges.value.values
 
+    val verticesMap: Map<Vertex, VertexViewModel>
+        get() = _vertices.value
+
+    val edgesMap: Map<Edge, EdgeViewModel>
+        get() = _edges.value
+
+
     fun refreshGraph() {
         refreshVertices()
         refreshEdges()
     }
 
     fun refreshVertices() {
-        val currentVertices = _vertices.value.toMutableMap()
-
-        graph.getVertices().forEach { vertex ->
-            if (!currentVertices.containsKey(vertex)) {
-                currentVertices[vertex] = VertexViewModel(
-                        0.dp, 0.dp, Color.Gray, vertex, showVerticesLabels
-                )
-            }
+        val oldVMs = _vertices.value
+        val newVerticesMap = graph.getVertices().associateWith { vertex ->
+            oldVMs[vertex] ?: VertexViewModel(
+                    0.dp, 0.dp, Color.Gray, vertex, showVerticesLabels
+            )
         }
-
-        val graphVertices = graph.getVertices().toSet()
-        currentVertices.keys.retainAll(graphVertices)
-
-        _vertices.value = currentVertices
+        _vertices.value = newVerticesMap
     }
 
 
@@ -102,7 +102,8 @@ class GraphViewModel(
         for (i in path.indices) {
             _vertices.value[path[i]]?.color = Color(93, 167, 250)
             if (i + 1 < path.size) {
-                _edges.value[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Blue
+                val edge = graph.getEdgeByVertex(path[i], path[i+1])
+                if(edge != null) _edges.value[edge]?.color = Color.Blue
             }
         }
     }
@@ -140,7 +141,8 @@ class GraphViewModel(
         for (i in path.indices) {
             _vertices.value[path[i]]?.color = Color(93, 167, 250)
             if (i + 1 < path.size) {
-                _edges.value[graph.getEdgeByVertex(path[i], path[i + 1])]?.color = Color.Blue
+                val edge = graph.getEdgeByVertex(path[i], path[i+1])
+                if(edge != null) _edges.value[edge]?.color = Color.Blue
             }
         }
     }
@@ -221,8 +223,9 @@ class GraphViewModel(
     }
 
     private fun updateVertices(showVerticesLabels: State<Boolean>): Map<Vertex, VertexViewModel> {
+        val oldVMs = _vertices.value
         return graph.getVertices().associateWith { v ->
-            VertexViewModel(0.dp, 0.dp, Color.Gray, v, showVerticesLabels)
+            oldVMs[v] ?: VertexViewModel(0.dp, 0.dp, Color.Gray, v, showVerticesLabels)
         }
     }
 

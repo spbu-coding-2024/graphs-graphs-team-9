@@ -45,15 +45,25 @@ class MainScreenViewModel(
     private var currentCanvasHeight: Double = 600.0
 
     init {
-        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
+        requestLayoutUpdate()
+    }
+
+    private fun requestLayoutUpdate() {
+        viewModelScope.launch(Dispatchers.Default) {
+            try {
+                representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
+            } catch (e: Exception) {
+                handleError(Exception("Layout failed: ${e.message}", e))
+            }
+        }
     }
 
     fun resetGraphView() {
-        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
         graphViewModel.vertices.forEach { v ->
             v.color = Color.Gray
             v.radius = 25.dp
         }
+        requestLayoutUpdate()
     }
 
     private var _vertex = mutableStateOf<String?>(null)
@@ -67,13 +77,13 @@ class MainScreenViewModel(
     fun addVertex() {
         graphViewModel.graph.addVertex(vertex.value ?: "")
         graphViewModel.refreshGraph()
-        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
+        requestLayoutUpdate()
     }
 
     fun delVertex() {
         graphViewModel.graph.removeVertex(_vertex.value ?: "")
         graphViewModel.refreshGraph()
-        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
+        requestLayoutUpdate()
     }
 
     private var _startVertex = mutableStateOf<String?>(null)
@@ -100,15 +110,14 @@ class MainScreenViewModel(
     fun addEdge(): Boolean {
         graphViewModel.graph.addEdge(startVertex.value ?: "", endVertex.value ?: "", width.value)
         graphViewModel.refreshGraph()
-        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
-
+        requestLayoutUpdate()
         return true
     }
 
     fun delEdge(): Boolean {
         graphViewModel.graph.removeEdge(_startVertex.value ?: "", _endVertex.value ?: "")
         graphViewModel.refreshGraph()
-        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
+        requestLayoutUpdate()
         return true
     }
 
@@ -119,7 +128,7 @@ class MainScreenViewModel(
     fun createGraph(isDirected: Boolean, isWeighted: Boolean) {
         graphViewModel.graph = GraphImpl(isDirected, isWeighted)
         graphViewModel.refreshGraph()
-        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
+        requestLayoutUpdate()
     }
 
     fun clearGraph() {
@@ -473,6 +482,6 @@ class MainScreenViewModel(
     fun setNewGraph(newGraph: Graph) {
         this.graph = newGraph
         graphViewModel.updateGraph(newGraph)
-        representationStrategy.layout(currentCanvasHeight, currentCanvasWidth, graphViewModel)
+        requestLayoutUpdate()
     }
 }
