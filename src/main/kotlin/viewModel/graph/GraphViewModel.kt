@@ -210,7 +210,7 @@ class GraphViewModel(
     fun applyKeyVertexVisuals(centrality: Map<Vertex, Double>) {
         val minCentrality = centrality.values.minOrNull() ?: 0.0
         val maxCentrality = centrality.values.maxOrNull() ?: 1.0
-        val minSize = 25.dp
+        val currentBaseSizeDp = _vertexSize.value.dp
 
         _vertices.value.forEach { (vertex, viewModel) ->
             val normalizedCentrality = if (maxCentrality - minCentrality != 0.0) {
@@ -218,7 +218,7 @@ class GraphViewModel(
             } else {
                 0.5
             }
-            val newSize = minSize + minSize * normalizedCentrality.toFloat()
+            val newSize = currentBaseSizeDp + (currentBaseSizeDp * normalizedCentrality.toFloat())
             viewModel.radius = newSize
         }
     }
