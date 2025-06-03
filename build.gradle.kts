@@ -32,6 +32,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
     testImplementation(compose.desktop.uiTestJUnit4)
+    testImplementation("org.neo4j:neo4j-common:4.4.5")
+    testImplementation("org.neo4j:neo4j-kernel:4.4.5")
+    testImplementation("org.neo4j:neo4j-dbms:4.4.5")
+    testImplementation("org.neo4j:neo4j:4.4.43")
+    implementation("org.neo4j.test:neo4j-harness:5.13.0")
+    testImplementation("org.neo4j.test:neo4j-harness:5.13.0")
 }
 
 kotlin {
