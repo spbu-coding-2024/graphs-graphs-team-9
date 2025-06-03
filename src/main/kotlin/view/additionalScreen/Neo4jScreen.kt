@@ -13,6 +13,7 @@ import viewModel.screen.MainScreenViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Recomposer
+import kotlinx.coroutines.launch
 
 @Composable
 fun diologistNeo4j(
@@ -27,6 +28,7 @@ fun diologistNeo4j(
     val isWighted = remember { mutableStateOf(false) }
     val showErrorDialog = remember { mutableStateOf(false) }
     val errorMessage = remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
 
     AnimatedVisibility(
         visible = showNeo4j.value,
@@ -69,14 +71,20 @@ fun diologistNeo4j(
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
                     Row {
-                        Row(modifier = Modifier.fillMaxWidth(0.5f).clickable(onClick = {isDirected.value = !isDirected.value})) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(0.5f)
+                                .clickable(onClick = { isDirected.value = !isDirected.value })
+                        ) {
                             Switch(
                                 checked = isDirected.value,
                                 onCheckedChange = { isDirected.value = it })
 
                             Text(modifier = Modifier.fillMaxWidth().padding(12.dp), text = "Directed")
                         }
-                        Row(modifier = Modifier.fillMaxWidth().clickable(onClick = {isWighted.value = !isWighted.value})) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                                .clickable(onClick = { isWighted.value = !isWighted.value })
+                        ) {
                             Switch(
                                 checked = isWighted.value,
                                 onCheckedChange = { isWighted.value = it })
@@ -94,19 +102,24 @@ fun diologistNeo4j(
                                 errorMessage.value = "URI cannot be empty"
                                 showErrorDialog.value = true
                             }
+
                             username.value.isBlank() -> {
                                 errorMessage.value = "Username cannot be empty"
                                 showErrorDialog.value = true
                             }
+
                             password.value.isBlank() -> {
                                 errorMessage.value = "Password cannot be empty"
                                 showErrorDialog.value = true
                             }
+
                             else -> {
                                 try {
                                     viewModel.setIsDirect(isDirected.value)
                                     viewModel.setIsWeight(isWighted.value)
-                                    viewModel.runNeo4j()
+                                    coroutineScope.launch {
+                                        viewModel.runNeo4j()
+                                    }
                                     showSaveClearButton.value = true
                                     showNeo4j.value = false
                                 } catch (e: Exception) {
