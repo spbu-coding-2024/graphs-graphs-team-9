@@ -1,4 +1,4 @@
-package viewModel
+package viewModel.graph
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -9,15 +9,23 @@ import model.graph.Vertex
 import androidx.compose.ui.graphics.Color
 
 class VertexViewModel (
-    x: Dp = 0.dp,
-    y: Dp = 0.dp,
-    color: Color,
-    private val v: Vertex,
-    private val _labelVisible: State<Boolean>,
-    val radius: Dp = 25.dp
+        x: Dp = 0.dp,
+        y: Dp = 0.dp,
+        color: Color,
+        private val v: Vertex,
+        val _labelVisible: State<Boolean>,
 ){
     val Id
         get() = v.id
+
+    private val _radius = mutableStateOf(25.dp)
+    var radius: Dp
+        get() = _radius.value
+        set(value) {
+            _radius.value = value
+        }
+
+    var relativeSizeFactor: Float = 1.0f
 
     private var _x = mutableStateOf(x)
     var x: Dp
@@ -38,7 +46,7 @@ class VertexViewModel (
             _color.value = value
         }
 
-    val label
+    val vertex
         get() = v
 
     val labelVisible

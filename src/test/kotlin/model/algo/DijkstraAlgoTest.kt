@@ -1,9 +1,7 @@
-package model.graph.algo
+package model.algo
 
 import model.graph.GraphImpl
-import model.graph.Vertex
 import model.algorithms.DijkstraAlgorithm
-
 import kotlin.test.assertFailsWith
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -30,32 +28,31 @@ class DijkstraAlgorithmTest {
 
         val graph = GraphImpl(isDirected = true, isWeighted = true)
 
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        val c = Vertex(3, "C")
-        val d = Vertex(4, "D")
-        val e = Vertex(5, "E")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
+        graph.addVertex("D")
+        graph.addVertex("E")
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addVertex(c)
-        graph.addVertex(d)
-        graph.addVertex(e)
+        graph.addEdge("A", "B", 6.0)
+        graph.addEdge("A", "D", 1.0)
+        graph.addEdge("B", "C", 5.0)
+        graph.addEdge("B", "E", 2.0)
+        graph.addEdge("D", "B", 2.0)
+        graph.addEdge("D", "E", 1.0)
+        graph.addEdge("E", "C", 5.0)
 
-        graph.addEdge(a, b, 6.0)
-        graph.addEdge(a, d, 1.0)
-        graph.addEdge(b, c, 5.0)
-        graph.addEdge(b, e, 2.0)
-        graph.addEdge(d, b, 2.0)
-        graph.addEdge(d, e, 1.0)
-        graph.addEdge(e, c, 5.0)
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val e = graph.getVertexByName("E") ?: throw IllegalStateException("Вершина должна быть найдена")
+
 
         val result = dijkstra.findShortestPath(graph, a, c)
 
         assertNotNull(result)
         result?.let {
-            assertEquals(listOf(a, d, e, c), it.path)
-
+            assertEquals(listOf(a, d, e, c).map { v -> v.name }, it.path.map { v -> v.name })
             assertEquals(7.0, it.distance, 0.001)
         }
     }
@@ -68,29 +65,25 @@ class DijkstraAlgorithmTest {
     fun DijkstraInNotDirGraph() {
         val graph = GraphImpl(isDirected = false, isWeighted = true)
 
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        val c = Vertex(3, "C")
-        val d = Vertex(4, "D")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
+        graph.addVertex("D")
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addVertex(c)
-        graph.addVertex(d)
+        graph.addEdge("A", "B", 1.0)
+        graph.addEdge("B", "C", 2.0)
+        graph.addEdge("C", "D", 1.0)
+        graph.addEdge("A", "D", 6.0)
 
-        graph.addEdge(a, b, 1.0)
-        graph.addEdge(b, c, 2.0)
-        graph.addEdge(c, d, 1.0)
-        graph.addEdge(a, d, 6.0)
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
 
         val result = dijkstra.findShortestPath(graph, a, d)
 
         assertNotNull(result)
         result?.let {
             assertEquals(4.0, it.distance, 0.001)
-
             assertEquals(4, it.path.size)
-
             assertEquals(a, it.path.first())
             assertEquals(d, it.path.last())
         }
@@ -103,20 +96,17 @@ class DijkstraAlgorithmTest {
     fun `find path when start and end are the same`() {
         val graph = GraphImpl(isDirected = true, isWeighted = true)
 
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addEdge("A", "B", 5.0)
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addEdge(a, b, 5.0)
-
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
         val result = dijkstra.findShortestPath(graph, a, a)
 
         assertNotNull(result)
         result?.let {
             assertEquals(1, it.path.size)
             assertEquals(a, it.path.first())
-
             assertEquals(0.0, it.distance, 0.001)
         }
     }
@@ -129,18 +119,14 @@ class DijkstraAlgorithmTest {
     fun `no path exists between vertices`() {
         val graph = GraphImpl(isDirected = true, isWeighted = true)
 
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        val c = Vertex(3, "C")
-        val d = Vertex(4, "D")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
+        graph.addVertex("D")
+        graph.addEdge("A", "B", 1.0)
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addVertex(c)
-        graph.addVertex(d)
-
-        graph.addEdge(a, b, 1.0)
-
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
         val result = dijkstra.findShortestPath(graph, a, d)
 
         assertNull(result)
@@ -154,17 +140,15 @@ class DijkstraAlgorithmTest {
     fun `negative edge weights throw exception`() {
         val graph = GraphImpl(isDirected = true, isWeighted = true)
 
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        val c = Vertex(3, "C")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addVertex(c)
+        graph.addEdge("A", "B", 5.0)
+        graph.addEdge("B", "C", -2.0)
 
-        graph.addEdge(a, b, 5.0)
-        graph.addEdge(b, c, -2.0)
-
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
         assertFailsWith<IllegalArgumentException> {
             dijkstra.findShortestPath(graph, a, c)
         }
@@ -178,30 +162,27 @@ class DijkstraAlgorithmTest {
     fun `Mokaev's Test`() {
         val graph = GraphImpl(isDirected = false, isWeighted = true)
 
-        val A = Vertex(1, "A")
-        val B = Vertex(2, "B")
-        val C = Vertex(3, "C")
-        val D = Vertex(4, "D")
-        val E = Vertex(5, "E")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
+        graph.addVertex("D")
+        graph.addVertex("E")
 
-        graph.addVertex(A)
-        graph.addVertex(B)
-        graph.addVertex(C)
-        graph.addVertex(D)
-        graph.addVertex(E)
+        graph.addEdge("A", "B", 7.0)
+        graph.addEdge("A", "D", 4.0)
+        graph.addEdge("D", "B", 6.0)
+        graph.addEdge("D", "E", 3.0)
+        graph.addEdge("B", "E", 2.0)
+        graph.addEdge("B", "C", 4.0)
+        graph.addEdge("E", "C", 5.0)
 
-        graph.addEdge(A, B, 7.0)
-        graph.addEdge(A, D, 4.0)
-        graph.addEdge(D, B, 6.0)
-        graph.addEdge(D, E, 3.0)
-        graph.addEdge(B, E, 2.0)
-        graph.addEdge(B, C, 4.0)
-        graph.addEdge(E, C, 5.0)
-
-        val result = dijkstra.findShortestPath(graph, A, C)
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val result = dijkstra.findShortestPath(graph, a, c)
 
         assertEquals(11.0, result?.distance)
-        assertEquals(listOf(A,B,C), result?.path)
+        assertEquals(listOf(a,b,c).map { v -> v.name }, result?.path?.map { v -> v.name })
     }
 
     /**
@@ -211,12 +192,12 @@ class DijkstraAlgorithmTest {
     @DisplayName("Граф с одной вершиной")
     fun `single vertex graph`() {
         val graph = GraphImpl(isDirected = true, isWeighted = true)
-        val a = Vertex(1, "A")
-        graph.addVertex(a)
+        graph.addVertex("A")
+        val aVertex = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
 
-        val result = dijkstra.findShortestPath(graph, a, a)
+        val result = dijkstra.findShortestPath(graph, aVertex, aVertex)
         assertNotNull(result)
-        assertEquals(listOf(a), result?.path)
+        assertEquals(listOf(aVertex).map { v -> v.name }, result?.path?.map { v -> v.name })
         assertEquals(0.0, result?.distance)
     }
 
@@ -228,18 +209,16 @@ class DijkstraAlgorithmTest {
     fun `multiple paths with equal weights`() {
         val graph = GraphImpl(isDirected = false, isWeighted = true)
 
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        val c = Vertex(3, "C")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addVertex(c)
+        graph.addEdge("A", "B", 2.0)
+        graph.addEdge("B", "C", 2.0)
+        graph.addEdge("A", "C", 4.0)
 
-        graph.addEdge(a, b, 2.0)
-        graph.addEdge(b, c, 2.0)
-        graph.addEdge(a, c, 4.0)
-
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
         val result = dijkstra.findShortestPath(graph, a, c)
         assertNotNull(result)
 
@@ -254,23 +233,19 @@ class DijkstraAlgorithmTest {
     fun `priority queue distance update`() {
         val graph = GraphImpl(isDirected = false, isWeighted = true)
 
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        val c = Vertex(3, "C")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addVertex(c)
+        graph.addEdge("A", "B", 5.0)
+        graph.addEdge("B", "C", 5.0)
+        graph.addEdge("A", "C", 15.0)
 
-
-        graph.addEdge(a, b, 5.0)
-        graph.addEdge(b, c, 5.0)
-        graph.addEdge(a, c, 15.0)
-        graph.addEdge(c, a, 9.0)
-
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
         val result = dijkstra.findShortestPath(graph, a, c)
         assertNotNull(result)
-        assertEquals(9.0, result?.distance)
+        assertEquals(10.0, result?.distance)
     }
 
     /**
@@ -281,21 +256,21 @@ class DijkstraAlgorithmTest {
     fun `zero weight edges`() {
         val graph = GraphImpl(isDirected = true, isWeighted = true)
 
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        val c = Vertex(3, "C")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addVertex(c)
+        graph.addEdge("A", "B", 0.0)
+        graph.addEdge("B", "C", 0.0)
 
-        graph.addEdge(a, b, 0.0)
-        graph.addEdge(b, c, 0.0)
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
 
         val result = dijkstra.findShortestPath(graph, a, c)
         assertNotNull(result)
         assertEquals(0.0, result?.distance)
-        assertEquals(listOf(a, b, c), result?.path)
+        assertEquals(listOf(a, b, c).map { v -> v.name }, result?.path?.map { v -> v.name })
     }
 
     /**
@@ -306,24 +281,21 @@ class DijkstraAlgorithmTest {
     fun `graph with cycle`() {
         val graph = GraphImpl(isDirected = true, isWeighted = true)
 
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        val c = Vertex(3, "C")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addVertex(c)
+        graph.addEdge("A", "B", 1.0)
+        graph.addEdge("B", "C", 1.0)
+        graph.addEdge("C", "A", 1.0)
+        graph.addEdge("C", "B", 1.0)
 
-        graph.addEdge(a, b, 1.0)
-        graph.addEdge(b, c, 1.0)
-        graph.addEdge(c, a, 1.0)
-        graph.addEdge(c, b, 1.0)
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
 
         val result = dijkstra.findShortestPath(graph, a, c)
-
         assertEquals(2.0, result?.distance)
-        assertEquals(listOf(a, b, c), result?.path)
+        assertEquals(listOf(a, b, c).map { v -> v.name }, result?.path?.map { v -> v.name })
     }
 }
-
-

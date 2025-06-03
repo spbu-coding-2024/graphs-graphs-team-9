@@ -1,7 +1,7 @@
-package model.repositories
+package model.io
 
 import model.graph.GraphImpl
-import model.graph.Vertex
+import model.io.SQLite.SQLGraph
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -73,7 +73,7 @@ class SQLGraphTest {
 
         val loadedGraph = sqlGraph.loadGraph()
         assertNotNull(loadedGraph)
-        assertFalse(loadedGraph!!.isDirected())
+        assertFalse(loadedGraph?.isDirected() ?: throw IllegalStateException())
         assertFalse(loadedGraph.isWeighted())
         assertTrue(loadedGraph.getVertices().isEmpty())
         assertTrue(loadedGraph.getEdges().isEmpty())
@@ -83,24 +83,20 @@ class SQLGraphTest {
     fun `test save and load directed weighted graph with vertices and edges`() {
         val graph = GraphImpl(isDirected = true, isWeighted = true)
 
-        val v1 = Vertex(1, "A")
-        val v2 = Vertex(2, "B")
-        val v3 = Vertex(3, "C")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
 
-        graph.addVertex(v1)
-        graph.addVertex(v2)
-        graph.addVertex(v3)
-
-        graph.addEdge(v1, v2, 1.5)
-        graph.addEdge(v2, v3, 2.0)
-        graph.addEdge(v3, v1, 3.5)
+        graph.addEdge("A", "B", 1.5)
+        graph.addEdge("B", "C", 2.0)
+        graph.addEdge("C", "A", 3.5)
 
         sqlGraph.saveGraph(graph)
 
         val loadedGraph = sqlGraph.loadGraph()
 
         assertNotNull(loadedGraph)
-        assertTrue(loadedGraph!!.isDirected())
+        assertTrue(loadedGraph?.isDirected() ?: throw IllegalStateException())
         assertTrue(loadedGraph.isWeighted())
 
         val vertices = loadedGraph.getVertices()
@@ -121,7 +117,7 @@ class SQLGraphTest {
 
         edges.forEach { edge ->
             val sourceDestPair = Pair(edge.source.name, edge.destination.name)
-            foundEdges.add(sourceDestPair as Pair<String, String>)
+            foundEdges.add(sourceDestPair)
 
             when (sourceDestPair) {
                 Pair("A", "B") -> edgeABWeight = edge.weight
@@ -143,20 +139,16 @@ class SQLGraphTest {
     fun `test save and load undirected unweighted graph with vertices and edges`() {
         val graph = GraphImpl(isDirected = false, isWeighted = false)
 
-        val v1 = Vertex(1, "X")
-        val v2 = Vertex(2, "Y")
-
-        graph.addVertex(v1)
-        graph.addVertex(v2)
-
-        graph.addEdge(v1, v2, null)
+        graph.addVertex("X")
+        graph.addVertex("Y")
+        graph.addEdge("X", "Y", null)
 
         sqlGraph.saveGraph(graph)
 
         val loadedGraph = sqlGraph.loadGraph()
 
         assertNotNull(loadedGraph)
-        assertFalse(loadedGraph!!.isDirected())
+        assertFalse(loadedGraph?.isDirected() ?: throw IllegalStateException())
         assertFalse(loadedGraph.isWeighted())
 
         val vertices = loadedGraph.getVertices()
@@ -175,24 +167,20 @@ class SQLGraphTest {
     @Test
     fun `test overwrite existing graph`() {
         val graph1 = GraphImpl(isDirected = true, isWeighted = true)
-        val v1 = Vertex(1, "A")
-        val v2 = Vertex(2, "B")
-        graph1.addVertex(v1)
-        graph1.addVertex(v2)
-        graph1.addEdge(v1, v2, 1.0)
+        graph1.addVertex("A")
+        graph1.addVertex("B")
+        graph1.addEdge("A", "B", 1.0)
         sqlGraph.saveGraph(graph1)
 
         val graph2 = GraphImpl(isDirected = false, isWeighted = false)
-        val v3 = Vertex(3, "C")
-        val v4 = Vertex(4, "D")
-        graph2.addVertex(v3)
-        graph2.addVertex(v4)
-        graph2.addEdge(v3, v4, null)
+        graph2.addVertex("C")
+        graph2.addVertex("D")
+        graph2.addEdge("C", "D", null)
         sqlGraph.saveGraph(graph2)
 
         val loadedGraph = sqlGraph.loadGraph()
         assertNotNull(loadedGraph)
-        assertFalse(loadedGraph!!.isDirected())
+        assertFalse(loadedGraph?.isDirected() ?: throw IllegalStateException())
         assertFalse(loadedGraph.isWeighted())
 
         val vertices = loadedGraph.getVertices()
@@ -208,9 +196,9 @@ class SQLGraphTest {
     @Test
     fun `test SQL exception handling during save`() {
         val graph = GraphImpl(true, true)
-        graph.addVertex(Vertex(1, "A"))
-        graph.addVertex(Vertex(2, "B"))
-        graph.addEdge(graph.getVertices().first(), graph.getVertices().last(), 1.0)
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addEdge("A", "B", 1.0)
 
         val mockSqlGraph = object : TestSQLGraph(dbPath) {
             override fun connect(): Connection {
@@ -222,10 +210,6 @@ class SQLGraphTest {
                             throw SQLException("Simulated failure during save")
                         }
                         return realConnection.prepareStatement(sql)
-                    }
-
-                    override fun rollback() {
-                        realConnection.rollback()
                     }
                 }
             }
@@ -256,7 +240,7 @@ class SQLGraphTest {
             val loadedGraph = sqlGraph.loadGraph()
 
             assertNotNull(loadedGraph)
-            assertEquals(1, loadedGraph!!.getVertices().size)
+            assertEquals(1, loadedGraph?.getVertices()?.size ?: throw IllegalStateException())
             assertEquals(0, loadedGraph.getEdges().size)
 
             val errorOutput = errContent.toString()
@@ -278,7 +262,6 @@ class SQLGraphTest {
         }
 
         val loadedGraph = sqlGraph.loadGraph()
-
         assertNull(loadedGraph)
     }
 }

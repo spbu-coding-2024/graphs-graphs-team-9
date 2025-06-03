@@ -4,7 +4,6 @@ import model.algorithms.FordBellman
 import model.graph.Graph
 import model.graph.GraphFactory
 import model.graph.Vertex
-
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -22,37 +21,36 @@ class FordBellmanTest {
     @Test
     @DisplayName("Нахождение кратчайшего пути в ориентированном взвешенном графе")
     fun fordBellmanInDirectedGraph() {
-
         val (a, b, c, d, e) = createTestGraph1()
         val (path, distance) = FordBellman.fordBellman(graph, a, c)
 
         assertNotNull(path)
         assertNotNull(distance)
-        assertEquals(listOf(a, d, e, c), path)
+        assertEquals(listOf(a, d, e, c).map { it.name }, path!!.map { it.name })
         assertEquals(7.0, distance)
     }
 
     @Test
     @DisplayName("Граф с одним узлом")
     fun singleNodeGraph() {
-        val a = Vertex(1, "A")
-        graph.addVertex(a)
+        graph.addVertex("A")
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
         val (path, distance) = FordBellman.fordBellman(graph, a, a)
-        assertEquals(listOf(a), path)
+        assertEquals(listOf(a).map { it.name }, path!!.map { it.name })
         assertEquals(0.0, distance)
     }
 
     @Test
     @DisplayName("Простой граф с одним ребром")
     fun simpleGraphWithOneEdge() {
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addEdge(a, b, 10.0)
+        graph.addVertex("A")
+        graph.addVertex("B")
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
+        graph.addEdge("A", "B", 10.0)
 
         val (path, distance) = FordBellman.fordBellman(graph, a, b)
-        assertEquals(listOf(a, b), path)
+        assertEquals(listOf(a, b).map { it.name }, path!!.map { it.name })
         assertEquals(10.0, distance)
     }
 
@@ -62,7 +60,7 @@ class FordBellmanTest {
         val (a, b, c) = createTestGraph2()
         val (path, distance) = FordBellman.fordBellman(graph, a, c)
 
-        assertEquals(listOf(a, b, c), path)
+        assertEquals(listOf(a, b, c).map { it.name }, path!!.map { it.name })
         assertEquals(8.0, distance)
     }
 
@@ -72,7 +70,7 @@ class FordBellmanTest {
         val (a, b, c) = createTestGraph3()
         val (path, distance) = FordBellman.fordBellman(graph, a, c)
 
-        assertEquals(listOf(a, b, c), path)
+        assertEquals(listOf(a, b, c).map { it.name }, path!!.map { it.name })
         assertEquals(1.0, distance)
     }
 
@@ -89,27 +87,38 @@ class FordBellmanTest {
     @DisplayName("Обнаружение отрицательного цикла2")
     fun detectComplexNegativeCycle() {
         val (a, b, c, d, e) = createTestGraph1()
-        graph.removeVertex(e)
+        graph.removeVertex("E")
 
-        graph.addEdge(a, b, 1.0)
-        graph.addEdge(b, c, -1.0)
-        graph.addEdge(c, d, -1.0)
-        graph.addEdge(d, b, -1.0)
+        if (graph.getVertexByName("A") == null) graph.addVertex("A")
+        if (graph.getVertexByName("B") == null) graph.addVertex("B")
+        if (graph.getVertexByName("C") == null) graph.addVertex("C")
+        if (graph.getVertexByName("D") == null) graph.addVertex("D")
+
+        val vA = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val vB = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val vC = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val vD = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
+
+
+        graph.addEdge("A", "B", 1.0)
+        graph.addEdge("B", "C", -1.0)
+        graph.addEdge("C", "D", -1.0)
+        graph.addEdge("D", "B", -1.0)
 
         assertThrows(IllegalStateException::class.java) {
-            FordBellman.fordBellman(graph, a, d)
+            FordBellman.fordBellman(graph, vA, vD)
         }
     }
 
     @Test
     @DisplayName("Нет пути между вершинами")
     fun noPathBetweenVertices() {
-        val (a, b, c) = createTestGraph2()
-        graph.removeEdge(b, c)
-        graph.removeEdge(a, c)
+        val (a, _, c) = createTestGraph2()
+        graph.removeEdge("B", "C")
+        graph.removeEdge("A", "C")
 
         val (path, distance) = FordBellman.fordBellman(graph, a, c)
-        assertEquals(null, path) // ??
+        assertNull(path)
         assertEquals(Double.POSITIVE_INFINITY, distance)
     }
 
@@ -117,143 +126,121 @@ class FordBellmanTest {
     @DisplayName("Граф с несколькими путями к вершине")
     fun multiplePathsToTarget() {
         val (a, b, c) = createTestGraph2()
-        val d = Vertex(4, "D")
+        graph.addVertex("D")
+        val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
 
-        graph.addVertex(d)
-
-        graph.addEdge(a, b, 2.0)
-        graph.addEdge(a, c, 5.0)
-        graph.addEdge(b, d, 3.0)
-        graph.addEdge(c, d, 1.0)
+        graph.addEdge("A", "B", 2.0)
+        graph.addEdge("A", "C", 5.0)
+        graph.addEdge("B", "D", 3.0)
+        graph.addEdge("C", "D", 1.0)
 
         val (path, distance) = FordBellman.fordBellman(graph, a, d)
-        assertEquals(listOf(a, b, d), path)
+        assertEquals(listOf(a, b, d).map{it.name}, path!!.map { it.name })
         assertEquals(5.0, distance)
     }
+
 
     @Test
     @DisplayName("Граф с нулевыми весами")
     fun graphWithZeroWeights() {
         val (a, b, c) = createTestGraph2()
 
-        graph.addEdge(a, b, 0.0)
-        graph.addEdge(b, c, 0.0)
-        graph.addEdge(a, c, 5.0)
+        graph.addEdge("A", "B", 0.0)
+        graph.addEdge("B", "C", 0.0)
+        graph.addEdge("A", "C", 5.0)
 
         val (path, distance) = FordBellman.fordBellman(graph, a, c)
-        assertEquals(listOf(a, b, c), path)
+        assertEquals(listOf(a, b, c).map{it.name}, path!!.map { it.name })
         assertEquals(0.0, distance)
     }
 
     @Test
     @DisplayName("Граф с петлей")
     fun graphWithSelfLoop() {
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-
-        graph.addEdge(a, a, 1.0)
-        graph.addEdge(a, b, 2.0)
+        graph.addEdge("A", "A", 1.0)
+        graph.addEdge("A", "B", 2.0)
 
         val (path, distance) = FordBellman.fordBellman(graph, a, b)
-        assertEquals(listOf(a, b), path)
+        assertEquals(listOf(a, b).map{it.name}, path!!.map { it.name })
         assertEquals(2.0, distance)
     }
 
     @Test
     @DisplayName("Большой граф с разными весами")
     fun largeGraphWithVariousWeights() {
-        val vertices = (1..10).map { Vertex(it, "V$it") }
-        vertices.forEach { graph.addVertex(it) }
+        val vertexNames = (1..10).map { "V$it" }
+        vertexNames.forEach { graph.addVertex(it) }
+        val vertices = vertexNames.map { graph.getVertexByName(it) ?: throw IllegalStateException("Вершина должна быть найдена") }
 
-        graph.addEdge(vertices[0], vertices[1], 5.0)
-        graph.addEdge(vertices[0], vertices[2], 3.0)
-        graph.addEdge(vertices[1], vertices[3], 2.0)
-        graph.addEdge(vertices[2], vertices[1], 1.0)
-        graph.addEdge(vertices[2], vertices[3], 1.0)
-        graph.addEdge(vertices[3], vertices[4], 7.0)
-        graph.addEdge(vertices[4], vertices[5], -2.0)
-        graph.addEdge(vertices[5], vertices[6], 3.0)
-        graph.addEdge(vertices[6], vertices[7], 4.0)
-        graph.addEdge(vertices[7], vertices[8], -1.0)
-        graph.addEdge(vertices[8], vertices[9], 2.0)
-        graph.addEdge(vertices[3], vertices[9], 10.0)
+        graph.addEdge("V1", "V2", 5.0)
+        graph.addEdge("V1", "V3", 3.0)
+        graph.addEdge("V2", "V4", 2.0)
+        graph.addEdge("V3", "V2", 1.0)
+        graph.addEdge("V3", "V4", 1.0)
+        graph.addEdge("V4", "V5", 7.0)
+        graph.addEdge("V5", "V6", -2.0)
+        graph.addEdge("V6", "V7", 3.0)
+        graph.addEdge("V7", "V8", 4.0)
+        graph.addEdge("V8", "V9", -1.0)
+        graph.addEdge("V9", "V10", 2.0)
+        graph.addEdge("V4", "V10", 10.0)
 
         val (path, distance) = FordBellman.fordBellman(graph, vertices[0], vertices[9])
-        assertEquals(listOf(vertices[0], vertices[2], vertices[3], vertices[9]), path)
+        val expectedPathVertices = listOf(vertices[0], vertices[2], vertices[3], vertices[9])
+        assertEquals(expectedPathVertices.map { it.name }, path!!.map { it.name })
         assertEquals(14.0, distance)
     }
 
     private fun createTestGraph1(): List<Vertex> {
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        val c = Vertex(3, "C")
-        val d = Vertex(4, "D")
-        val e = Vertex(5, "E")
+        graph.addVertex("A"); graph.addVertex("B"); graph.addVertex("C"); graph.addVertex("D"); graph.addVertex("E")
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена"); val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена"); val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена"); val e = graph.getVertexByName("E") ?: throw IllegalStateException("Вершина должна быть найдена")
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addVertex(c)
-        graph.addVertex(d)
-        graph.addVertex(e)
-
-        graph.addEdge(a, b, 6.0)
-        graph.addEdge(a, d, 1.0)
-        graph.addEdge(b, c, 5.0)
-        graph.addEdge(b, e, 2.0)
-        graph.addEdge(d, b, 2.0)
-        graph.addEdge(d, e, 1.0)
-        graph.addEdge(e, c, 5.0)
+        graph.addEdge("A", "B", 6.0)
+        graph.addEdge("A", "D", 1.0)
+        graph.addEdge("B", "C", 5.0)
+        graph.addEdge("B", "E", 2.0)
+        graph.addEdge("D", "B", 2.0)
+        graph.addEdge("D", "E", 1.0)
+        graph.addEdge("E", "C", 5.0)
 
         return listOf(a, b, c, d, e)
     }
 
     private fun createTestGraph2(): List<Vertex> {
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        val c = Vertex(3, "C")
+        graph.addVertex("A"); graph.addVertex("B"); graph.addVertex("C")
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена"); val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена"); val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addVertex(c)
-
-        graph.addEdge(a, b, 5.0)
-        graph.addEdge(b, c, 3.0)
-        graph.addEdge(a, c, 12.0)
+        graph.addEdge("A", "B", 5.0)
+        graph.addEdge("B", "C", 3.0)
+        graph.addEdge("A", "C", 12.0)
 
         return listOf(a, b, c)
     }
 
     private fun createTestGraph3(): List<Vertex> {
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        val c = Vertex(3, "C")
+        graph.addVertex("A"); graph.addVertex("B"); graph.addVertex("C")
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена"); val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена"); val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addVertex(c)
-
-        graph.addEdge(a, b, 5.0)
-        graph.addEdge(b, c, -4.0)
-        graph.addEdge(a, c, 2.0)
+        graph.addEdge("A", "B", 5.0)
+        graph.addEdge("B", "C", -4.0)
+        graph.addEdge("A", "C", 2.0)
 
         return listOf(a, b, c)
     }
 
     private fun createTestGraph4(): List<Vertex> {
-        val a = Vertex(1, "A")
-        val b = Vertex(2, "B")
-        val c = Vertex(3, "C")
+        graph.addVertex("A"); graph.addVertex("B"); graph.addVertex("C")
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена"); val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена"); val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
 
-        graph.addVertex(a)
-        graph.addVertex(b)
-        graph.addVertex(c)
-
-        graph.addEdge(a, b, 1.0)
-        graph.addEdge(b, c, -2.0)
-        graph.addEdge(c, a, -1.0)
+        graph.addEdge("A", "B", 1.0)
+        graph.addEdge("B", "C", -2.0)
+        graph.addEdge("C", "A", -1.0)
 
         return listOf(a, b, c)
     }

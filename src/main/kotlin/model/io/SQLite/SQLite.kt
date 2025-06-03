@@ -1,10 +1,11 @@
-package model.repositories
+package model.io.SQLite
 
 import model.graph.GraphImpl
 import model.graph.Vertex
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
+import java.sql.Types
 
 
 open class SQLGraph(private val dbPath: String) {
@@ -91,7 +92,7 @@ open class SQLGraph(private val dbPath: String) {
                             if (graph.isWeighted() && edge.weight != null) {
                                 pstmt.setDouble(3, edge.weight ?: throw IllegalArgumentException())
                             } else {
-                                pstmt.setNull(3, java.sql.Types.REAL)
+                                pstmt.setNull(3, Types.REAL)
                             }
                             pstmt.addBatch()
                         }
@@ -135,7 +136,7 @@ open class SQLGraph(private val dbPath: String) {
                     val name = rsVertices.getString("name")
                     val vertex = Vertex(id, name)
                     vertices[id] = vertex
-                    graph.addVertex(vertex)
+                    graph.addVertex(name)
                 }
             }
 
@@ -157,7 +158,7 @@ open class SQLGraph(private val dbPath: String) {
                     val destinationVertex = vertices[destinationId]
 
                     if (sourceVertex != null && destinationVertex != null) {
-                        graph.addEdge(sourceVertex, destinationVertex, weight)
+                        graph.addEdge(sourceVertex.name, destinationVertex.name, weight)
                     } else {
                         System.err.println("Data integrity issue: Vertex not found for edge ($sourceId -> $destinationId). Edge skipped.")
                     }
