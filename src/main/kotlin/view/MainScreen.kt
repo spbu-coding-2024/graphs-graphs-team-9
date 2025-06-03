@@ -27,6 +27,8 @@ import model.graph.GraphFactory
 import viewModel.screen.layouts.ForceAtlas2
 import view.additionalScreen.SaveAsSQLiteDialog
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.testTag
 
@@ -96,6 +98,7 @@ fun MainScreen(viewModel: MainScreenViewModel = remember { MainScreenViewModel(s
                         .width(232.dp)
                         .padding(horizontal = 8.dp)
                         .scrollable(rememberScrollableState { 0f }, orientation = Orientation.Vertical)
+                        .verticalScroll(rememberScrollState())
                 ) {
                     Spacer(modifier = Modifier.height(4.dp))
                     DividerG()
@@ -135,6 +138,7 @@ fun MainScreen(viewModel: MainScreenViewModel = remember { MainScreenViewModel(s
                     ) { Text("Algorithms") }
                     algoButton(viewModel, showAlgoButtons, showResult)
                     DividerG()
+                    Spacer(modifier = Modifier.padding(4.dp))
                 }
             }
 

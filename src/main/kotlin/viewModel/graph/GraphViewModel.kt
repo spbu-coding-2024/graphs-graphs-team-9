@@ -9,7 +9,7 @@ import model.graph.Edge
 import model.graph.Graph
 import model.graph.GraphImpl
 import model.graph.Vertex
-import model.io.Neo4j.Neo4j
+import model.io.Neo4j.Neo4jRepository
 import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -173,7 +173,6 @@ class GraphViewModel(
         val maxCentrality = centrality.values.maxOrNull() ?: 1.0
 
         val minSize = 25.dp
-        val maxSize = 50.dp
 
         _vertices.value.forEach { (vertex, viewModel) ->
             val normalizedCentrality = if (maxCentrality - minCentrality != 0.0) {
@@ -181,13 +180,13 @@ class GraphViewModel(
             } else {
                 0.5
             }
-            val newSize = minSize + (maxSize - minSize) * normalizedCentrality.toFloat()
+            val newSize = minSize + minSize * normalizedCentrality.toFloat()
             viewModel.radius = newSize
         }
     }
 
-    fun startNeo4j(uri: String, username: String, password: String, isDirected: Boolean, isWeighted: Boolean){
-        graph = Neo4j(uri, username, password).readFromDB(isDirected, isWeighted)
+    suspend fun startNeo4j(uri: String, username: String, password: String, isDirected: Boolean, isWeighted: Boolean){
+        graph = Neo4jRepository(uri, username, password).readFromDB(isDirected, isWeighted)
         // доработать
     }
 
