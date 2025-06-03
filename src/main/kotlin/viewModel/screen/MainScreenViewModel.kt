@@ -3,7 +3,7 @@ package viewModel.screen
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import model.graph.*
-import model.io.Neo4j.Neo4j
+import model.io.Neo4j.Neo4jRepository
 import viewModel.graph.GraphViewModel
 import viewModel.screen.layouts.RepresentationStrategy
 import androidx.compose.runtime.State
@@ -316,19 +316,19 @@ class MainScreenViewModel(
         graphViewModel.edges.forEach { it.color = Color.Gray }
     }
 
-    private fun withNeoDB(action: Neo4j.() -> Unit) {
+    private suspend fun withNeoDB(action: suspend Neo4jRepository.() -> Unit) {
         val uri = _uri.value;
         val usr = _user.value
         if (uri.isNullOrBlank() || usr.isNullOrBlank()) {
             println("Neo4j: missing credentials"); return
         }
-        Neo4j(uri, usr, _pass.value ?: "").action()
+        Neo4jRepository(uri, usr, _pass.value ?: "").action()
     }
 
-    fun runNeo4j() =
+    suspend fun runNeo4j() =
             withNeoDB { }
 
-    fun uploadGraph() {
+    suspend fun uploadGraph() {
         try {
             withNeoDB {
                 readFromDB(isDirect.value, isWeight.value).also { setNewGraph(it) }
@@ -340,7 +340,7 @@ class MainScreenViewModel(
         resetGraphView()
     }
 
-    fun saveToNeo4j() {
+    suspend fun saveToNeo4j() {
         try {
             withNeoDB {
                 val graph = graphViewModel.graph
@@ -356,7 +356,7 @@ class MainScreenViewModel(
     }
 
 
-    fun clearNeo4jDatabase() {
+    suspend fun clearNeo4jDatabase() {
         try {
             withNeoDB {
                 clearDatabase()
