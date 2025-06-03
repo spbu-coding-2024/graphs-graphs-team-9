@@ -45,7 +45,8 @@ class GraphViewModel(
                     v,
                     showLabelsState
             ).apply {
-                radius = defaultRadius
+                this.radius = defaultRadius
+                this.relativeSizeFactor = 1.0f
             }
         }
     }
@@ -210,7 +211,7 @@ class GraphViewModel(
     fun applyKeyVertexVisuals(centrality: Map<Vertex, Double>) {
         val minCentrality = centrality.values.minOrNull() ?: 0.0
         val maxCentrality = centrality.values.maxOrNull() ?: 1.0
-        val currentBaseSizeDp = _vertexSize.value.dp
+        val currentBaseSize = _vertexSize.value // значение ползунка
 
         _vertices.value.forEach { (vertex, viewModel) ->
             val normalizedCentrality = if (maxCentrality - minCentrality != 0.0) {
@@ -218,33 +219,33 @@ class GraphViewModel(
             } else {
                 0.5
             }
-            val newSize = currentBaseSizeDp + (currentBaseSizeDp * normalizedCentrality.toFloat())
-            viewModel.radius = newSize
+            viewModel.relativeSizeFactor = 1.0f + normalizedCentrality.toFloat()
+            viewModel.radius = (currentBaseSize * viewModel.relativeSizeFactor).dp
         }
     }
 
-    suspend fun startNeo4j(uri: String, username: String, password: String, isDirected: Boolean, isWeighted: Boolean){
+    suspend fun startNeo4j(uri: String, username: String, password: String, isDirected: Boolean, isWeighted: Boolean) {
         val newGraph = Neo4jRepository(uri, username, password).readFromDB(isDirected, isWeighted)
         updateGraph(newGraph)
     }
 
-    fun clearGraph(){
+    fun clearGraph() {
         val newGraph = GraphImpl(isWeighted = graph.isWeighted(), isDirected = graph.isDirected())
         updateGraph(newGraph)
     }
 
-    fun updateVertexSize(newSize: Float) {
-        _vertexSize.value = newSize
+    fun updateVertexSize(newBaseSize: Float) {
+        _vertexSize.value = newBaseSize
         _vertices.value.values.forEach { vertexVM ->
-            vertexVM.radius = newSize.dp
+            vertexVM.radius = (newBaseSize * vertexVM.relativeSizeFactor).dp
         }
     }
 
-    fun isDirected(): Boolean{
+    fun isDirected(): Boolean {
         return graph.isDirected()
     }
 
-    fun isWeighted(): Boolean{
+    fun isWeighted(): Boolean {
         return graph.isWeighted()
     }
 }

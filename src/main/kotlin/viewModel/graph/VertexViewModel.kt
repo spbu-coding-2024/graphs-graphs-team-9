@@ -25,6 +25,8 @@ class VertexViewModel (
             _radius.value = value
         }
 
+    var relativeSizeFactor: Float = 1.0f
+
     private var _x = mutableStateOf(x)
     var x: Dp
         get() = _x.value

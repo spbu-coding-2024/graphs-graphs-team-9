@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainScreenViewModel(
     private var graph: Graph,
@@ -61,7 +62,8 @@ class MainScreenViewModel(
     fun resetGraphView() {
         graphViewModel.vertices.forEach { v ->
             v.color = Color.Gray
-            v.radius = 25.dp
+            v.relativeSizeFactor = 1.0f
+            v.radius = graphViewModel.vertexSize.value.dp
         }
         requestLayoutUpdate()
     }
@@ -263,8 +265,12 @@ class MainScreenViewModel(
     }
 
     fun handleError(error: Throwable) {
-        _errorMessage.value = error.message ?: "Exception"
-        _showErrorDialog.value = true
+        viewModelScope.launch {
+            _errorMessage.value = error.message ?: "Exception"
+            _showErrorDialog.value = true
+            // Для отладки можно также выводить полный стектрейс в консоль
+            // error.printStackTrace()
+        }
     }
 
     private var _startName = mutableStateOf<String?>(null)
