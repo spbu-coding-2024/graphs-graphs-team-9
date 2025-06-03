@@ -1,4 +1,4 @@
-package view
+package integration
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.test.*
@@ -17,6 +17,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.Before
 import org.junit.After
+import view.MainScreen
 import viewModel.screen.MainScreenViewModel
 import viewModel.screen.layouts.ForceAtlas2
 import kotlin.Result
