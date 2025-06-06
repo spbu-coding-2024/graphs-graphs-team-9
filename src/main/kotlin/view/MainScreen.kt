@@ -101,6 +101,10 @@ fun MainScreen(viewModel: MainScreenViewModel = remember { MainScreenViewModel(s
                     Button(
                         onClick = {
                             showUploadSaveButtons.value = !showUploadSaveButtons.value
+                            if (!showUploadSaveButtons.value) {
+                                showSQLiteSaveClearButtonsPanel.value = false
+                                showNeo4jSaveClearButtonsPanel.value = false
+                            }
                         },
                         modifier = Modifier.fillMaxWidth().testTag("uploadSaveButton"),
                     ) { Text("Upload/Save") }
