@@ -48,8 +48,8 @@ class ForceAtlas2 : RepresentationStrategy {
         algorithm.initAlgo()
         algorithm.resetPropertiesValues()
         algorithm.isBarnesHutOptimize = true
-        algorithm.scalingRatio = 40.0
-        algorithm.gravity = 0.5
+        algorithm.scalingRatio = 20.0
+        algorithm.gravity = 1.5
         algorithm.isLinLogMode = true
 
         for (i in 1..100) {
