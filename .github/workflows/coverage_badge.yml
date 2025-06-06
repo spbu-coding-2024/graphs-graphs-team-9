@@ -51,7 +51,7 @@ jobs:
         shell: bash
 
       - name: Commit and push badge
-        if: env.git-check == 'true'
+        if: env.modified == 'true'
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
