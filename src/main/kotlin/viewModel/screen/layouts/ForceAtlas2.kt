@@ -10,9 +10,12 @@ import viewModel.graph.GraphViewModel
 import kotlin.math.abs
 import kotlin.random.Random
 
-class ForceAtlas2: RepresentationStrategy {
-    override fun layout(height: Double, width: Double, graphViewModel: GraphViewModel) {
-
+class ForceAtlas2 : RepresentationStrategy {
+    override fun layout(
+        height: Double,
+        width: Double,
+        graphViewModel: GraphViewModel,
+    ) {
         val pc: ProjectController = Lookup.getDefault().lookup(ProjectController::class.java)
         pc.newProject()
         val workSpace = pc.currentWorkspace
@@ -25,8 +28,8 @@ class ForceAtlas2: RepresentationStrategy {
             val id = vertexVM.Id.toString()
             val node: Node = graphModel.factory().newNode(id)
             node.label = id
-            node.setX(abs(Random.nextFloat()) * width.toFloat() - (width/2).toFloat())
-            node.setY(abs(Random.nextFloat()) * height.toFloat() - (height/2).toFloat())
+            node.setX(abs(Random.nextFloat()) * width.toFloat() - (width / 2).toFloat())
+            node.setY(abs(Random.nextFloat()) * height.toFloat() - (height / 2).toFloat())
             node.setSize(vertexVM.radius.value)
             gephiGraph.addNode(node)
             gephiNodeToVmMap[id] = vertexVM

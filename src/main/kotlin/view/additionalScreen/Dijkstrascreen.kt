@@ -19,9 +19,8 @@ import viewModel.screen.MainScreenViewModel
 fun diologistDijkstraScreen(
     showDijkstraScreen: MutableState<Boolean>,
     viewModel: MainScreenViewModel,
-    showResult: MutableState<Boolean>
+    showResult: MutableState<Boolean>,
 ) {
-
     val startName = mutableStateOf<String?>(null)
     val endName = mutableStateOf<String?>(null)
     AnimatedVisibility(
@@ -37,18 +36,19 @@ fun diologistDijkstraScreen(
                         value = startName.value ?: "",
                         onValueChange = {
                             viewModel.setStart(it)
-                            startName.value = it },
+                            startName.value = it
+                        },
                         label = { Text("Start vertex") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     )
                     OutlinedTextField(
                         value = endName.value ?: "",
                         onValueChange = {
                             viewModel.setEnd(it)
                             endName.value = it
-                                        },
+                        },
                         label = { Text("End Vertex") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             },
@@ -58,7 +58,7 @@ fun diologistDijkstraScreen(
                         viewModel.runDijkstra()
                         showResult.value = if (viewModel.graphViewModel.isWeighted()) true else false
                         showDijkstraScreen.value = false
-                    }
+                    },
                 ) {
                     Text("Find")
                 }
@@ -67,11 +67,11 @@ fun diologistDijkstraScreen(
                 Button(
                     onClick = {
                         showDijkstraScreen.value = false
-                    }
+                    },
                 ) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 }

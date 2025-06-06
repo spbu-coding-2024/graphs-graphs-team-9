@@ -10,10 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import viewModel.screen.MainScreenViewModel
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import viewModel.screen.MainScreenViewModel
 
 @Composable
 fun DBButtons(
@@ -29,8 +29,9 @@ fun DBButtons(
         visible = showUploadSaveButtons.value,
     ) {
         Column(
-            modifier = Modifier
-                .absolutePadding(left = 8.dp, right = 8.dp)
+            modifier =
+                Modifier
+                    .absolutePadding(left = 8.dp, right = 8.dp),
         ) {
             Button(
                 onClick = {
@@ -39,7 +40,7 @@ fun DBButtons(
                         showNeo4jSaveUploadButton.value = false
                     }
                 },
-                modifier = Modifier.fillMaxWidth().testTag("sqliteSectionButton")
+                modifier = Modifier.fillMaxWidth().testTag("sqliteSectionButton"),
             ) {
                 Text("SQLite")
             }
@@ -49,7 +50,7 @@ fun DBButtons(
                     showSQLiteSaveUploadButton.value = false
                     showNeo4jSaveUploadButton.value = true
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("Neo4j")
             }
@@ -62,20 +63,20 @@ fun DBButtons(
                         onClick = {
                             viewModel.requestSQLiteFileOpen()
                         },
-                        modifier = Modifier.fillMaxWidth().testTag("sqliteOpenAsButton")
+                        modifier = Modifier.fillMaxWidth().testTag("sqliteOpenAsButton"),
                     ) {
                         Text("Open as")
                     }
                     Button(
                         onClick = { viewModel.openSaveAsSQLiteDialog() },
-                        modifier = Modifier.fillMaxWidth().testTag("sqliteSaveAsButton")
+                        modifier = Modifier.fillMaxWidth().testTag("sqliteSaveAsButton"),
                     ) {
                         Text("Save as")
                     }
                     Button(
                         onClick = { viewModel.saveToCurrentSQLiteFile() },
                         enabled = viewModel.currentSQLiteDbPath.value != null,
-                        modifier = Modifier.fillMaxWidth().testTag("sqliteSaveButton")
+                        modifier = Modifier.fillMaxWidth().testTag("sqliteSaveButton"),
                     ) {
                         Text("Save")
                     }
@@ -92,7 +93,7 @@ fun DBButtons(
                                 viewModel.uploadGraph()
                             }
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("Upload Graph")
                     }
@@ -102,7 +103,7 @@ fun DBButtons(
                                 viewModel.saveToNeo4j()
                             }
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("Save Graph")
                     }
@@ -122,7 +123,7 @@ fun DBButtons(
                             }
                         }
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text("Clear Graph")
                 }

@@ -1,28 +1,27 @@
 package viewModel.screen
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
-import model.graph.*
-import model.io.Neo4j.Neo4jRepository
-import viewModel.graph.GraphViewModel
-import viewModel.screen.layouts.RepresentationStrategy
-import androidx.compose.runtime.State
 import androidx.compose.ui.unit.dp
-import java.io.File
-import model.io.SQLite.SQLiteService
-import javax.swing.JFileChooser
-import javax.swing.UIManager
-import javax.swing.filechooser.FileNameExtensionFilter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import model.graph.*
+import model.io.neo4j.Neo4jRepository
+import model.io.sqlite.SQLiteService
+import viewModel.graph.GraphViewModel
+import viewModel.screen.layouts.RepresentationStrategy
+import java.io.File
+import javax.swing.JFileChooser
+import javax.swing.UIManager
+import javax.swing.filechooser.FileNameExtensionFilter
 
 class MainScreenViewModel(
     private var graph: Graph,
     val representationStrategy: RepresentationStrategy,
-    private val sqliteServiceInstance: SQLiteService = SQLiteService()
+    private val sqliteServiceInstance: SQLiteService = SQLiteService(),
 ) {
     private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
@@ -76,6 +75,7 @@ class MainScreenViewModel(
     }
 
     val map: MutableMap<String?, Int> = mutableMapOf()
+
     fun addVertex() {
         graphViewModel.graph.addVertex(vertex.value ?: "")
         graphViewModel.refreshGraph()
@@ -95,7 +95,7 @@ class MainScreenViewModel(
     val endVertex: State<String?> = _endVertex
 
     private var _weight = mutableStateOf<Double?>(null)
-    val width: State<Double?> = _weight
+    val weight: State<Double?> = _weight
 
     fun setStartVertex(startV: String) {
         _startVertex.value = startV
@@ -105,12 +105,12 @@ class MainScreenViewModel(
         _endVertex.value = endV
     }
 
-    fun setWidthVertex(width: Double?) {
-        _weight.value = width
+    fun setWeightVertex(weight: Double?) {
+        _weight.value = weight
     }
 
     fun addEdge(): Boolean {
-        graphViewModel.graph.addEdge(startVertex.value ?: "", endVertex.value ?: "", width.value)
+        graphViewModel.graph.addEdge(startVertex.value ?: "", endVertex.value ?: "", weight.value)
         graphViewModel.refreshGraph()
         requestLayoutUpdate()
         return true
@@ -127,7 +127,10 @@ class MainScreenViewModel(
         return graphViewModel.graph.getMap()
     }
 
-    fun createGraph(isDirected: Boolean, isWeighted: Boolean) {
+    fun createGraph(
+        isDirected: Boolean,
+        isWeighted: Boolean,
+    ) {
         graphViewModel.graph = GraphImpl(isDirected, isWeighted)
         graphViewModel.refreshGraph()
         requestLayoutUpdate()
@@ -135,18 +138,19 @@ class MainScreenViewModel(
 
     fun clearGraph() {
         val g = graphViewModel.graph
-        val newG = when {
-            g.isDirected() && g.isWeighted() -> GraphFactory.createDirectedWeightedGraph()
-            g.isDirected() && !g.isWeighted() -> GraphFactory.createDirectedUnweightedGraph()
-            !g.isDirected() && g.isWeighted() -> GraphFactory.createUndirectedWeightedGraph()
-            else -> GraphFactory.createUndirectedUnweightedGraph()
-        }
+        val newG =
+            when {
+                g.isDirected() && g.isWeighted() -> GraphFactory.createDirectedWeightedGraph()
+                g.isDirected() && !g.isWeighted() -> GraphFactory.createDirectedUnweightedGraph()
+                !g.isDirected() && g.isWeighted() -> GraphFactory.createUndirectedWeightedGraph()
+                else -> GraphFactory.createUndirectedUnweightedGraph()
+            }
         setNewGraph(newG)
     }
 
     val findResult = mutableStateOf<String?>(null)
 
-    fun getFindResult(): String{
+    fun getFindResult(): String {
         return findResult.value ?: ""
     }
 
@@ -174,8 +178,7 @@ class MainScreenViewModel(
             } catch (e: IllegalStateException) {
                 findResult.value = "Ошибка: ${e.message}"
                 handleError(e)
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 findResult.value = "Произошла ошибка"
                 handleError(e)
             }
@@ -250,8 +253,8 @@ class MainScreenViewModel(
     }
 
     val vertexSize: State<Float> get() = graphViewModel.vertexSize
-    fun updateVertexSize(v: Float) = graphViewModel.updateVertexSize(v)
 
+    fun updateVertexSize(v: Float) = graphViewModel.updateVertexSize(v)
 
     private var _errorMessage = mutableStateOf<String?>(null)
     val errorMessage: State<String?> = _errorMessage
@@ -279,10 +282,10 @@ class MainScreenViewModel(
     val endName: State<String?> = _endName
     private var _uri = mutableStateOf<String?>(null)
     val uri: State<String?> = _uri
-    private var _user = mutableStateOf<String?>(null)
-    val username: State<String?> = _user
-    private var _pass = mutableStateOf<String?>(null)
-    val password: State<String?> = _pass
+    private var _username = mutableStateOf<String?>(null)
+    val username: State<String?> = _username
+    private var _password = mutableStateOf<String?>(null)
+    val password: State<String?> = _password
 
     private var _isDirect = mutableStateOf<Boolean>(false)
     val isDirect: State<Boolean> = _isDirect
@@ -310,11 +313,11 @@ class MainScreenViewModel(
     }
 
     fun setUsername(user: String) {
-        _user.value = user
+        _username.value = user
     }
 
     fun setPassword(pass: String) {
-        _pass.value = pass
+        _password.value = pass
     }
 
     fun resetColor() {
@@ -323,16 +326,16 @@ class MainScreenViewModel(
     }
 
     private suspend fun withNeoDB(action: suspend Neo4jRepository.() -> Unit) {
-        val uri = _uri.value;
-        val usr = _user.value
+        val uri = _uri.value
+        val usr = _username.value
         if (uri.isNullOrBlank() || usr.isNullOrBlank()) {
-            println("Neo4j: missing credentials"); return
+            println("Neo4j: missing credentials")
+            return
         }
-        Neo4jRepository(uri, usr, _pass.value ?: "").action()
+        Neo4jRepository(uri, usr, _password.value ?: "").action()
     }
 
-    suspend fun runNeo4j() =
-            withNeoDB { }
+    suspend fun runNeo4j() = withNeoDB { }
 
     suspend fun uploadGraph() {
         try {
@@ -361,7 +364,6 @@ class MainScreenViewModel(
         }
     }
 
-
     suspend fun clearNeo4jDatabase() {
         try {
             withNeoDB {
@@ -373,8 +375,8 @@ class MainScreenViewModel(
     }
 
     private fun showSQLiteOpenFileChooserPlatform(
-            initialDirectory: String?,
-            onFileSelected: (String) -> Unit
+        initialDirectory: String?,
+        onFileSelected: (String) -> Unit,
     ) {
         try {
             for (info in UIManager.getInstalledLookAndFeels()) {
@@ -410,11 +412,17 @@ class MainScreenViewModel(
 
     private val _saveAsFileName = mutableStateOf("database.db")
     val saveAsFileName: State<String> = _saveAsFileName
-    fun setSaveAsFileName(name: String) { _saveAsFileName.value = name }
+
+    fun setSaveAsFileName(name: String) {
+        _saveAsFileName.value = name
+    }
 
     private val _saveAsDirectoryPath = mutableStateOf<String?>(System.getProperty("user.home"))
     val saveAsDirectoryPath: State<String?> = _saveAsDirectoryPath
-    fun setSaveAsDirectoryPath(path: String?) { _saveAsDirectoryPath.value = path }
+
+    fun setSaveAsDirectoryPath(path: String?) {
+        _saveAsDirectoryPath.value = path
+    }
 
     private val _currentSQLiteDbPath = mutableStateOf<String?>(null)
     val currentSQLiteDbPath: State<String?> = _currentSQLiteDbPath

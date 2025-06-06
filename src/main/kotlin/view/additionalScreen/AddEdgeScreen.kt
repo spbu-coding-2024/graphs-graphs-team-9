@@ -21,24 +21,26 @@ fun diologistAddEdgeScreen(
 
     val firstVertex = mutableStateOf("")
     val secondVertex = mutableStateOf("")
-    val weight =  mutableStateOf("")
+    val weight = mutableStateOf("")
 
     AnimatedVisibility(
         visible = showAddEdge.value,
     ) {
         AlertDialog(
             modifier = Modifier.width(250.dp).padding(5.dp),
-            properties = DialogProperties(
-                dismissOnBackPress = true,
-                dismissOnClickOutside = true
-            ),
+            properties =
+                DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true,
+                ),
             onDismissRequest = { showAddEdge.value = false },
             title = { Text("Edge") },
             text = {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
                 ) {
                     OutlinedTextField(
                         value = firstVertex.value,
@@ -47,7 +49,7 @@ fun diologistAddEdgeScreen(
                             viewModel.setStartVertex(it)
                         },
                         label = { Text("First vertex") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     )
                     Spacer(modifier = Modifier)
                     OutlinedTextField(
@@ -57,7 +59,7 @@ fun diologistAddEdgeScreen(
                             viewModel.setEndVertex(it)
                         },
                         label = { Text("Second vertex") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     )
                     if (viewModel.graphViewModel.isWeighted()) {
                         Spacer(modifier = Modifier)
@@ -70,15 +72,15 @@ fun diologistAddEdgeScreen(
                                 }
                             },
                             label = { Text("Weight") },
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                         )
                     }
                     if (errorMessage.value != null) {
                         Text(
-                            text = errorMessage.value?: "",
+                            text = errorMessage.value ?: "",
                             color = MaterialTheme.colors.error,
                             style = MaterialTheme.typography.caption,
-                            modifier = Modifier.padding(top = 4.dp)
+                            modifier = Modifier.padding(top = 4.dp),
                         )
                     }
                 }
@@ -88,14 +90,15 @@ fun diologistAddEdgeScreen(
                     Button(
                         onClick = {
                             if (!viewModel.graphViewModel.isWeighted() ||
-                                weight.value.toDoubleOrNull() != null) {
+                                weight.value.toDoubleOrNull() != null
+                            ) {
                                 viewModel.addEdge()
                                 showAddEdge.value = false
                             } else {
                                 errorMessage.value = "Please enter a valid weight"
                             }
                         },
-                        modifier = Modifier.padding(horizontal = 10.dp)
+                        modifier = Modifier.padding(horizontal = 10.dp),
                     ) {
                         Text("Create")
                     }
@@ -106,12 +109,12 @@ fun diologistAddEdgeScreen(
                     Button(
                         onClick = {
                             showAddEdge.value = false
-                        }
+                        },
                     ) {
                         Text("Cancel")
                     }
                 }
-            }
+            },
         )
     }
 }

@@ -1,0 +1,25 @@
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{kt,kts}]
+ktlint_standard_no-wildcard-imports = disabled
+ktlint_standard_function-naming = disabled
+ktlint_compose_compositionlocal-naming = enabled
+ktlint_compose_content-trailing-lambda = enabled
+ktlint_compose_mutable-state-naming = enabled
+ktlint_compose_modifier-composable = enabled
+ktlint_compose_modifier-missing-check = enabled
+ktlint_compose_modifier-reused = enabled
+ktlint_compose_modifier-order = enabled
+ktlint_compose_preview-composable = enabled
+ktlint_compose_remember-observed = enabled
+ktlint_compose_viewModel-composable = enabled
+ktlint_compose_viewModel-forwarding = enabled
+ktlint_function_naming_ignore_when_annotated_with = Composable

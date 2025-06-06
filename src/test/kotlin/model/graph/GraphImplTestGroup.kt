@@ -1,19 +1,13 @@
 package model.graph
 
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.RepeatedTest
-import java.lang.IllegalStateException
 import kotlin.random.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class GraphImplTestGroup {
-
     private val vA = "A"
     private val vB = "B"
     private val vC = "C"
@@ -22,7 +16,6 @@ class GraphImplTestGroup {
     @Nested
     @DisplayName("Тесты для Неориентированного Невзвешенного Графа")
     inner class UndirectedUnweightedGraphTest {
-
         private lateinit var graph: Graph
 
         @BeforeEach
@@ -194,15 +187,18 @@ class GraphImplTestGroup {
             val edges = graph.getEdges()
             assertEquals(2, edges.size)
 
-            assertTrue(edges.any { (it.source.name == vA && it.destination.name == vB) || (it.source.name == vB && it.destination.name == vA) })
-            assertTrue(edges.any { (it.source.name == vB && it.destination.name == vC) || (it.source.name == vC && it.destination.name == vB) })
+            assertTrue(
+                edges.any { (it.source.name == vA && it.destination.name == vB) || (it.source.name == vB && it.destination.name == vA) },
+            )
+            assertTrue(
+                edges.any { (it.source.name == vB && it.destination.name == vC) || (it.source.name == vC && it.destination.name == vB) },
+            )
         }
     }
 
     @Nested
     @DisplayName("Тесты для Ориентированного Невзвешенного Графа")
     inner class DirectedUnweightedGraphTest {
-
         private lateinit var graph: Graph
 
         @BeforeEach
@@ -364,7 +360,6 @@ class GraphImplTestGroup {
     @Nested
     @DisplayName("Тесты для Неориентированного Взвешенного Графа")
     inner class UndirectedWeightedGraphTest {
-
         private lateinit var graph: Graph
 
         @BeforeEach
@@ -446,7 +441,6 @@ class GraphImplTestGroup {
     @Nested
     @DisplayName("Тесты для Ориентированного Взвешенного Графа")
     inner class DirectedWeightedGraphTest {
-
         private lateinit var graph: Graph
 
         @BeforeEach
@@ -535,7 +529,6 @@ class GraphImplTestGroup {
     @Nested
     @DisplayName("Тесты для Iterator")
     inner class IteratorTest {
-
         @Test
         @DisplayName("Итератор для графа")
         fun graphIterator() {
@@ -547,9 +540,9 @@ class GraphImplTestGroup {
             graph.addEdge(vA, vB)
             graph.addEdge(vB, vC)
 
-            val vertexAobj = graph.getVertexByName(vA) ?: throw IllegalStateException("Вершина должна быть найдена")
-            val vertexBobj = graph.getVertexByName(vB) ?: throw IllegalStateException("Вершина должна быть найдена")
-            val vertexCobj = graph.getVertexByName(vC) ?: throw IllegalStateException("Вершина должна быть найдена")
+            graph.getVertexByName(vA) ?: throw IllegalStateException("Вершина должна быть найдена")
+            graph.getVertexByName(vB) ?: throw IllegalStateException("Вершина должна быть найдена")
+            graph.getVertexByName(vC) ?: throw IllegalStateException("Вершина должна быть найдена")
 
             val iterator = graph.iterator()
             var count = 0
@@ -584,7 +577,6 @@ class GraphImplTestGroup {
 
     @Nested
     inner class GraphPropertyBasedTestGroup {
-
         // Генератор случайных вершин (строк)
         private fun generateRandomVertexName(): String {
             return ('A'..'Z').random().toString() + Random.nextInt(1, 1000)
@@ -607,7 +599,6 @@ class GraphImplTestGroup {
         @Nested
         @DisplayName("Property-Based тесты для Неориентированного Невзвешенного Графа")
         inner class UndirectedUnweightedGraphPropertyTest {
-
             @RepeatedTest(10)
             @DisplayName("Добавление множества вершин не приводит к дубликатам")
             fun addingMultipleVerticesDoesNotCreateDuplicates() {
@@ -648,7 +639,11 @@ class GraphImplTestGroup {
 
                 // Проверяем, что у остальных вершин нет соседей
                 vertexNames.drop(1).forEach {
-                    assertTrue(graph.getNeighbors(graph.getVertexByName(it) ?: throw IllegalStateException("Вершина должна быть найдена")).isEmpty())
+                    assertTrue(
+                        graph.getNeighbors(
+                            graph.getVertexByName(it) ?: throw IllegalStateException("Вершина должна быть найдена"),
+                        ).isEmpty(),
+                    )
                 }
             }
 
@@ -667,8 +662,12 @@ class GraphImplTestGroup {
                 graph.addVertex(v1Name)
                 graph.addVertex(v2Name)
                 graph.addEdge(v1Name, v2Name)
-                val vertex1 = graph.getVertexByName(v1Name) ?: throw IllegalStateException("Вершина должна быть найдена")
-                val vertex2 = graph.getVertexByName(v2Name) ?: throw IllegalStateException("Вершина должна быть найдена")
+                val vertex1 =
+                    graph.getVertexByName(v1Name)
+                        ?: throw IllegalStateException("Вершина должна быть найдена")
+                val vertex2 =
+                    graph.getVertexByName(v2Name)
+                        ?: throw IllegalStateException("Вершина должна быть найдена")
 
                 // Проверяем, что ребро существует в обоих направлениях
                 assertTrue(graph.containsEdge(vertex1, vertex2))
@@ -683,7 +682,6 @@ class GraphImplTestGroup {
         @Nested
         @DisplayName("Property-Based тесты для Ориентированного Невзвешенного Графа")
         inner class DirectedUnweightedGraphPropertyTest {
-
             @RepeatedTest(10)
             @DisplayName("Ребра в ориентированном графе направленные")
             fun edgesInDirectedGraphAreDirectional() {
@@ -699,8 +697,12 @@ class GraphImplTestGroup {
                 graph.addVertex(v1Name)
                 graph.addVertex(v2Name)
                 graph.addEdge(v1Name, v2Name)
-                val vertex1 = graph.getVertexByName(v1Name) ?: throw IllegalStateException("Вершина должна быть найдена")
-                val vertex2 = graph.getVertexByName(v2Name) ?: throw IllegalStateException("Вершина должна быть найдена")
+                val vertex1 =
+                    graph.getVertexByName(v1Name)
+                        ?: throw IllegalStateException("Вершина должна быть найдена")
+                val vertex2 =
+                    graph.getVertexByName(v2Name)
+                        ?: throw IllegalStateException("Вершина должна быть найдена")
 
                 // Проверяем, что ребро существует только в одном направлении
                 assertTrue(graph.containsEdge(vertex1, vertex2))
@@ -735,7 +737,13 @@ class GraphImplTestGroup {
                 // Проверяем, что количество соседей соответствует
                 vertexNames.forEach { sourceName ->
                     val expectedNeighbors = edgePairs.filter { it.first == sourceName }.map { it.second }.toSet()
-                    val actualNeighbors = graph.getNeighbors(graph.getVertexByName(sourceName) ?: throw IllegalStateException("Вершина должна быть найдена")).map { it.name }.toSet()
+                    val actualNeighbors =
+                        graph.getNeighbors(
+                            graph.getVertexByName(sourceName)
+                                ?: throw IllegalStateException("Вершина должна быть найдена"),
+                        ).map {
+                            it.name
+                        }.toSet()
                     assertEquals(expectedNeighbors, actualNeighbors)
                 }
             }
@@ -744,7 +752,6 @@ class GraphImplTestGroup {
         @Nested
         @DisplayName("Property-Based тесты для Взвешенных Графов")
         inner class WeightedGraphPropertyTest {
-
             @RepeatedTest(10)
             @DisplayName("Веса ребер в неориентированном графе одинаковы в обоих направлениях")
             fun edgeWeightsInUndirectedGraphAreSameInBothDirections() {
@@ -762,8 +769,12 @@ class GraphImplTestGroup {
                 graph.addVertex(v1Name)
                 graph.addVertex(v2Name)
                 graph.addEdge(v1Name, v2Name, weight)
-                val vertex1 = graph.getVertexByName(v1Name) ?: throw IllegalStateException("Вершина должна быть найдена")
-                val vertex2 = graph.getVertexByName(v2Name) ?: throw IllegalStateException("Вершина должна быть найдена")
+                val vertex1 =
+                    graph.getVertexByName(v1Name)
+                        ?: throw IllegalStateException("Вершина должна быть найдена")
+                val vertex2 =
+                    graph.getVertexByName(v2Name)
+                        ?: throw IllegalStateException("Вершина должна быть найдена")
 
                 // Проверяем, что вес ребра одинаков в обоих направлениях
                 assertEquals(weight, graph.getEdgeWeight(vertex1, vertex2))
@@ -789,8 +800,12 @@ class GraphImplTestGroup {
                 graph.addVertex(v2Name)
                 graph.addEdge(v1Name, v2Name, weight1)
                 graph.addEdge(v2Name, v1Name, weight2)
-                val vertex1 = graph.getVertexByName(v1Name) ?: throw IllegalStateException("Вершина должна быть найдена")
-                val vertex2 = graph.getVertexByName(v2Name) ?: throw IllegalStateException("Вершина должна быть найдена")
+                val vertex1 =
+                    graph.getVertexByName(v1Name)
+                        ?: throw IllegalStateException("Вершина должна быть найдена")
+                val vertex2 =
+                    graph.getVertexByName(v2Name)
+                        ?: throw IllegalStateException("Вершина должна быть найдена")
 
                 // Проверяем, что веса ребер сохранены правильно
                 assertEquals(weight1, graph.getEdgeWeight(vertex1, vertex2))
@@ -801,7 +816,6 @@ class GraphImplTestGroup {
         @Nested
         @DisplayName("Сложные свойства графов")
         inner class ComplexGraphPropertiesTest {
-
             @RepeatedTest(5)
             @DisplayName("Количество ребер не превышает N*(N-1)/2 для неориентированного и N*(N-1) для ориентированного")
             fun edgeCountDoesNotExceedMaximumPossible() {
@@ -837,12 +851,13 @@ class GraphImplTestGroup {
             @DisplayName("Удаление всех вершин приводит к пустому графу")
             fun removingAllVerticesResultsInEmptyGraph() {
                 val vertexNames = generateRandomVertexNames(Random.nextInt(2, 8))
-                val graphs = listOf(
+                val graphs =
+                    listOf(
                         GraphFactory.createUndirectedUnweightedGraph(),
                         GraphFactory.createDirectedUnweightedGraph(),
                         GraphFactory.createUndirectedWeightedGraph(),
-                        GraphFactory.createDirectedWeightedGraph()
-                )
+                        GraphFactory.createDirectedWeightedGraph(),
+                    )
 
                 graphs.forEach { graph ->
                     // Добавляем вершины и ребра
@@ -903,7 +918,6 @@ class GraphImplTestGroup {
         @Nested
         @DisplayName("Дополнительные свойства графов")
         inner class AdditionalGraphPropertiesTest {
-
             @RepeatedTest(5)
             @DisplayName("В графе без циклов количество ребер не превышает N-1")
             fun graphWithoutCyclesHasAtMostNMinusOneEdges() {
@@ -947,7 +961,11 @@ class GraphImplTestGroup {
                 assertEquals(1, graph.getEdgeCount(), "Повторное добавление ребра не должно увеличивать счетчик")
 
                 graph.addEdge(v2Name, v1Name)
-                assertEquals(1, graph.getEdgeCount(), "Добавление ребра в обратном направлении не должно увеличивать счетчик в неориентированном графе")
+                assertEquals(
+                    1,
+                    graph.getEdgeCount(),
+                    "Добавление ребра в обратном направлении не должно увеличивать счетчик в неориентированном графе",
+                )
             }
 
             @RepeatedTest(5)
@@ -958,7 +976,6 @@ class GraphImplTestGroup {
                 val v2Name = generateRandomVertexName()
                 val tempV1 = Vertex(-1, v1Name) // For methods expecting Vertex objects
                 val tempV2 = Vertex(-2, v2Name)
-
 
                 // Операции с пустым графом
                 assertFalse(graph.containsVertex(v1Name))
@@ -978,9 +995,17 @@ class GraphImplTestGroup {
                 val v2Name = generateRandomVertexName()
                 val v3Name = generateRandomVertexName()
 
-                graph.addVertex(v1Name); val vertex1 = graph.getVertexByName(v1Name) ?: throw IllegalStateException("Вершина должна быть найдена")
-                graph.addVertex(v2Name); val vertex2 = graph.getVertexByName(v2Name) ?: throw IllegalStateException("Вершина должна быть найдена")
-                graph.addVertex(v3Name); val vertex3 = graph.getVertexByName(v3Name) ?: throw IllegalStateException("Вершина должна быть найдена")
+                graph.addVertex(v1Name)
+                val vertex1 =
+                    graph.getVertexByName(v1Name)
+                        ?: throw IllegalStateException("Вершина должна быть найдена")
+                graph.addVertex(v2Name)
+                val vertex2 =
+                    graph.getVertexByName(v2Name)
+                        ?: throw IllegalStateException("Вершина должна быть найдена")
+                graph.addVertex(v3Name)
+                graph.getVertexByName(v3Name)
+                    ?: throw IllegalStateException("Вершина должна быть найдена")
 
                 // Создаем ребра v1 -- v2 и v2 -- v3
                 graph.addEdge(v1Name, v2Name)

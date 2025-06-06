@@ -3,34 +3,37 @@ default_language_version:
   python: python3
 
 repos:
-  - repo: https://github.com/pinterest/ktlint
-    rev: 1.6.0
+  # Локальные хуки для Kotlin
+  - repo: local
     hooks:
-      - id: ktlint
-        name: "Ktlint - Format & Lint Kotlin Files"
-        language: jvm
-        args: [ "--format", "--reporter=plain?relative" ]
+      - id: ktlint-format
+        name: "Ktlint - Format Kotlin Files"
+        entry: ./gradlew ktlintFormat
+        language: system
         files: \.kt$
+        pass_filenames: false
+      - id: ktlint-check
+        name: "Ktlint - Check Kotlin Files"
+        entry: ./gradlew ktlintCheck
+        language: system
+        files: \.kt$
+        pass_filenames: false
 
+  # Стандартные pre-commit хуки
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
         name: "Trim Trailing Whitespace"
-
       - id: end-of-file-fixer
         name: "Ensure End of File is Newline"
-
       - id: check-yaml
         name: "Check YAML Syntax"
-
       - id: check-added-large-files
         name: "Check for Large Files"
         args: [ '--maxkb=2048' ]
-
       - id: check-merge-conflict
         name: "Check for Merge Conflict Markers"
-
       - id: detect-private-key
         name: "Detect Private Keys"
         exclude: gradle/wrapper/gradle-wrapper.jar

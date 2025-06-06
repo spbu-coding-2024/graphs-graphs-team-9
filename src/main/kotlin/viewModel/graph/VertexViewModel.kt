@@ -3,18 +3,18 @@ package viewModel.graph
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import model.graph.Vertex
-import androidx.compose.ui.graphics.Color
 
-class VertexViewModel (
-        x: Dp = 0.dp,
-        y: Dp = 0.dp,
-        color: Color,
-        private val v: Vertex,
-        val _labelVisible: State<Boolean>,
-){
+class VertexViewModel(
+    x: Dp = 0.dp,
+    y: Dp = 0.dp,
+    color: Color,
+    private val v: Vertex,
+    val _labelVisible: State<Boolean>,
+) {
     val Id
         get() = v.id
 
@@ -40,7 +40,7 @@ class VertexViewModel (
             _y.value = value
         }
     private var _color = mutableStateOf(color)
-    var color: androidx.compose.ui.graphics.Color
+    var color: Color
         get() = _color.value
         set(value) {
             _color.value = value

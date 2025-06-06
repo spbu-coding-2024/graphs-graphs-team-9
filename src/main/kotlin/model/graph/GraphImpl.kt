@@ -2,13 +2,13 @@ package model.graph
 
 class GraphImpl(
     private val isDirected: Boolean = false,
-    private val isWeighted: Boolean = false
+    private val isWeighted: Boolean = false,
 ) : Graph {
     private var id = 1
     var positive = 0
     private val adjList: MutableMap<Vertex, MutableSet<Edge>> = mutableMapOf()
 
-    override fun getPositive(): Boolean{
+    override fun getPositive(): Boolean {
         return positive >= 0
     }
 
@@ -31,7 +31,11 @@ class GraphImpl(
         }
     }
 
-    override fun addEdge(fromName: String, toName: String, weight: Double?) {
+    override fun addEdge(
+        fromName: String,
+        toName: String,
+        weight: Double?,
+    ) {
         if ((weight ?: 0.0) < 0.0) {
             positive--
         }
@@ -51,7 +55,10 @@ class GraphImpl(
         }
     }
 
-    override fun removeEdge(fromName: String, toName: String) {
+    override fun removeEdge(
+        fromName: String,
+        toName: String,
+    ) {
         val from = getVertexByName(fromName) ?: return
         val to = getVertexByName(toName) ?: return
         if ((getEdgeByVertex(from, to)?.weight ?: 0.0) < 0.0) {
@@ -71,11 +78,17 @@ class GraphImpl(
         return getVertexByName(vertex) != null
     }
 
-    override fun containsEdge(from: Vertex, to: Vertex): Boolean {
+    override fun containsEdge(
+        from: Vertex,
+        to: Vertex,
+    ): Boolean {
         return adjList[from]?.any { it.destination == to } ?: false
     }
 
-    override fun getEdgeWeight(from: Vertex, to: Vertex): Double? {
+    override fun getEdgeWeight(
+        from: Vertex,
+        to: Vertex,
+    ): Double? {
         if (!containsEdge(from, to)) {
             return null
         }
@@ -107,12 +120,16 @@ class GraphImpl(
 
     override fun getEdges(): List<Edge> {
         val edges = mutableListOf<Edge>()
-        for ((vertex, adjacentEdges) in adjList) {
+        for ((_, adjacentEdges) in adjList) {
             edges.addAll(adjacentEdges)
         }
 
-        return if (isDirected) edges else edges.distinctBy {
-            setOf(it.source.id, it.destination.id)
+        return if (isDirected) {
+            edges
+        } else {
+            edges.distinctBy {
+                setOf(it.source.id, it.destination.id)
+            }
         }
     }
 
@@ -125,11 +142,14 @@ class GraphImpl(
         return null
     }
 
-    override fun getEdgeByVertex(firstV: Vertex, secondV: Vertex): Edge? {
+    override fun getEdgeByVertex(
+        firstV: Vertex,
+        secondV: Vertex,
+    ): Edge? {
         val edges = adjList[getVertexByKey(firstV.id)] ?: emptySet()
         val secondVertex = getVertexByKey(secondV.id)
         for (el in edges) {
-            if (el.destination == secondVertex){
+            if (el.destination == secondVertex) {
                 return el
             }
         }

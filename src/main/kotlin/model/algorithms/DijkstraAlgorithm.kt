@@ -2,16 +2,19 @@ package model.algorithms
 
 import model.graph.Graph
 import model.graph.Vertex
-import java.util.PriorityQueue
+import java.util.*
 
 class DijkstraAlgorithm {
-
     data class PathResult(
-            val path: List<Vertex>,
-            val distance: Double
+        val path: List<Vertex>,
+        val distance: Double,
     )
 
-    fun findShortestPath(graph: Graph, start: Vertex, end: Vertex): PathResult? {
+    fun findShortestPath(
+        graph: Graph,
+        start: Vertex,
+        end: Vertex,
+    ): PathResult? {
         if (start == end) {
             return PathResult(listOf(start), 0.0)
         }
@@ -21,10 +24,8 @@ class DijkstraAlgorithm {
         val priorityQueue = PriorityQueue<Pair<Vertex, Double>>(compareBy { it.second })
 
         for (vertex in graph.getVertices()) {
-
             if (vertex == start) {
                 distances[vertex] = 0.0
-
             } else {
                 distances[vertex] = Double.POSITIVE_INFINITY
             }
@@ -49,8 +50,9 @@ class DijkstraAlgorithm {
             for (neighbor in graph.getNeighbors(currentVertex)) {
                 val edgeWeight: Double = graph.getEdgeWeight(currentVertex, neighbor) ?: continue
 
-                if (edgeWeight < 0)
+                if (edgeWeight < 0) {
                     throw IllegalArgumentException("Dijkstra's algorithm does not support negative edge weights")
+                }
 
                 val distanceThroughCurrent = distances.getValue(currentVertex) + edgeWeight
 
@@ -71,7 +73,11 @@ class DijkstraAlgorithm {
         return PathResult(path, distances.getValue(end))
     }
 
-    private fun reconstructPath(start: Vertex, end: Vertex, predecessors: Map<Vertex, Vertex?>): List<Vertex> {
+    private fun reconstructPath(
+        start: Vertex,
+        end: Vertex,
+        predecessors: Map<Vertex, Vertex?>,
+    ): List<Vertex> {
         val path = mutableListOf<Vertex>()
         var current: Vertex? = end
 

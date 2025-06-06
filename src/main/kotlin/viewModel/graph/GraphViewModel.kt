@@ -3,23 +3,23 @@ package viewModel.graph
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
-import viewModel.toosl.CoolColors
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import model.algorithms.*
 import model.graph.Edge
 import model.graph.Graph
 import model.graph.GraphImpl
 import model.graph.Vertex
-import model.io.Neo4j.Neo4jRepository
+import model.io.neo4j.Neo4jRepository
+import viewModel.toosl.Colors
 import kotlin.random.Random
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class GraphViewModel(
-        var graph: Graph,
-        private val _showVerticesLabelsInput: State<Boolean>,
-        private val _showEdgesLabelsInput: State<Boolean>
+    var graph: Graph,
+    private val _showVerticesLabelsInput: State<Boolean>,
+    private val _showEdgesLabelsInput: State<Boolean>,
 ) {
     val showVerticesLabels: State<Boolean> = _showVerticesLabelsInput
     val showEdgesLabels: State<Boolean> = _showEdgesLabelsInput
@@ -32,18 +32,18 @@ class GraphViewModel(
         get() = _vertexSize.value.dp
 
     private fun createVertexViewModels(
-            vertices: List<Vertex>,
-            showLabelsState: State<Boolean>,
-            defaultColor: Color,
-            defaultRadius: Dp
+        vertices: List<Vertex>,
+        showLabelsState: State<Boolean>,
+        defaultColor: Color,
+        defaultRadius: Dp,
     ): Map<Vertex, VertexViewModel> {
         return vertices.associateWith { v ->
             VertexViewModel(
-                    0.dp,
-                    0.dp,
-                    defaultColor,
-                    v,
-                    showLabelsState
+                0.dp,
+                0.dp,
+                defaultColor,
+                v,
+                showLabelsState,
             ).apply {
                 this.radius = defaultRadius
                 this.relativeSizeFactor = 1.0f
@@ -52,48 +52,58 @@ class GraphViewModel(
     }
 
     private fun createEdgeViewModels(
-            edges: List<Edge>,
-            targetVertexViewModels: Map<Vertex, VertexViewModel>,
-            showVerticesLabelsState: State<Boolean>,
-            showEdgesLabelsState: State<Boolean>,
-            defaultColor: Color
+        edges: List<Edge>,
+        targetVertexViewModels: Map<Vertex, VertexViewModel>,
+        showVerticesLabelsState: State<Boolean>,
+        showEdgesLabelsState: State<Boolean>,
+        defaultColor: Color,
     ): Map<Edge, EdgeViewModel> {
         return edges.associateWith { e ->
-            val fst = targetVertexViewModels[e.source]
-                    ?: throw IllegalStateException("VertexView for source vertex ${e.source.name} not found when creating edge VMs.")
-            val snd = targetVertexViewModels[e.destination]
-                    ?: throw IllegalStateException("VertexView for destination vertex ${e.destination.name} not found when creating edge VMs.")
+            val fst =
+                targetVertexViewModels[e.source]
+                    ?: throw IllegalStateException(
+                        "VertexView for source vertex ${e.source.name} not found " +
+                            "when creating edge VMs.",
+                    )
+            val snd =
+                targetVertexViewModels[e.destination]
+                    ?: throw IllegalStateException(
+                        "VertexView for destination vertex ${e.destination.name} " +
+                            "not found when creating edge VMs.",
+                    )
 
             EdgeViewModel(
-                    fst,
-                    snd,
-                    defaultColor,
-                    Edge(e.source, e.destination),
-                    showVerticesLabelsState,
-                    showEdgesLabelsState,
-                    e.weight
+                fst,
+                snd,
+                defaultColor,
+                Edge(e.source, e.destination),
+                showVerticesLabelsState,
+                showEdgesLabelsState,
+                e.weight,
             )
         }
     }
 
-    private var _vertices = mutableStateOf(
+    private var _vertices =
+        mutableStateOf(
             createVertexViewModels(
-                    graph.getVertices(),
-                    this.showVerticesLabels,
-                    CoolColors.vertexBasic,
-                    this.currentDefaultVertexRadiusDp
-            )
-    )
+                graph.getVertices(),
+                this.showVerticesLabels,
+                Colors.vertexBasic,
+                this.currentDefaultVertexRadiusDp,
+            ),
+        )
 
-    private var _edges = mutableStateOf(
+    private var _edges =
+        mutableStateOf(
             createEdgeViewModels(
-                    graph.getEdges(),
-                    _vertices.value,
-                    this.showVerticesLabels,
-                    this.showEdgesLabels,
-                    CoolColors.edgeBasic
-            )
-    )
+                graph.getEdges(),
+                _vertices.value,
+                this.showVerticesLabels,
+                this.showEdgesLabels,
+                Colors.edgeBasic,
+            ),
+        )
 
     val vertices: Collection<VertexViewModel>
         get() = _vertices.value.values
@@ -108,21 +118,23 @@ class GraphViewModel(
         get() = _edges.value
 
     fun refreshGraph() {
-        val newVertexVMs = createVertexViewModels(
+        val newVertexVMs =
+            createVertexViewModels(
                 this.graph.getVertices(),
                 this.showVerticesLabels,
-                CoolColors.vertexBasic,
-                this.currentDefaultVertexRadiusDp
-        )
+                Colors.vertexBasic,
+                this.currentDefaultVertexRadiusDp,
+            )
         _vertices.value = newVertexVMs
 
-        _edges.value = createEdgeViewModels(
+        _edges.value =
+            createEdgeViewModels(
                 this.graph.getEdges(),
                 newVertexVMs,
                 this.showVerticesLabels,
                 this.showEdgesLabels,
-                CoolColors.edgeBasic
-        )
+                Colors.edgeBasic,
+            )
     }
 
     fun updateGraph(newGraph: Graph) {
@@ -130,7 +142,10 @@ class GraphViewModel(
         refreshGraph()
     }
 
-    suspend fun startFordBellman(startName: String?, endName: String?): Pair<List<Vertex>?, Double?> {
+    suspend fun startFordBellman(
+        startName: String?,
+        endName: String?,
+    ): Pair<List<Vertex>?, Double?> {
         val startVertex = graph.getVertexByName(startName ?: "") ?: return null to null
         val endVertex = graph.getVertexByName(endName ?: "") ?: return null to null
         return withContext(Dispatchers.Default) {
@@ -141,10 +156,10 @@ class GraphViewModel(
     fun highlightFordBellmanPath(result: Pair<List<Vertex>?, Double?>) {
         val path = result.first ?: return
         path.forEachIndexed { i, vertex ->
-            _vertices.value[vertex]?.color = CoolColors.pathHighlightVertex
+            _vertices.value[vertex]?.color = Colors.pathHighlightVertex
             if (i + 1 < path.size) {
                 graph.getEdgeByVertex(vertex, path[i + 1])?.let { edge ->
-                    _edges.value[edge]?.color = CoolColors.pathHighlightEdge
+                    _edges.value[edge]?.color = Colors.pathHighlightEdge
                 }
             }
         }
@@ -157,7 +172,7 @@ class GraphViewModel(
     }
 
     fun highlightBridges(bridges: List<Pair<Vertex, Vertex>>) {
-        val bridgeColor = CoolColors.pathHighlightVertex
+        val bridgeColor = Colors.pathHighlightVertex
         bridges.forEach { edgePair ->
             graph.getEdgeByVertex(edgePair.first, edgePair.second)?.let {
                 _edges.value[it]?.color = bridgeColor
@@ -168,7 +183,10 @@ class GraphViewModel(
         }
     }
 
-    suspend fun startDijkstra(start: String, end: String): DijkstraAlgorithm.PathResult? {
+    suspend fun startDijkstra(
+        start: String,
+        end: String,
+    ): DijkstraAlgorithm.PathResult? {
         val startVertex = graph.getVertexByName(start) ?: return null
         val endVertex = graph.getVertexByName(end) ?: return null
         return withContext(Dispatchers.Default) {
@@ -178,10 +196,10 @@ class GraphViewModel(
 
     fun highlightDijkstraPath(path: List<Vertex>) {
         path.forEachIndexed { i, vertex ->
-            _vertices.value[vertex]?.color = CoolColors.pathHighlightVertex
+            _vertices.value[vertex]?.color = Colors.pathHighlightVertex
             if (i + 1 < path.size) {
                 graph.getEdgeByVertex(vertex, path[i + 1])?.let { edge ->
-                    _edges.value[edge]?.color = CoolColors.pathHighlightEdge
+                    _edges.value[edge]?.color = Colors.pathHighlightEdge
                 }
             }
         }
@@ -211,20 +229,27 @@ class GraphViewModel(
     fun applyKeyVertexVisuals(centrality: Map<Vertex, Double>) {
         val minCentrality = centrality.values.minOrNull() ?: 0.0
         val maxCentrality = centrality.values.maxOrNull() ?: 1.0
-        val currentBaseSize = _vertexSize.value // значение ползунка
+        val currentBaseSize = _vertexSize.value
 
         _vertices.value.forEach { (vertex, viewModel) ->
-            val normalizedCentrality = if (maxCentrality - minCentrality != 0.0) {
-                ((centrality[vertex] ?: 0.0) - minCentrality) / (maxCentrality - minCentrality)
-            } else {
-                0.5
-            }
+            val normalizedCentrality =
+                if (maxCentrality - minCentrality != 0.0) {
+                    ((centrality[vertex] ?: 0.0) - minCentrality) / (maxCentrality - minCentrality)
+                } else {
+                    0.5
+                }
             viewModel.relativeSizeFactor = 1.0f + normalizedCentrality.toFloat()
             viewModel.radius = (currentBaseSize * viewModel.relativeSizeFactor).dp
         }
     }
 
-    suspend fun startNeo4j(uri: String, username: String, password: String, isDirected: Boolean, isWeighted: Boolean) {
+    suspend fun startNeo4j(
+        uri: String,
+        username: String,
+        password: String,
+        isDirected: Boolean,
+        isWeighted: Boolean,
+    ) {
         val newGraph = Neo4jRepository(uri, username, password).readFromDB(isDirected, isWeighted)
         updateGraph(newGraph)
     }

@@ -1,4 +1,4 @@
-package model.io.SQLite
+package model.io.sqlite
 
 import model.graph.GraphImpl
 import model.graph.Vertex
@@ -7,9 +7,7 @@ import java.sql.DriverManager
 import java.sql.SQLException
 import java.sql.Types
 
-
 open class SQLGraph(private val dbPath: String) {
-
     protected open fun connect(): Connection {
         return DriverManager.getConnection("jdbc:sqlite:$dbPath")
     }
@@ -18,24 +16,27 @@ open class SQLGraph(private val dbPath: String) {
         connect().use { conn ->
             conn.createStatement().use { statement ->
 
-                val createGraphMetadataTable = """
+                val createGraphMetadataTable =
+                    """
                     CREATE TABLE IF NOT EXISTS graph_metadata (
                         id INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
                         is_directed INTEGER NOT NULL,
                         is_weighted INTEGER NOT NULL
                     )
-                """.trimIndent()
+                    """.trimIndent()
                 statement.execute(createGraphMetadataTable)
 
-                val createVerticesTable = """
+                val createVerticesTable =
+                    """
                     CREATE TABLE IF NOT EXISTS vertices (
                         id INTEGER PRIMARY KEY,
                         name TEXT
                     )
-                """.trimIndent()
+                    """.trimIndent()
                 statement.execute(createVerticesTable)
 
-                val createEdgesTable = """
+                val createEdgesTable =
+                    """
                     CREATE TABLE IF NOT EXISTS edges (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         source_vertex_id INTEGER NOT NULL,
@@ -44,7 +45,7 @@ open class SQLGraph(private val dbPath: String) {
                         FOREIGN KEY (source_vertex_id) REFERENCES vertices(id) ON DELETE CASCADE,
                         FOREIGN KEY (destination_vertex_id) REFERENCES vertices(id) ON DELETE CASCADE
                     )
-                """.trimIndent()
+                    """.trimIndent()
                 statement.execute(createEdgesTable)
             }
         }
@@ -81,10 +82,11 @@ open class SQLGraph(private val dbPath: String) {
 
                 val edgesToSave = graph.getEdges()
                 if (edgesToSave.isNotEmpty()) {
-                    val insertEdgeSql = """
+                    val insertEdgeSql =
+                        """
                         INSERT INTO edges (source_vertex_id, destination_vertex_id, weight)
                         VALUES (?, ?, ?)
-                    """.trimIndent()
+                        """.trimIndent()
                     conn.prepareStatement(insertEdgeSql).use { pstmt ->
                         edgesToSave.forEach { edge ->
                             pstmt.setInt(1, edge.source.id)
@@ -111,8 +113,8 @@ open class SQLGraph(private val dbPath: String) {
         connect().use { conn ->
             if (!tableExists(conn, "graph_metadata") ||
                 !tableExists(conn, "vertices") ||
-                !tableExists(conn, "edges")) {
-
+                !tableExists(conn, "edges")
+            ) {
                 return null
             }
             var isDirectedGraph = false
@@ -147,12 +149,13 @@ open class SQLGraph(private val dbPath: String) {
                     val sourceId = rsEdges.getInt("source_vertex_id")
                     val destinationId = rsEdges.getInt("destination_vertex_id")
 
-                    val weight: Double? = if (isWeightedGraph) {
-                        val weightObj = rsEdges.getObject("weight")
-                        (weightObj as? Number)?.toDouble()
-                    } else {
-                        null
-                    }
+                    val weight: Double? =
+                        if (isWeightedGraph) {
+                            val weightObj = rsEdges.getObject("weight")
+                            (weightObj as? Number)?.toDouble()
+                        } else {
+                            null
+                        }
 
                     val sourceVertex = vertices[sourceId]
                     val destinationVertex = vertices[destinationId]
@@ -170,7 +173,10 @@ open class SQLGraph(private val dbPath: String) {
 }
 
 @Throws(SQLException::class)
-private fun tableExists(connection: Connection, tableName: String?): Boolean {
+private fun tableExists(
+    connection: Connection,
+    tableName: String?,
+): Boolean {
     val meta = connection.metaData
     val resultSet = meta.getTables(null, null, tableName, arrayOf<String>("TABLE"))
 

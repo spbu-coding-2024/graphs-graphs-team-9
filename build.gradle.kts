@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.compose") version "1.6.10"
     id("org.jetbrains.kotlin.plugin.compose")
     id("jacoco")
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
 group = "org.example"

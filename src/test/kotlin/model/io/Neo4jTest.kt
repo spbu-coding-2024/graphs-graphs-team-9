@@ -8,16 +8,17 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import model.graph.Graph
 import model.graph.GraphFactory
-import model.io.Neo4j.Neo4jRepository
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.neo4j.harness.Neo4j
 import org.neo4j.harness.Neo4jBuilders
-import kotlin.test.*
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class Neo4jTest {
-
     private lateinit var graphDW: Graph
     private lateinit var graphDU: Graph
     private lateinit var graphUW: Graph
@@ -46,7 +47,7 @@ class Neo4jTest {
 
     @Test
     @DisplayName("Пустой граф")
-    fun emptyGraph(){
+    fun emptyGraph() {
         runTest {
             neo4j.clearDatabase()
             neo4j.writeDB(graphDU)
@@ -58,7 +59,7 @@ class Neo4jTest {
 
     @Test
     @DisplayName("Проверка корректной отправки")
-    fun correctSending(){
+    fun correctSending() {
         runTest {
             createGraphDU()
             neo4j.writeDB(graphDU)
@@ -69,7 +70,7 @@ class Neo4jTest {
 
     @Test
     @DisplayName("Запись и чтение направленного невзвешенного графа")
-    fun directedUnweightedGraph(){
+    fun directedUnweightedGraph() {
         runTest {
             createGraphDU()
             neo4j.writeDB(graphDU)
@@ -82,7 +83,7 @@ class Neo4jTest {
 
     @Test
     @DisplayName("Запись и чтение направленного взвешенного графа")
-    fun directedWeightedGraph(){
+    fun directedWeightedGraph() {
         runTest {
             createGraphDW()
             neo4j.writeDB(graphDW)
@@ -95,7 +96,7 @@ class Neo4jTest {
 
     @Test
     @DisplayName("Запись и чтение ненаправленного взвешенного графа")
-    fun undirectedWeightedGraph(){
+    fun undirectedWeightedGraph() {
         runTest {
             createGraphUW()
             neo4j.writeDB(graphUW)
@@ -108,7 +109,7 @@ class Neo4jTest {
 
     @Test
     @DisplayName("Запись и чтение ненаправленного невзвешенного графа")
-    fun undirectedUnweightedGraph(){
+    fun undirectedUnweightedGraph() {
         runTest {
             createGraphUU()
             neo4j.writeDB(graphUU)
@@ -121,7 +122,7 @@ class Neo4jTest {
 
     @Test
     @DisplayName("Очистка базы данных")
-    fun clearDatabaseTest(){
+    fun clearDatabaseTest() {
         runTest {
             createGraphDU()
             neo4j.writeDB(graphDU)

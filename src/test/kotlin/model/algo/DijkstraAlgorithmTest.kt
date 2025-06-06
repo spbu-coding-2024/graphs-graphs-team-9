@@ -1,17 +1,16 @@
 package model.algo
 
-import model.graph.GraphImpl
 import model.algorithms.DijkstraAlgorithm
-import kotlin.test.assertFailsWith
-import org.junit.jupiter.api.Assertions.*
+import model.graph.GraphImpl
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
-
+import kotlin.test.assertFailsWith
 
 class DijkstraAlgorithmTest {
-
     private lateinit var dijkstra: DijkstraAlgorithm
 
     @BeforeEach
@@ -25,7 +24,6 @@ class DijkstraAlgorithmTest {
     @Test
     @DisplayName("Нахождение кратчайшего пути в ориентированном взвешенном графе")
     fun DijkstraInDirectedGraph() {
-
         val graph = GraphImpl(isDirected = true, isWeighted = true)
 
         graph.addVertex("A")
@@ -46,7 +44,6 @@ class DijkstraAlgorithmTest {
         val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
         val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
         val e = graph.getVertexByName("E") ?: throw IllegalStateException("Вершина должна быть найдена")
-
 
         val result = dijkstra.findShortestPath(graph, a, c)
 
@@ -182,7 +179,7 @@ class DijkstraAlgorithmTest {
         val result = dijkstra.findShortestPath(graph, a, c)
 
         assertEquals(11.0, result?.distance)
-        assertEquals(listOf(a,b,c).map { v -> v.name }, result?.path?.map { v -> v.name })
+        assertEquals(listOf(a, b, c).map { v -> v.name }, result?.path?.map { v -> v.name })
     }
 
     /**

@@ -1,4 +1,3 @@
 package viewModel.toosl
 
-class Button {
-}
+class Button

@@ -2,10 +2,9 @@ package model.algorithms
 
 import model.graph.Graph
 import model.graph.Vertex
-import java.util.Stack
+import java.util.*
 
 class TarjanAlgorithm {
-
     fun findStronglyConnectedComponents(graph: Graph): List<Set<Vertex>> {
         val result = mutableListOf<Set<Vertex>>()
 
@@ -28,12 +27,17 @@ class TarjanAlgorithm {
             for (neighbor in graph.getNeighbors(vertex)) {
                 if (!index.containsKey(neighbor)) {
                     strongConnect(neighbor)
-                    lowLink[vertex] = minOf(lowLink.getValue(vertex),
-                                            lowLink.getValue(neighbor))
-                }
-                else if (onStack.contains(neighbor)) {
-                    lowLink[vertex] = minOf(lowLink.getValue(vertex),
-                                            lowLink.getValue(neighbor))
+                    lowLink[vertex] =
+                        minOf(
+                            lowLink.getValue(vertex),
+                            lowLink.getValue(neighbor),
+                        )
+                } else if (onStack.contains(neighbor)) {
+                    lowLink[vertex] =
+                        minOf(
+                            lowLink.getValue(vertex),
+                            lowLink.getValue(neighbor),
+                        )
                 }
             }
 
