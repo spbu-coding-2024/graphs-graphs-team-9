@@ -1,0 +1,63 @@
+name: Измерение покрытия и генерация значка # Название рабочего процесса
+
+on:
+    workflow_dispatch:
+    pull_request:
+
+permissions: write-all
+
+jobs:
+    coverage:
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Clone repository
+                uses: actions/checkout@v4
+                with:
+                    ref: ${{ github.head_ref }}
+
+            -   name: Set up JDK
+                uses: actions/setup-java@v3
+                with:
+                    java-version: '18'
+                    distribution: 'temurin'
+
+            -   name: chmod +x ./gradlew
+                run: chmod +x ./gradlew
+
+            -   name: Setting gradle
+                uses: gradle/actions/setup-gradle@v3
+
+            -   name: run jacoco
+                run: ./gradlew jacocoTestReport
+
+            -   name: Generating badge
+                uses: cicirello/jacoco-badge-generator@v2.11.0
+                with:
+                    jacoco-csv-file: build/reports/jacoco/test/jacocoTestReport.csv
+                    badges-directory: .github/badges
+                    generate-coverage-badge: true
+                    coverage-badge-filename: jacoco.svg
+
+            -   name: Check if badge changed
+                id: git-check
+                run: |
+                    git status
+                    modified_files=$(git status --porcelain)
+                    if [ -n "$modified_files" ]; then
+                      echo "modified=true" >> $GITHUB_ENV
+                    else
+                      echo "modified=false" >> $GITHUB_ENV
+                    fi
+                shell: bash
+
+            -   name: Commit and push badge
+                if: env.git-check == 'true'
+                run: |
+                    git config --global user.name 'github-actions[bot]'
+                    git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+                    git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+                    git add .github/badges/*
+                    git commit -am "ci: autogenerate JaCoCo coverage badge"
+                    git push
+                shell: bash
