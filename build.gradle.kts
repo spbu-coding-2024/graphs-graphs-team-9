@@ -47,9 +47,6 @@ kotlin {
 tasks.test {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
-    useJUnitPlatform() {
-        excludeTags("Wrong")
-    }
 }
 
 tasks.jacocoTestReport {
