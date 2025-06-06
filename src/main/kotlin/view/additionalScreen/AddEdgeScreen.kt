@@ -68,7 +68,7 @@ fun diologistAddEdgeScreen(
                             onValueChange = {
                                 weight.value = it
                                 it.toDoubleOrNull()?.let { doubleValue ->
-                                    viewModel.setWidthVertex(doubleValue)
+                                    viewModel.setWeightVertex(doubleValue)
                                 }
                             },
                             label = { Text("Weight") },

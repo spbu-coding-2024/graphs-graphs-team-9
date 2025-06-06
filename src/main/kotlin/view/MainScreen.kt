@@ -26,7 +26,7 @@ import view.graph.GraphView
 import viewModel.additionalScreen.diologistNeo4j
 import viewModel.screen.MainScreenViewModel
 import viewModel.screen.layouts.ForceAtlas2
-import viewModel.toosl.CoolColors
+import viewModel.toosl.Colors
 
 val sampleGraph: Graph =
     GraphFactory.createDirectedWeightedGraph().apply {
@@ -146,7 +146,7 @@ fun MainScreen(viewModel: MainScreenViewModel = remember { MainScreenViewModel(s
                 modifier =
                     Modifier
                         .weight(1f)
-                        .background(CoolColors.backgroundBasic)
+                        .background(Colors.backgroundBasic)
                         .clipToBounds()
                         .scrollable(
                             orientation = Orientation.Vertical,
