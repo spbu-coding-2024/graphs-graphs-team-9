@@ -1,5 +1,3 @@
-![JaCoCo Coverage](.github/badges/jacoco.svg)
-
 ![img.png](src/main/kotlin/viewModel/toosl/img.png)
 
 Десктопное приложение для создания, визуализации и анализа графов. Этот проект, созданный с использованием Kotlin и
