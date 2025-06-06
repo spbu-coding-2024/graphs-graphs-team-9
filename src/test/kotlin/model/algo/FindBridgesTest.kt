@@ -3,7 +3,6 @@ package model.algo
 import model.algorithms.FindBridges
 import model.graph.Graph
 import model.graph.GraphFactory
-import model.graph.Vertex
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.assertTrue
 
 class FindBridgesTest {
-
     private lateinit var findBridges: FindBridges
     private lateinit var graphUU: Graph
     private lateinit var graphU: Graph
@@ -82,7 +80,6 @@ class FindBridgesTest {
         val c = graphUU.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
         val d = graphUU.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
 
-
         assertEquals(2, bridges.size)
         assertTrue(bridges.contains(a to b) || bridges.contains(b to a))
         assertTrue(bridges.contains(c to d) || bridges.contains(d to c))
@@ -109,9 +106,12 @@ class FindBridgesTest {
         findBridges = FindBridges(graphUU)
         val bridges = findBridges.findBridges()
 
-        val a = graphUU.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена"); val b = graphUU.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
-        val c = graphUU.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена"); val d = graphUU.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
-        val e = graphUU.getVertexByName("E") ?: throw IllegalStateException("Вершина должна быть найдена"); val f = graphUU.getVertexByName("F") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val a = graphUU.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val b = graphUU.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val c = graphUU.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val d = graphUU.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val e = graphUU.getVertexByName("E") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val f = graphUU.getVertexByName("F") ?: throw IllegalStateException("Вершина должна быть найдена")
         val g = graphUU.getVertexByName("G") ?: throw IllegalStateException("Вершина должна быть найдена")
 
         assertEquals(3, bridges.size)
@@ -120,10 +120,14 @@ class FindBridgesTest {
         assertTrue(bridges.any { (it.first == e && it.second == f) || (it.first == f && it.second == e) })
         assertTrue(bridges.any { (it.first == f && it.second == g) || (it.first == g && it.second == f) })
 
-
         val cycleEdges = listOf(a to b, b to c, c to a)
         for (edge in cycleEdges) {
-            assertTrue(!bridges.any { (it.first == edge.first && it.second == edge.second) || (it.first == edge.second && it.second == edge.first) })
+            assertTrue(
+                !bridges.any {
+                    (it.first == edge.first && it.second == edge.second) ||
+                        (it.first == edge.second && it.second == edge.first)
+                },
+            )
         }
     }
 

@@ -8,23 +8,21 @@ import androidx.compose.ui.window.application
 import view.MainScreen
 import java.awt.Dimension
 
-
-
 @Composable
 @Preview
 fun App() {
-
 }
 
-fun main() = application {
-    Window(
-        onCloseRequest = ::exitApplication,
-        state = WindowState(width = 1200.dp, height = 800.dp),
-        title = "Bobr",
-    ) {
-        window.minimumSize = Dimension(900, 600)
-        MaterialTheme {
-            MainScreen()
+fun main() =
+    application {
+        Window(
+            onCloseRequest = ::exitApplication,
+            state = WindowState(width = 1200.dp, height = 800.dp),
+            title = "Bobr",
+        ) {
+            window.minimumSize = Dimension(900, 600)
+            MaterialTheme {
+                MainScreen()
+            }
         }
     }
-}

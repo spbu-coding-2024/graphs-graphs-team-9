@@ -31,7 +31,7 @@ fun diologistDeleteVertexScreen(
             title = {
                 Text(
                     text = "Vertex",
-                    modifier = Modifier.testTag("deleteVertexDialogTitle")
+                    modifier = Modifier.testTag("deleteVertexDialogTitle"),
                 )
             },
             text = {
@@ -40,9 +40,10 @@ fun diologistDeleteVertexScreen(
                         value = vertex.value ?: "",
                         onValueChange = {
                             vertex.value = it
-                            viewModel.setVertex(it) },
+                            viewModel.setVertex(it)
+                        },
                         label = { Text("Vertex") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).testTag("vertexNameInput")
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).testTag("vertexNameInput"),
                     )
                 }
             },
@@ -51,7 +52,7 @@ fun diologistDeleteVertexScreen(
                     onClick = {
                         viewModel.delVertex()
                         showDeleteVertex.value = false
-                    }
+                    },
                 ) {
                     Text("Delete")
                 }
@@ -60,11 +61,11 @@ fun diologistDeleteVertexScreen(
                 Button(
                     onClick = {
                         showDeleteVertex.value = false
-                    }
+                    },
                 ) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 }

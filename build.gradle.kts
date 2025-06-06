@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.compose") version "1.6.10"
     id("org.jetbrains.kotlin.plugin.compose")
     id("jacoco")
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
 group = "org.example"
@@ -47,9 +48,6 @@ kotlin {
 tasks.test {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
-    useJUnitPlatform() {
-        excludeTags("Wrong")
-    }
 }
 
 tasks.jacocoTestReport {
@@ -57,7 +55,7 @@ tasks.jacocoTestReport {
     reports {
         xml.required.set(false)
         html.required.set(true)
-        csv.required.set(false)
+        csv.required.set(true)
     }
 }
 

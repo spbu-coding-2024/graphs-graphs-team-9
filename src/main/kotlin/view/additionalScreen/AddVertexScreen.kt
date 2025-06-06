@@ -34,9 +34,10 @@ fun diologistAddVertexScreen(
                         value = vertex.value ?: "",
                         onValueChange = {
                             vertex.value = it
-                            viewModel.setVertex(it) },
+                            viewModel.setVertex(it)
+                        },
                         label = { Text("Vertex") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     )
                 }
             },
@@ -45,7 +46,7 @@ fun diologistAddVertexScreen(
                     onClick = {
                         viewModel.addVertex()
                         showAddVertex.value = false
-                    }
+                    },
                 ) {
                     Text("Create")
                 }
@@ -54,11 +55,11 @@ fun diologistAddVertexScreen(
                 Button(
                     onClick = {
                         showAddVertex.value = false
-                    }
+                    },
                 ) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 }

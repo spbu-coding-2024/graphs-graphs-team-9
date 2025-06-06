@@ -3,8 +3,8 @@ package model.algo
 import model.algorithms.HarmonicCentrality
 import model.graph.Graph
 import model.graph.GraphFactory
-import model.graph.Vertex
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -67,9 +67,9 @@ class HarmonicCentralityTest {
         val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
 
         val centrality = HarmonicCentrality(graph)
-        assertEquals(1.0 + 1.0/2.0, centrality.centrality[a]?: 0.0, 1e-6)
-        assertEquals(1.0 + 1.0, centrality.centrality[b]?: 0.0, 1e-6)
-        assertEquals(1.0/2.0 + 1.0, centrality.centrality[c]?: 0.0, 1e-6)
+        assertEquals(1.0 + 1.0 / 2.0, centrality.centrality[a] ?: 0.0, 1e-6)
+        assertEquals(1.0 + 1.0, centrality.centrality[b] ?: 0.0, 1e-6)
+        assertEquals(1.0 / 2.0 + 1.0, centrality.centrality[c] ?: 0.0, 1e-6)
     }
 
     @Test
@@ -86,9 +86,9 @@ class HarmonicCentralityTest {
         val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
 
         val centrality = HarmonicCentrality(graph)
-        assertEquals(1.0 + 1.0, centrality.centrality[a]?: 0.0, 1e-6)
-        assertEquals(1.0 + 1.0, centrality.centrality[b]?: 0.0, 1e-6)
-        assertEquals(1.0 + 1.0, centrality.centrality[c]?: 0.0, 1e-6)
+        assertEquals(1.0 + 1.0, centrality.centrality[a] ?: 0.0, 1e-6)
+        assertEquals(1.0 + 1.0, centrality.centrality[b] ?: 0.0, 1e-6)
+        assertEquals(1.0 + 1.0, centrality.centrality[c] ?: 0.0, 1e-6)
     }
 
     @Test
@@ -107,10 +107,10 @@ class HarmonicCentralityTest {
         val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
 
         val centrality = HarmonicCentrality(graph)
-        assertEquals(1.0 + 1.0 + 1.0, centrality.centrality[center]?: 0.0, 1e-6)
-        assertEquals(1.0 + 1.0/2.0 + 1.0/2.0, centrality.centrality[a]?: 0.0, 1e-6)
-        assertEquals(1.0 + 1.0/2.0 + 1.0/2.0, centrality.centrality[b]?: 0.0, 1e-6)
-        assertEquals(1.0 + 1.0/2.0 + 1.0/2.0, centrality.centrality[c]?: 0.0, 1e-6)
+        assertEquals(1.0 + 1.0 + 1.0, centrality.centrality[center] ?: 0.0, 1e-6)
+        assertEquals(1.0 + 1.0 / 2.0 + 1.0 / 2.0, centrality.centrality[a] ?: 0.0, 1e-6)
+        assertEquals(1.0 + 1.0 / 2.0 + 1.0 / 2.0, centrality.centrality[b] ?: 0.0, 1e-6)
+        assertEquals(1.0 + 1.0 / 2.0 + 1.0 / 2.0, centrality.centrality[c] ?: 0.0, 1e-6)
     }
 
     @Test
@@ -133,19 +133,19 @@ class HarmonicCentralityTest {
         // - путь до B: 2 (A→B)
         // - путь до C: min(10 (A→C), 5 (A→B→C) → 5
         // гармоническая центральность: 1/2 + 1/5 = 0.5 + 0.2 = 0.7
-        assertEquals(0.7, centrality.centrality[a]?: 0.0, 1e-6)
+        assertEquals(0.7, centrality.centrality[a] ?: 0.0, 1e-6)
 
         // Для вершины B:
         // - путь до A: нет пути (в ориентированном графе)
         // - путь до C: 3 (B→C)
         // гармоническая центральность: 1/3 ≈ 0.333...
-        assertEquals(1.0/3.0, centrality.centrality[b]?: 0.0, 1e-6)
+        assertEquals(1.0 / 3.0, centrality.centrality[b] ?: 0.0, 1e-6)
 
         // Для вершины C:
         // - путь до A: нет пути
         // - путь до B: нет пути
         // гармоническая центральность: 0
-        assertEquals(0.0, centrality.centrality[c]?: 0.0, 1e-6)
+        assertEquals(0.0, centrality.centrality[c] ?: 0.0, 1e-6)
     }
 
     @Test
@@ -163,10 +163,10 @@ class HarmonicCentralityTest {
         val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
 
         val centrality = HarmonicCentrality(graph)
-        assertEquals(1.0, centrality.centrality[a]?: 0.0, 1e-6)
-        assertEquals(1.0, centrality.centrality[b]?: 0.0, 1e-6)
-        assertEquals(1.0, centrality.centrality[c]?: 0.0, 1e-6)
-        assertEquals(1.0, centrality.centrality[d]?: 0.0, 1e-6)
+        assertEquals(1.0, centrality.centrality[a] ?: 0.0, 1e-6)
+        assertEquals(1.0, centrality.centrality[b] ?: 0.0, 1e-6)
+        assertEquals(1.0, centrality.centrality[c] ?: 0.0, 1e-6)
+        assertEquals(1.0, centrality.centrality[d] ?: 0.0, 1e-6)
     }
 
     @Test
@@ -187,7 +187,7 @@ class HarmonicCentralityTest {
         val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
 
         val centrality = HarmonicCentrality(graph)
-        assertEquals(1.0, centrality.centrality[a]?: 0.0, 1e-6)
-        assertEquals(1.0, centrality.centrality[b]?: 0.0, 1e-6)
+        assertEquals(1.0, centrality.centrality[a] ?: 0.0, 1e-6)
+        assertEquals(1.0, centrality.centrality[b] ?: 0.0, 1e-6)
     }
 }

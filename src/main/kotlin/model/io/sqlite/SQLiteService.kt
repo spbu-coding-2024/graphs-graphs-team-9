@@ -1,13 +1,12 @@
-package model.io.SQLite
+package model.io.sqlite
 
-import model.graph.GraphImpl
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import model.graph.Graph
+import model.graph.GraphImpl
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
-import kotlin.Result
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class SQLiteService {
     private suspend fun initializeDatabaseAtPath(dbFilePath: String): Result<Unit> {
@@ -24,7 +23,11 @@ class SQLiteService {
         }
     }
 
-    suspend fun saveGraphToNewFile(graphToSave: Graph, targetDirectoryPath: String, targetFileName: String): Result<String> {
+    suspend fun saveGraphToNewFile(
+        graphToSave: Graph,
+        targetDirectoryPath: String,
+        targetFileName: String,
+    ): Result<String> {
         if (targetDirectoryPath.isBlank()) {
             return Result.failure(IllegalArgumentException("Directory path cannot be blank."))
         }
@@ -38,7 +41,9 @@ class SQLiteService {
         return try {
             withContext(Dispatchers.IO) {
                 if (Files.exists(Paths.get(fullPath))) {
-                    return@withContext Result.failure(IllegalArgumentException("File already exists at: $fullPath. Please choose a different name or location."))
+                    return@withContext Result.failure(
+                        IllegalArgumentException("File already exists at: $fullPath. Please choose a different name or location."),
+                    )
                 }
 
                 if (graphToSave !is GraphImpl) {
@@ -54,7 +59,10 @@ class SQLiteService {
         }
     }
 
-    suspend fun saveGraphToCurrentFile(graphToSave: Graph, currentDbPath: String): Result<Unit> {
+    suspend fun saveGraphToCurrentFile(
+        graphToSave: Graph,
+        currentDbPath: String,
+    ): Result<Unit> {
         if (currentDbPath.isBlank()) {
             return Result.failure(IllegalStateException("No current SQLite database file set. Use 'Save As...' first."))
         }
@@ -79,13 +87,18 @@ class SQLiteService {
         }
 
         return try {
-            val loadedGraph = withContext(Dispatchers.IO) {
-                SQLGraph(filePath).loadGraph()
-            }
+            val loadedGraph =
+                withContext(Dispatchers.IO) {
+                    SQLGraph(filePath).loadGraph()
+                }
             if (loadedGraph != null) {
                 Result.success(Pair(loadedGraph, filePath))
             } else {
-                Result.failure(FileNotFoundOrInvalidFormatException("No graph data found in the file, or the file is not a valid graph database: $filePath"))
+                Result.failure(
+                    FileNotFoundOrInvalidFormatException(
+                        "No graph data found in the file, or the file is not a valid graph database: $filePath",
+                    ),
+                )
             }
         } catch (e: Exception) {
             Result.failure(Exception("Failed to load graph from SQLite at $filePath", e))

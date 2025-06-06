@@ -1,7 +1,7 @@
 package model.io
 
 import model.graph.GraphImpl
-import model.io.SQLite.SQLGraph
+import model.io.sqlite.SQLGraph
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -16,7 +16,6 @@ import java.sql.DriverManager
 import java.sql.SQLException
 
 class SQLGraphTest {
-
     @TempDir
     lateinit var tempDir: Path
 
@@ -200,24 +199,26 @@ class SQLGraphTest {
         graph.addVertex("B")
         graph.addEdge("A", "B", 1.0)
 
-        val mockSqlGraph = object : TestSQLGraph(dbPath) {
-            override fun connect(): Connection {
-                val realConnection = super.connect()
+        val mockSqlGraph =
+            object : TestSQLGraph(dbPath) {
+                override fun connect(): Connection {
+                    val realConnection = super.connect()
 
-                return object : Connection by realConnection {
-                    override fun prepareStatement(sql: String): java.sql.PreparedStatement {
-                        if (sql.contains("INSERT INTO graph_metadata")) {
-                            throw SQLException("Simulated failure during save")
+                    return object : Connection by realConnection {
+                        override fun prepareStatement(sql: String): java.sql.PreparedStatement {
+                            if (sql.contains("INSERT INTO graph_metadata")) {
+                                throw SQLException("Simulated failure during save")
+                            }
+                            return realConnection.prepareStatement(sql)
                         }
-                        return realConnection.prepareStatement(sql)
                     }
                 }
             }
-        }
 
-        val exception = assertThrows(SQLException::class.java) {
-            mockSqlGraph.saveGraph(graph)
-        }
+        val exception =
+            assertThrows(SQLException::class.java) {
+                mockSqlGraph.saveGraph(graph)
+            }
 
         assertEquals("Simulated failure during save", exception.message)
     }
@@ -245,7 +246,6 @@ class SQLGraphTest {
 
             val errorOutput = errContent.toString()
             assertTrue(errorOutput.contains("Data integrity issue: Vertex not found for edge (1 -> 2). Edge skipped."))
-
         } finally {
             System.setErr(originalErr)
         }

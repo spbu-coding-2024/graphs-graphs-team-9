@@ -17,12 +17,11 @@ import viewModel.additionalScreen.diologistFordBellman
 import viewModel.screen.MainScreenViewModel
 
 @Composable
-fun algoButton(
+fun AlgoButton(
     viewModel: MainScreenViewModel,
     showAlgoButtons: MutableState<Boolean>,
     showResult: MutableState<Boolean>,
 ) {
-
     val showDijkstra = remember { mutableStateOf(false) }
     val showFordBellman = remember { mutableStateOf(false) }
 
@@ -30,8 +29,9 @@ fun algoButton(
         visible = showAlgoButtons.value,
     ) {
         Column(
-            modifier = Modifier
-                .absolutePadding(left = 8.dp, right = 8.dp)
+            modifier =
+                Modifier
+                    .absolutePadding(left = 8.dp, right = 8.dp),
         ) {
             if (viewModel.graphViewModel.isWeighted() && viewModel.graphViewModel.graph.getPositive()) {
                 Button(
@@ -39,7 +39,7 @@ fun algoButton(
                         showResult.value = false
                         showDijkstra.value = !showDijkstra.value
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text("Dijkstra")
                 }
@@ -49,7 +49,7 @@ fun algoButton(
                     showResult.value = false
                     viewModel.runFindBridge()
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("Find Bridges")
             }
@@ -58,7 +58,7 @@ fun algoButton(
                     showResult.value = false
                     showFordBellman.value = !showFordBellman.value
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("Ford Bellman")
             }
@@ -67,7 +67,7 @@ fun algoButton(
                     showResult.value = false
                     viewModel.runTarjan()
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("Tarjan")
             }
@@ -76,7 +76,7 @@ fun algoButton(
                     showResult.value = false
                     viewModel.runFindKey()
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("Find key vertex")
             }

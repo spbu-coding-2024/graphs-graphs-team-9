@@ -2,18 +2,17 @@ package viewModel.additionalScreen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import viewModel.screen.MainScreenViewModel
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.Recomposer
 import kotlinx.coroutines.launch
+import viewModel.screen.MainScreenViewModel
 
 @Composable
 fun diologistNeo4j(
@@ -47,7 +46,7 @@ fun diologistNeo4j(
                             viewModel.setUri(it)
                         },
                         label = { Text("URI") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
@@ -57,7 +56,7 @@ fun diologistNeo4j(
                             viewModel.setUsername(it)
                         },
                         label = { Text("Username") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
@@ -67,27 +66,31 @@ fun diologistNeo4j(
                             viewModel.setPassword(it)
                         },
                         label = { Text("Password") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
                     Row {
                         Row(
-                            modifier = Modifier.fillMaxWidth(0.5f)
-                                .clickable(onClick = { isDirected.value = !isDirected.value })
+                            modifier =
+                                Modifier.fillMaxWidth(0.5f)
+                                    .clickable(onClick = { isDirected.value = !isDirected.value }),
                         ) {
                             Switch(
                                 checked = isDirected.value,
-                                onCheckedChange = { isDirected.value = it })
+                                onCheckedChange = { isDirected.value = it },
+                            )
 
                             Text(modifier = Modifier.fillMaxWidth().padding(12.dp), text = "Directed")
                         }
                         Row(
-                            modifier = Modifier.fillMaxWidth()
-                                .clickable(onClick = { isWighted.value = !isWighted.value })
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .clickable(onClick = { isWighted.value = !isWighted.value }),
                         ) {
                             Switch(
                                 checked = isWighted.value,
-                                onCheckedChange = { isWighted.value = it })
+                                onCheckedChange = { isWighted.value = it },
+                            )
 
                             Text(modifier = Modifier.fillMaxWidth().padding(12.dp), text = "Weighted")
                         }
@@ -128,7 +131,7 @@ fun diologistNeo4j(
                                 }
                             }
                         }
-                    }
+                    },
                 ) {
                     Text("Connect")
                 }
@@ -138,11 +141,11 @@ fun diologistNeo4j(
                     onClick = {
                         showSaveClearButton.value = false
                         showNeo4j.value = false
-                    }
+                    },
                 ) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
     if (showErrorDialog.value) {
@@ -154,7 +157,7 @@ fun diologistNeo4j(
                 Button(onClick = { showErrorDialog.value = false }) {
                     Text("OK")
                 }
-            }
+            },
         )
     }
 }

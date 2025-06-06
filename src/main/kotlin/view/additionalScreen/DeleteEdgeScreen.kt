@@ -26,21 +26,22 @@ fun diologistDeleteEdgeScreen(
         visible = showDeleteEdge.value,
     ) {
         AlertDialog(
-            modifier = Modifier.width(250.dp).padding(5.dp)
+            modifier = Modifier.width(250.dp).padding(5.dp),
 //                .wrapContentHeight()
-            ,
-            properties = DialogProperties(
-                dismissOnBackPress = true,
-                dismissOnClickOutside = true
-            ),
+            properties =
+                DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true,
+                ),
             onDismissRequest = { showDeleteEdge.value = false },
             title = { Text("Edge") },
             text = {
 //                Spacer(modifier = Modifier.height(80.dp))
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
                 ) {
                     OutlinedTextField(
                         value = firstVertex.value ?: "",
@@ -49,7 +50,7 @@ fun diologistDeleteEdgeScreen(
                             viewModel.setStartVertex(it)
                         },
                         label = { Text("First vertex") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     )
                     Spacer(modifier = Modifier)
                     OutlinedTextField(
@@ -59,7 +60,7 @@ fun diologistDeleteEdgeScreen(
                             viewModel.setEndVertex(it)
                         },
                         label = { Text("Second vertex") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     )
                 }
             },
@@ -70,7 +71,7 @@ fun diologistDeleteEdgeScreen(
                             viewModel.delEdge()
                             showDeleteEdge.value = false
                         },
-                        modifier = Modifier.padding(horizontal = 10.dp)
+                        modifier = Modifier.padding(horizontal = 10.dp),
                     ) {
                         Text("Delete")
                     }
@@ -81,12 +82,12 @@ fun diologistDeleteEdgeScreen(
                     Button(
                         onClick = {
                             showDeleteEdge.value = false
-                        }
+                        },
                     ) {
                         Text("Cancel")
                     }
                 }
-            }
+            },
         )
     }
 }

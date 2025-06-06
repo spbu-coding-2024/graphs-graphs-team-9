@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import model.graph.Edge
 
-class EdgeViewModel (
+class EdgeViewModel(
     val u: VertexViewModel,
     val v: VertexViewModel,
     color: Color,

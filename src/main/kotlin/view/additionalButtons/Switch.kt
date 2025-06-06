@@ -17,15 +17,16 @@ fun switch(
     showLabels: MutableState<Boolean>,
 ) {
     Row(
-        modifier = Modifier.clickable(onClick = { viewModel.showVerticesLabels = !viewModel.showVerticesLabels })
-            .fillMaxWidth()
+        modifier =
+            Modifier.clickable(onClick = { viewModel.showVerticesLabels = !viewModel.showVerticesLabels })
+                .fillMaxWidth(),
     ) {
         Switch(
             checked = viewModel.showVerticesLabels,
-            onCheckedChange = { viewModel.showVerticesLabels = it }
+            onCheckedChange = { viewModel.showVerticesLabels = it },
         )
         Text(
-            text = if (viewModel.graphViewModel.isWeighted())  "Vertexes and edges" else "Vertexes",
+            text = if (viewModel.graphViewModel.isWeighted()) "Vertexes and edges" else "Vertexes",
             fontSize = if (viewModel.graphViewModel.isWeighted()) 14.sp else 18.sp,
             modifier = Modifier.fillMaxWidth().padding(8.dp),
         )

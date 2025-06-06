@@ -32,71 +32,77 @@ fun barButton(
     val showAddEdgeDialog = remember { mutableStateOf(false) }
     val showDeleteEdge = remember { mutableStateOf(false) }
     Box(
-        modifier = Modifier.fillMaxWidth().background(Color.DarkGray).height(28.dp)
+        modifier = Modifier.fillMaxWidth().background(Color.DarkGray).height(28.dp),
     ) {
         Row(
             modifier = Modifier.padding(vertical = 2.dp).background(Color.DarkGray),
             horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(IntrinsicSize.Min)
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .width(IntrinsicSize.Min),
             ) {
                 DropdownMenuItem(
                     modifier = Modifier.fillMaxSize(),
-                    onClick = { showGraph.value = !showGraph.value }
+                    onClick = { showGraph.value = !showGraph.value },
                 ) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .background(Color.Transparent),
-                        contentAlignment = Alignment.Center
+                        modifier =
+                            Modifier
+                                .fillMaxHeight()
+                                .background(Color.Transparent),
+                        contentAlignment = Alignment.Center,
                     ) {
                         Text("Graph", color = Color.White)
                     }
                 }
             }
             Divider(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(1.dp),
-                color = Color.Gray
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .width(1.dp),
+                color = Color.Gray,
             )
             Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(IntrinsicSize.Min)
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .width(IntrinsicSize.Min),
             ) {
                 DropdownMenuItem(
                     modifier = Modifier.fillMaxSize(),
-                    onClick = { showSettingsMenu.value = true }
+                    onClick = { showSettingsMenu.value = true },
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Text("Create graph", color = Color.White)
                     }
                 }
             }
             Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(IntrinsicSize.Min)
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .width(IntrinsicSize.Min),
             ) {
                 Divider(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(1.dp),
-                    color = Color.Gray
+                    modifier =
+                        Modifier
+                            .fillMaxHeight()
+                            .width(1.dp),
+                    color = Color.Gray,
                 )
                 DropdownMenu(
                     expanded = showSettingsMenu.value,
                     onDismissRequest = {
                         showSettingsMenu.value = false
-                    }
+                    },
                 ) {
                     DropdownMenuItem(onClick = {
                         viewModel.createGraph(true, true)
@@ -116,26 +122,28 @@ fun barButton(
                     }) {
                         Text("Directed unweighted graph")
                     }
-                    DropdownMenuItem(onClick = {
-                        viewModel.createGraph(false, false)
-                        showSettingsMenu.value = false
-                    }
+                    DropdownMenuItem(
+                        onClick = {
+                            viewModel.createGraph(false, false)
+                            showSettingsMenu.value = false
+                        },
                     ) {
                         Text("Undirected unweighted graph")
                     }
                 }
                 Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(IntrinsicSize.Min)
+                    modifier =
+                        Modifier
+                            .fillMaxHeight()
+                            .width(IntrinsicSize.Min),
                 ) {
                     DropdownMenuItem(
                         modifier = Modifier.fillMaxSize(),
-                        onClick = { showAddMenu.value = true }
+                        onClick = { showAddMenu.value = true },
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             Text("Add/Delete", color = Color.White)
                         }
@@ -143,7 +151,7 @@ fun barButton(
                 }
                 DropdownMenu(
                     expanded = showAddMenu.value,
-                    onDismissRequest = { showAddMenu.value = false }
+                    onDismissRequest = { showAddMenu.value = false },
                 ) {
                     DropdownMenuItem(onClick = {
                         showAddVertex.value = true

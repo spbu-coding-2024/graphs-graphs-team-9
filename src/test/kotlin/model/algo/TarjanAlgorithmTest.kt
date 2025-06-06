@@ -2,16 +2,14 @@ package model.algo
 
 import model.algorithms.TarjanAlgorithm
 import model.graph.Graph
-import model.graph.GraphFactory
 import model.graph.GraphImpl
-import model.graph.Vertex
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 class TarjanAlgorithmTest {
-
     private lateinit var tarjan: TarjanAlgorithm
     private lateinit var graph: Graph
 
@@ -84,10 +82,15 @@ class TarjanAlgorithmTest {
     @Test
     @DisplayName("Граф с несколькими компонентами сильной связности")
     fun testMultipleComponents() {
-        graph.addVertex("A"); graph.addVertex("B"); graph.addVertex("C")
-        graph.addVertex("D"); graph.addVertex("E")
-        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена"); val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
-        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена"); val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
+        graph.addVertex("D")
+        graph.addVertex("E")
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
         val e = graph.getVertexByName("E") ?: throw IllegalStateException("Вершина должна быть найдена")
 
         graph.addEdge("A", "B")
@@ -116,7 +119,9 @@ class TarjanAlgorithmTest {
     fun testComplexDirectedGraph() {
         val vertexNames = (0..7).map { it.toString() }
         vertexNames.forEach { graph.addVertex(it) }
-        val vertices = vertexNames.map { graph.getVertexByName(it) ?: throw IllegalStateException("Вершина должна быть найдена") }
+        vertexNames.map {
+            graph.getVertexByName(it) ?: throw IllegalStateException("Вершина должна быть найдена")
+        }
 
         graph.addEdge("0", "1")
         graph.addEdge("1", "2")
@@ -135,7 +140,7 @@ class TarjanAlgorithmTest {
         val components = tarjan.findStronglyConnectedComponents(graph)
         assertEquals(4, components.size, "Expected 4 strongly connected components")
 
-        val componentSets = components.map { it.toSet() }
+        components.map { it.toSet() }
         val componentNameSets = components.map { comp -> comp.map { it.name }.toSet() }
 
         assertTrue(componentNameSets.contains(setOf("0", "1", "2")), "Component {0,1,2} not found")
@@ -150,9 +155,14 @@ class TarjanAlgorithmTest {
     @Test
     @DisplayName("Линейный граф без циклов")
     fun testLinearGraph() {
-        graph.addVertex("A"); graph.addVertex("B"); graph.addVertex("C"); graph.addVertex("D")
-        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена"); val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
-        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена"); val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
+        graph.addVertex("D")
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
 
         graph.addEdge("A", "B")
         graph.addEdge("B", "C")
@@ -175,9 +185,14 @@ class TarjanAlgorithmTest {
     @Test
     @DisplayName("Граф с изолированными компонентами")
     fun testDisconnectedComponents() {
-        graph.addVertex("A"); graph.addVertex("B"); graph.addVertex("C"); graph.addVertex("D")
-        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена"); val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
-        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена"); val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
+        graph.addVertex("A")
+        graph.addVertex("B")
+        graph.addVertex("C")
+        graph.addVertex("D")
+        val a = graph.getVertexByName("A") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val b = graph.getVertexByName("B") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val c = graph.getVertexByName("C") ?: throw IllegalStateException("Вершина должна быть найдена")
+        val d = graph.getVertexByName("D") ?: throw IllegalStateException("Вершина должна быть найдена")
 
         graph.addEdge("A", "B")
         graph.addEdge("B", "A")

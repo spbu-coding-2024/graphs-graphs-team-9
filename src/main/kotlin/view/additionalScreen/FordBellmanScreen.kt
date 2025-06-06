@@ -6,7 +6,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import viewModel.screen.MainScreenViewModel
@@ -15,9 +14,8 @@ import viewModel.screen.MainScreenViewModel
 fun diologistFordBellman(
     showFordBellman: MutableState<Boolean>,
     viewModel: MainScreenViewModel,
-    showResult: MutableState<Boolean>
+    showResult: MutableState<Boolean>,
 ) {
-
     val startName = mutableStateOf<String?>(null)
     val endName = mutableStateOf<String?>(null)
     AnimatedVisibility(
@@ -36,7 +34,7 @@ fun diologistFordBellman(
                             startName.value = it
                         },
                         label = { Text("Start vertex") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     )
                     OutlinedTextField(
                         value = endName.value ?: "",
@@ -45,7 +43,7 @@ fun diologistFordBellman(
                             endName.value = it
                         },
                         label = { Text("End Vertex") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             },
@@ -55,7 +53,7 @@ fun diologistFordBellman(
                         viewModel.runFordBellman()
                         showResult.value = if (viewModel.graphViewModel.isWeighted()) true else false
                         showFordBellman.value = false
-                    }
+                    },
                 ) {
                     Text("Find")
                 }
@@ -64,11 +62,11 @@ fun diologistFordBellman(
                 Button(
                     onClick = {
                         showFordBellman.value = false
-                    }
+                    },
                 ) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 }

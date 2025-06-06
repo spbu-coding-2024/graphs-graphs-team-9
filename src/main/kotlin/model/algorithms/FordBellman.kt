@@ -4,8 +4,11 @@ import model.graph.Graph
 import model.graph.Vertex
 
 object FordBellman {
-
-    fun fordBellman(graph: Graph, startVertex: Vertex, endVertex: Vertex?): Pair<List<Vertex>?, Double?> {
+    fun fordBellman(
+        graph: Graph,
+        startVertex: Vertex,
+        endVertex: Vertex?,
+    ): Pair<List<Vertex>?, Double?> {
         val infinity = Double.POSITIVE_INFINITY
         val distance =
             graph.getVertices().associateWith { if (it == startVertex) 0.0 else infinity }.toMutableMap()
@@ -13,7 +16,6 @@ object FordBellman {
 
         for (i in 1 until graph.getVertices().size) {
             for (entry in graph) {
-
                 for (edge in entry.second) {
                     val weight = edge.weight ?: 0.0
 
@@ -39,7 +41,7 @@ object FordBellman {
         }
         if (endVertex == null) return distance.keys.toList() to null
         if (distance[endVertex] == infinity) {
-            return null to infinity  // путь не существует
+            return null to infinity // путь не существует
         }
         val path: MutableList<Vertex> = mutableListOf()
         var cur: Vertex? = endVertex
@@ -48,7 +50,7 @@ object FordBellman {
             cur = previousVertex[cur]
         }
         if (cur != startVertex) {
-            return null to infinity  // путь не существует
+            return null to infinity // путь не существует
         }
         path.add(startVertex)
         path.reverse()
@@ -56,7 +58,10 @@ object FordBellman {
         return path to (distance[endVertex] ?: infinity)
     }
 
-    fun fordBellman(graph: Graph, startVertex: Vertex): Map<Vertex, Double?> {
+    fun fordBellman(
+        graph: Graph,
+        startVertex: Vertex,
+    ): Map<Vertex, Double?> {
         val infinity = Double.POSITIVE_INFINITY
         val distance =
             graph.getVertices().associateWith { if (it == startVertex) 0.0 else infinity }.toMutableMap()
@@ -64,7 +69,6 @@ object FordBellman {
 
         for (i in 1 until graph.getVertices().size) {
             for (entry in graph) {
-
                 for (edge in entry.second) {
                     val weight = edge.weight ?: 0.0
 
@@ -91,7 +95,7 @@ object FordBellman {
         return distance
     }
 }
-//object FordBellman{
+// object FordBellman{
 //    fun fordBellman(graph: Graph, vertexFirst: Vertex, vertexSecond: Vertex): Pair<Double, List<Vertex>> {
 //        val infinity = Double.POSITIVE_INFINITY
 //        val distance =
