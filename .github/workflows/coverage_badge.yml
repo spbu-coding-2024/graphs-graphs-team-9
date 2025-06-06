@@ -1,4 +1,4 @@
-name: Измерение покрытия и генерация значка # Название рабочего процесса
+name: Test coverage and generate jacoco badge
 
 on:
     workflow_dispatch:
