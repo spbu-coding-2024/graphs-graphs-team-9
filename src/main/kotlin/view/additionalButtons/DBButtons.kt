@@ -111,13 +111,11 @@ fun DBButtons(
             }
 
             AnimatedVisibility(
-                visible = showSQLiteSaveUploadButton.value || showNeo4jSaveUploadButton.value,
+                visible = showNeo4jSaveUploadButton.value,
             ) {
                 Button(
                     onClick = {
-                        if (showSQLiteSaveUploadButton.value) {
-                            viewModel.clearGraph()
-                        } else if (showNeo4jSaveUploadButton.value) {
+                        if (showNeo4jSaveUploadButton.value) {
                             coroutine.launch {
                                 viewModel.clearNeo4jDatabase()
                             }
